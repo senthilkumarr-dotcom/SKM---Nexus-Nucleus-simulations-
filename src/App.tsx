@@ -1,0 +1,109 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState } from 'react';
+import Dashboard from './components/Dashboard';
+import SimulationLayout from './components/SimulationLayout';
+import VariableIdentification from './components/VariableIdentification';
+import { LABS } from './constants';
+import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation } from './components/Simulations';
+
+export default function App() {
+  const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
+  const [isIdentifying, setIsIdentifying] = useState(false);
+
+  const selectedLab = LABS.find(l => l.id === selectedLabId);
+
+  const handleSelectLab = (id: string) => {
+    setSelectedLabId(id);
+    setIsIdentifying(true);
+  };
+
+  const handleIdentificationComplete = () => {
+    setIsIdentifying(false);
+  };
+
+  const handleBack = () => {
+    setSelectedLabId(null);
+    setIsIdentifying(false);
+  };
+
+  // 1. Register your visual components here
+  const SIMULATION_COMPONENTS: Record<string, React.FC<{ variables: Record<string, number>, isPaused?: boolean }>> = {
+    'enzyme-action': EnzymeSimulation,
+    'osmosis': OsmosisSimulation,
+    'photosynthesis': PhotosynthesisSimulation,
+    'lactose-breakdown': LactoseBreakdownSimulation,
+  };
+
+  // 2. Register your mathematical models here
+  const CALCULATION_MODELS: Record<string, (vars: Record<string, number>) => number> = {
+    'enzyme-action': (vars) => {
+      const { temp, ph } = vars;
+      const tempEffect = Math.exp(-0.5 * Math.pow((temp - 37) / 15, 2));
+      const phEffect = Math.exp(-0.5 * Math.pow((ph - 7) / 2, 2));
+      return tempEffect * phEffect * 50;
+    },
+    'osmosis': (vars) => (0.3 - vars.molarity) * 25,
+    'photosynthesis': (vars) => {
+      const { light, temp, co2 } = vars;
+      const lightEffect = light / 100;
+      const co2Effect = Math.min(co2 * 10, 1); // Saturation at 0.1%
+      const tempEffect = Math.exp(-0.5 * Math.pow((temp - 30) / 10, 2)); // Optimum at 30°C
+      return lightEffect * co2Effect * tempEffect * 60;
+    },
+    'lactose-breakdown': (vars) => {
+      const { temp, enzyme } = vars;
+      const tempEffect = Math.exp(-0.5 * Math.pow((temp - 37) / 15, 2));
+      const enzymeEffect = enzyme / 10;
+      return tempEffect * enzymeEffect * 50;
+    },
+  };
+
+  const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean) => {
+    const Component = SIMULATION_COMPONENTS[id];
+    if (Component) return <Component variables={variables} isPaused={isPaused} />;
+
+    return (
+      <div className="text-white/40 text-center p-8">
+        <p className="text-xl font-bold mb-2 font-sans">Simulation Scaffolding</p>
+        <p className="text-sm">This simulation is currently in "Build Mode". The UI and data analysis are fully functional.</p>
+      </div>
+    );
+  };
+
+  const calculateResult = (id: string, variables: Record<string, number>) => {
+    const model = CALCULATION_MODELS[id];
+    if (model) return model(variables);
+
+    // Default generic model for new labs
+    const firstVar = Object.values(variables)[0] || 0;
+    return firstVar * 1.5 + (Math.random() * 2);
+  };
+
+  if (!selectedLab) {
+    return <Dashboard onSelectLab={handleSelectLab} />;
+  }
+
+  if (isIdentifying) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <VariableIdentification 
+          lab={selectedLab} 
+          onComplete={handleIdentificationComplete} 
+        />
+      </div>
+    );
+  }
+
+  return (
+    <SimulationLayout 
+      lab={selectedLab}
+      onBack={handleBack}
+      renderSimulation={(vars, isPaused) => renderSimulationContent(selectedLab.id, vars, isPaused)}
+      calculateResult={(vars) => calculateResult(selectedLab.id, vars)}
+    />
+  );
+}
