@@ -8,7 +8,7 @@ import Dashboard from './components/Dashboard';
 import SimulationLayout from './components/SimulationLayout';
 import VariableIdentification from './components/VariableIdentification';
 import { LABS } from './constants';
-import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation } from './components/Simulations';
+import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation } from './components/Simulations';
 
 export default function App() {
   const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
@@ -36,6 +36,7 @@ export default function App() {
     'osmosis': OsmosisSimulation,
     'photosynthesis': PhotosynthesisSimulation,
     'lactose-breakdown': LactoseBreakdownSimulation,
+    'transpiration': TranspirationSimulation,
   };
 
   // 2. Register your mathematical models here
@@ -50,9 +51,18 @@ export default function App() {
     'photosynthesis': (vars) => {
       const { light, temp, co2 } = vars;
       const lightEffect = light / 100;
-      const co2Effect = Math.min(co2 * 10, 1); // Saturation at 0.1%
-      const tempEffect = Math.exp(-0.5 * Math.pow((temp - 30) / 10, 2)); // Optimum at 30°C
+      const co2Effect = co2 > 0 ? (co2 / (co2 + 0.05)) * 1.25 : 0;
+      const tempEffect = Math.exp(-0.5 * Math.pow((temp - 30) / 10, 2));
       return lightEffect * co2Effect * tempEffect * 60;
+    },
+    'transpiration': (vars) => {
+      const { wind, humidity, temp, light } = vars;
+      // Wind increases rate, humidity decreases it
+      const windEffect = 1 + (wind / 5);
+      const humidityEffect = Math.max(0.1, (100 - humidity) / 50);
+      const tempEffect = 1 + (temp - 25) / 50; // Rate increases with temp
+      const lightEffect = 1 + (light / 100); // Stomata open more in light
+      return windEffect * humidityEffect * tempEffect * lightEffect * 2; // mm/min
     },
     'lactose-breakdown': (vars) => {
       const { temp, enzyme } = vars;

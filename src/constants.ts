@@ -284,10 +284,12 @@ If the wind speed increases, then the rate of water uptake will increase because
 *   Use a digital potometer for more precise water uptake readings.`,
     independentVariables: [
       { id: 'wind', name: 'Wind Speed', min: 0, max: 10, step: 1, defaultValue: 0, unit: 'm/s' },
-      { id: 'humidity', name: 'Humidity', min: 20, max: 100, step: 5, defaultValue: 50, unit: '%' }
+      { id: 'humidity', name: 'Humidity', min: 20, max: 100, step: 5, defaultValue: 50, unit: '%' },
+      { id: 'temp', name: 'Temperature', min: 10, max: 50, step: 1, defaultValue: 25, unit: '°C' },
+      { id: 'light', name: 'Light Intensity', min: 0, max: 100, step: 5, defaultValue: 50, unit: '%' }
     ],
     dependentVariable: { name: 'water_uptake', unit: 'mm/min', label: 'Rate of Water Uptake' },
-    controlledVariables: ['Light Intensity', 'Temperature', 'Leaf Surface Area'],
+    controlledVariables: ['Leaf Surface Area'],
     safetyOptions: [
       { id: 'glass_care', text: 'Handle the fragile glass potometer with care', isCorrect: true },
       { id: 'spill_wipe', text: 'Wipe up water spills immediately', isCorrect: true },

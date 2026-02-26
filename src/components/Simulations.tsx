@@ -1266,3 +1266,166 @@ export const LactoseBreakdownSimulation = ({ variables, isPaused = false, setVar
     </div>
   );
 };
+
+export const TranspirationSimulation = ({ variables, isPaused = false }: { variables: Record<string, number>, isPaused?: boolean }) => {
+  const { wind, humidity } = variables;
+  
+  // Rate calculation (mm/min)
+  const windEffect = 1 + (wind / 5);
+  const humidityEffect = Math.max(0.1, (100 - humidity) / 50);
+  const rate = windEffect * humidityEffect * 5; 
+  
+  const [bubblePos, setBubblePos] = React.useState(0);
+  const lastUpdate = React.useRef(Date.now());
+
+  React.useEffect(() => {
+    if (isPaused) {
+      lastUpdate.current = Date.now();
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const delta = (now - lastUpdate.current) / 1000;
+      lastUpdate.current = now;
+      
+      // rate is mm/min, so rate/60 is mm/sec
+      // Let's scale it for the UI (capillary is ~400px wide)
+      const increment = (rate / 60) * 20 * delta; 
+      setBubblePos(prev => (prev + increment) % 400);
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [isPaused, rate]);
+
+  return (
+    <div className="relative w-full h-full flex flex-col items-center justify-center bg-slate-900/10 rounded-[3rem] overflow-hidden p-8">
+      {/* Environmental Effects */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Wind Particles */}
+        {wind > 0 && Array.from({ length: 10 }).map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ x: -100, y: Math.random() * 600 }}
+            animate={{ x: 1200 }}
+            transition={{ 
+              duration: 2 / (1 + wind/5), 
+              repeat: Infinity, 
+              delay: i * 0.2,
+              ease: "linear"
+            }}
+            className="absolute h-px bg-white/20 w-20"
+          />
+        ))}
+        {/* Humidity Mist */}
+        <motion.div 
+          animate={{ opacity: humidity / 100 }}
+          className="absolute inset-0 bg-blue-100/5 backdrop-blur-[1px]"
+        />
+      </div>
+
+      <div className="relative w-full max-w-5xl h-full flex flex-col items-center justify-center gap-12">
+        {/* 1. The Plant (Leafy Shoot) */}
+        <div className="relative z-10">
+          <div className="w-1 h-32 bg-emerald-900 rounded-full" />
+          {/* Leaves */}
+          {[0, 1, 2, 3, 4, 5].map(i => (
+            <motion.div
+              key={i}
+              animate={{ 
+                rotate: i % 2 === 0 ? [20, 22, 20] : [-20, -22, -20],
+                x: wind > 5 ? (i % 2 === 0 ? 5 : -5) : 0
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className={cn(
+                "absolute w-24 h-12 bg-emerald-600 rounded-full border border-emerald-400/30",
+                i % 2 === 0 ? "left-1 origin-left" : "right-1 origin-right"
+              )}
+              style={{ top: i * 20 }}
+            >
+              <div className="w-full h-px bg-emerald-400/20 mt-6" />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* 2. The Potometer Setup */}
+        <div className="relative w-full h-64 flex flex-col items-center">
+          {/* Reservoir / Flask */}
+          <div className="w-32 h-40 bg-blue-400/10 border border-white/20 rounded-t-3xl rounded-b-lg backdrop-blur-md relative">
+            <div className="absolute bottom-0 w-full h-32 bg-blue-500/20 rounded-b-lg" />
+            {/* Connection to capillary */}
+            <div className="absolute bottom-4 -right-4 w-8 h-4 bg-blue-400/20 border border-white/20" />
+          </div>
+
+          {/* Capillary Tube */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[500px] h-6 bg-white/5 border border-white/10 rounded-full flex items-center px-4 overflow-hidden">
+            {/* Water in capillary */}
+            <div className="absolute inset-0 bg-blue-500/10" />
+            
+            {/* Moving Air Bubble */}
+            <motion.div 
+              style={{ x: bubblePos }}
+              className="w-8 h-4 bg-white/40 rounded-full border border-white/60 shadow-[0_0_10px_rgba(255,255,255,0.3)] flex items-center justify-center"
+            >
+              <div className="w-1 h-1 bg-white/80 rounded-full" />
+            </motion.div>
+          </div>
+
+          {/* Ruler */}
+          <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 w-[500px] h-8 bg-amber-50 border border-amber-200 rounded flex items-end px-4 pb-1">
+            {Array.from({ length: 51 }).map((_, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center">
+                <div className={cn("w-px bg-amber-400", i % 10 === 0 ? "h-4" : i % 5 === 0 ? "h-3" : "h-2")} />
+                {i % 10 === 0 && <span className="text-[8px] font-bold text-amber-800 mt-0.5">{i}</span>}
+              </div>
+            ))}
+            <div className="absolute top-1 left-4 text-[7px] font-black text-amber-900/40 uppercase tracking-widest">Millimeters (mm)</div>
+          </div>
+        </div>
+
+        {/* 3. The Fan (Wind Source) */}
+        <div className="absolute left-[-150px] top-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
+          <div className="relative w-32 h-32 bg-slate-800 rounded-full border-4 border-slate-700 flex items-center justify-center shadow-2xl">
+            <motion.div 
+              animate={{ rotate: wind * 100 }}
+              transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
+              className="relative w-28 h-28 flex items-center justify-center"
+            >
+              {[0, 1, 2].map(i => (
+                <div key={i} className="absolute w-4 h-24 bg-slate-600 rounded-full" style={{ transform: `rotate(${i * 120}deg)` }} />
+              ))}
+            </motion.div>
+            <div className="absolute w-8 h-8 bg-slate-700 rounded-full border-2 border-slate-600 shadow-inner" />
+          </div>
+          <div className="px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
+            <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Wind Gen v2</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Lab Sensors */}
+      <div className="absolute bottom-8 left-8 flex flex-col gap-4">
+        <div className="bg-black/60 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-2xl min-w-[160px]">
+          <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
+            <Activity className="w-3 h-3 text-blue-400" />
+            <span className="text-[9px] text-white/80 uppercase font-black tracking-widest">Atmospheric Data</span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] text-white/40 uppercase font-bold">Wind</span>
+              <span className="text-xs font-mono font-black text-blue-400">{wind} m/s</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] text-white/40 uppercase font-bold">Humidity</span>
+              <span className="text-xs font-mono font-black text-sky-400">{humidity}%</span>
+            </div>
+            <div className="pt-2 border-t border-white/5 flex justify-between items-center">
+              <span className="text-[9px] text-emerald-400 uppercase font-black">Uptake</span>
+              <span className="text-sm font-mono font-black text-emerald-400">{rate.toFixed(1)} <span className="text-[8px]">mm/min</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
