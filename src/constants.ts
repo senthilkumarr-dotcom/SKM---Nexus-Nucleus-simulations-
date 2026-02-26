@@ -195,7 +195,7 @@ If the light intensity increases, then the number of oxygen bubbles produced per
     independentVariables: [
       { id: 'light', name: 'Light Intensity', min: 0, max: 100, step: 5, defaultValue: 50, unit: '%' },
       { id: 'temp', name: 'Temperature', min: 10, max: 50, step: 1, defaultValue: 25, unit: '°C' },
-      { id: 'co2', name: 'CO₂ Concentration', min: 0, max: 1, step: 0.1, defaultValue: 0.1, unit: '%' }
+      { id: 'co2', name: 'CO₂ Concentration', min: 0, max: 1, step: 0.05, defaultValue: 0.1, unit: '%' }
     ],
     dependentVariable: { name: 'bubbles', unit: 'bubbles/min', label: 'Number of Oxygen Bubbles Produced' },
     controlledVariables: ['Type of Pondweed', 'Water Volume', 'Light Wavelength'],

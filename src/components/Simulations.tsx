@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
-import { Plus, Scale, Weight, Waves, Thermometer, Lightbulb, FlaskConical, Timer, Check, RotateCcw, Play } from 'lucide-react';
+import { Plus, Scale, Weight, Waves, Thermometer, Lightbulb, FlaskConical, Timer, Check, RotateCcw, Play, Activity, Settings2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
-export const EnzymeSimulation = ({ variables, isPaused = false }: { variables: Record<string, number>, isPaused?: boolean }) => {
+export const EnzymeSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
   const { temp, ph } = variables;
   
   const tempEffect = Math.exp(-0.5 * Math.pow((temp - 37) / 15, 2));
@@ -278,7 +278,7 @@ export const EnzymeSimulation = ({ variables, isPaused = false }: { variables: R
   );
 };
 
-export const OsmosisSimulation = ({ variables, isPaused = false }: { variables: Record<string, number>, isPaused?: boolean }) => {
+export const OsmosisSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
   const { molarity } = variables;
   const [initialMass, setInitialMass] = React.useState<number | null>(null);
   const [currentMass, setCurrentMass] = React.useState<number>(0);
@@ -694,13 +694,44 @@ export const OsmosisSimulation = ({ variables, isPaused = false }: { variables: 
   );
 };
 
-export const PhotosynthesisSimulation = ({ variables, isPaused = false }: { variables: Record<string, number>, isPaused?: boolean }) => {
+export const PhotosynthesisSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
   const { light, temp, co2 } = variables;
+  
+  // Sandbox State
+  const [lampPos, setLampPos] = React.useState({ x: -480, y: 100 });
+  const [beakerPos, setBeakerPos] = React.useState({ x: 280, y: 150 });
+  
+  // UI Panel Positions
+  const [sensorsPos, setSensorsPos] = React.useState({ x: 0, y: 0 });
+  const [counterPos, setCounterPos] = React.useState({ x: 0, y: 0 });
+  const [tallyPos, setTallyPos] = React.useState({ x: 0, y: 0 });
+
+  const [isDraggingLamp, setIsDraggingLamp] = React.useState(false);
+  const [perspective, setPerspective] = React.useState<'aerial' | 'eye'>('aerial');
+
+  // Calculate variables based on sandbox state
+  React.useEffect(() => {
+    if (!setVariables) return;
+
+    const dist = Math.abs(lampPos.x - beakerPos.x);
+    // Light intensity decreases with distance squared (inverse square law feel)
+    const calculatedLight = Math.max(0, Math.min(100, 100 - ((dist - 100) / 400) * 100));
+    
+    setVariables(prev => ({
+      ...prev,
+      light: Math.round(calculatedLight),
+    }));
+  }, [lampPos, beakerPos, setVariables]);
+
+  // Rate calculation
   const lightEffect = light / 100;
-  const co2Effect = Math.min(co2 * 10, 1);
+  // CO2 saturation curve (Michaelis-Menten style)
+  // P = Pmax * [CO2] / ([CO2] + Km)
+  // Using Km = 0.05 as a reasonable value for the 0-0.2 range
+  const co2Effect = co2 > 0 ? (co2 / (co2 + 0.05)) * 1.25 : 0;
   const tempEffect = Math.exp(-0.5 * Math.pow((temp - 30) / 10, 2));
   const combinedRate = lightEffect * co2Effect * tempEffect;
-  const bpm = Math.floor(combinedRate * 60);
+  const bpm = Math.max(0, Math.floor(combinedRate * 80));
 
   const [tally, setTally] = React.useState(0);
   const [autoCount, setAutoCount] = React.useState(0);
@@ -708,286 +739,382 @@ export const PhotosynthesisSimulation = ({ variables, isPaused = false }: { vari
   const bubbleIdRef = React.useRef(0);
 
   React.useEffect(() => {
-    setTally(0);
-    setAutoCount(0);
-    setBubbles([]);
-  }, [light, temp, co2, isPaused]);
+    if (isPaused) {
+      setBubbles([]);
+    }
+  }, [isPaused]);
 
-  // Automatic bubble counter and visual synchronization
   React.useEffect(() => {
     if (!isPaused && bpm > 0) {
       const interval = setInterval(() => {
+        const id = bubbleIdRef.current++;
+        const x = (Math.random() - 0.5) * 12;
+        
+        // Sync bubble spawn with count increment
+        setBubbles(prev => [...prev, { id, x }]);
         setAutoCount(prev => prev + 1);
         
-        // Spawn a visual bubble
-        const id = bubbleIdRef.current++;
-        const x = (Math.random() - 0.5) * 15;
-        setBubbles(prev => [...prev, { id, x }]);
-        
-        // Remove bubble after animation
         setTimeout(() => {
           setBubbles(prev => prev.filter(b => b.id !== id));
-        }, 2500);
+        }, 2500); // Longer life for bubbles to reach top
       }, (60 / bpm) * 1000);
-      
       return () => clearInterval(interval);
     }
   }, [bpm, isPaused]);
 
+  // Perspective transition on mount
+  React.useEffect(() => {
+    const timer = setTimeout(() => setPerspective('eye'), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const distance = Math.round(Math.abs(lampPos.x - beakerPos.x) / 5);
+
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center p-8 bg-slate-950/20 rounded-[3rem] overflow-hidden">
-      {/* Background Lab Bench */}
-      <div className="absolute bottom-0 w-full h-1/4 bg-slate-800/50 border-t border-white/10" />
-      <div className="relative w-full max-w-6xl h-[500px] flex items-end justify-center gap-6 px-4 pb-12">
+    <div className="relative w-full h-full flex flex-col items-center justify-center bg-[#050505] rounded-[3rem] overflow-hidden">
+      {/* Immersive Background (Recipe 7) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-blue-900/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-emerald-900/10 blur-[100px] rounded-full" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px]" />
+      </div>
+      
+      {/* 3D Table - Darker, more premium */}
+      <motion.div 
+        animate={{ 
+          rotateX: perspective === 'aerial' ? 45 : 8,
+          scale: perspective === 'aerial' ? 0.9 : 1,
+          y: perspective === 'aerial' ? 50 : 0
+        }}
+        transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
+        className="absolute bottom-0 w-full h-[38%] bg-[#0a0a0a] border-t border-white/5 shadow-[0_-20px_100px_rgba(0,0,0,0.8)]"
+        style={{ transformStyle: 'preserve-3d', perspective: '1200px' }}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        {/* Table Edge Glow */}
+        <div className="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+      </motion.div>
+
+      <div className="relative w-full max-w-7xl h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
         
-        {/* 1. CO2 Cylinder & Tank */}
-        <div className="flex flex-col items-center gap-4 mb-8">
-          <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">CO₂ Supply</div>
-          <div className="relative w-16 h-48 bg-slate-600 rounded-t-xl border-x-4 border-t-4 border-slate-500 shadow-2xl flex flex-col items-center pt-4">
-            {/* Cylinder Cap */}
-            <div className="w-10 h-4 bg-slate-700 rounded-t-md border-x-2 border-t-2 border-slate-600" />
-            
-            {/* Measuring Knob */}
-            <div className="mt-4 relative w-10 h-10">
-              <motion.div 
-                animate={{ rotate: co2 * 360 }}
-                className="w-full h-full bg-slate-800 rounded-full border-2 border-slate-400 flex items-center justify-center"
-              >
-                <div className="w-1 h-4 bg-emerald-400 rounded-full -translate-y-2" />
-              </motion.div>
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] font-bold text-white/40 uppercase">Knob</div>
-            </div>
-
-            {/* Tube leading to bath */}
-            <div className="absolute top-2 -right-8 w-8 h-2 bg-slate-500/50 rounded-full" />
-            <svg className="absolute top-2 -right-32 w-32 h-24 pointer-events-none opacity-30">
-              <path 
-                d="M 0 4 Q 15 4, 30 20 T 120 80" 
-                fill="none" 
-                stroke="white" 
-                strokeWidth="2" 
-                strokeLinecap="round"
-              />
-            </svg>
-            
-            <div className="mt-auto mb-4 text-[10px] font-bold text-white/20 uppercase tracking-tighter">CO₂ Tank</div>
-          </div>
-        </div>
-
-        {/* 2. Light Source (Bulb) */}
-        <div className="flex flex-col items-center gap-4 mb-8 z-10">
-          <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Light Source</div>
-          <div className="relative">
-            {/* Light Beam (Conical) */}
+        {/* 1. Blue Articulated Lamp - Enhanced Visuals */}
+        <motion.div 
+          drag="x"
+          dragMomentum={false}
+          onDragStart={() => setIsDraggingLamp(true)}
+          onDragEnd={() => setIsDraggingLamp(false)}
+          onDrag={(e, info) => setLampPos(prev => ({ ...prev, x: prev.x + info.delta.x }))}
+          animate={{ x: lampPos.x, y: lampPos.y }}
+          className="absolute z-30 cursor-grab active:cursor-grabbing group"
+        >
+          <div className="relative flex flex-col items-center">
+            {/* Light Rays - More Dramatic */}
             {!isPaused && light > 0 && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: lightEffect * 0.4 }}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-gradient-to-r from-yellow-200/40 to-transparent blur-2xl pointer-events-none"
-                style={{ 
-                  clipPath: 'polygon(0 40%, 100% 0, 100% 100%, 0 60%)',
-                  transformOrigin: 'left center',
-                  transform: 'translateY(-50%) rotate(0deg)'
-                }}
-              />
-            )}
-            
-            {/* Glow Effect */}
-            <motion.div 
-              animate={{ 
-                opacity: isPaused ? 0.1 : (0.2 + lightEffect * 0.8),
-                scale: 1 + lightEffect * 0.5
-              }}
-              className="absolute inset-0 bg-yellow-400/30 blur-3xl rounded-full"
-            />
-            <div className="relative w-20 h-36 bg-slate-700 rounded-t-full border-x-4 border-t-4 border-slate-600 flex flex-col items-center justify-center shadow-2xl">
-              <div className="w-14 h-14 bg-slate-800 rounded-full border-4 border-slate-600 flex items-center justify-center">
-                <Lightbulb className={cn(
-                  "w-8 h-8 transition-colors duration-500",
-                  isPaused ? "text-slate-600" : (light > 0 ? "text-yellow-400 fill-yellow-400/20" : "text-slate-600")
-                )} />
-              </div>
-              <div className="mt-4 w-full h-10 bg-slate-800 border-t-4 border-slate-600" />
-            </div>
-            {/* Intensity Label */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/60 whitespace-nowrap">
-              {light}%
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Water Bath & Plant Setup */}
-        <div className="relative flex flex-col items-center gap-4">
-          <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Experimental Setup</div>
-          
-          {/* Water Bath (Large Container) */}
-          <div className="relative w-80 h-80 bg-blue-400/10 border-2 border-white/20 rounded-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
-            {/* Water in Bath */}
-            <div className="absolute bottom-0 w-full h-[90%] bg-blue-400/10" />
-            
-            {/* Heater / Thermostat */}
-            <div className="absolute top-4 right-4 flex flex-col items-center gap-1">
-              <div className="w-8 h-12 bg-slate-700 rounded border border-white/10 flex flex-col items-center justify-center p-1">
-                <Thermometer className="w-4 h-4 text-red-400" />
-                <div className="text-[8px] font-mono text-white">{temp}°C</div>
-              </div>
-              <div className="text-[8px] font-bold text-white/20 uppercase">Heater</div>
-            </div>
-
-            {/* CO2 Supply (Sodium Bicarbonate) */}
-            <div className="absolute top-4 left-4 flex flex-col items-center gap-1">
-              <div className="w-8 h-12 bg-slate-700 rounded border border-white/10 flex flex-col items-center justify-center p-1">
-                <FlaskConical className="w-4 h-4 text-emerald-400" />
-                <div className="text-[8px] font-mono text-white">{co2}%</div>
-              </div>
-              <div className="text-[8px] font-bold text-white/20 uppercase">CO₂</div>
-            </div>
-
-            {/* Beaker inside Water Bath */}
-            <div className="relative w-48 h-64 bg-white/5 border-x-2 border-b-2 border-white/20 rounded-b-3xl flex flex-col items-center justify-end pb-4">
-              {/* Funnel (Inverted) */}
-              <div className="absolute bottom-4 w-32 h-24 flex flex-col items-center">
-                <div className="w-32 h-1 bg-white/20" /> {/* Funnel base */}
-                <div className="w-8 h-20 bg-white/10 border-x border-white/20" /> {/* Funnel neck */}
-              </div>
-
-              {/* Inverted Test Tube */}
-              <div className="absolute bottom-20 w-10 h-40 bg-white/5 border-x-2 border-t-2 border-white/20 rounded-t-full flex flex-col items-center justify-start pt-4">
-                {/* Gas Collection Area */}
+              <div className="absolute left-[90px] top-[45px] pointer-events-none z-0">
                 <motion.div 
-                  animate={{ height: isPaused ? 0 : (bpm * 0.5) }}
-                  className="w-full bg-white/10 rounded-t-full"
+                  animate={{ 
+                    opacity: [0.2, 0.4, 0.2],
+                    scale: [1, 1.02, 1]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-[700px] h-[500px] bg-gradient-to-r from-yellow-200/30 via-yellow-100/5 to-transparent blur-3xl"
+                  style={{ clipPath: 'polygon(0 42%, 100% 0, 100% 100%, 0 58%)', transformOrigin: 'left center' }}
                 />
-              </div>
-
-              {/* Elodea Plant inside Funnel */}
-              <div className="relative w-6 h-32 bg-emerald-700/80 rounded-full mb-2">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div 
+                {/* Dynamic Ray Particles */}
+                {[0, 1, 2, 3, 4, 5].map(i => (
+                  <motion.div 
                     key={i}
-                    className="absolute w-10 h-5 bg-emerald-500/60 rounded-full"
+                    animate={{ 
+                      x: [0, 500], 
+                      opacity: [0, 0.6, 0],
+                      scale: [0.5, 1.5, 0.5]
+                    }}
+                    transition={{ 
+                      duration: 2 + Math.random(), 
+                      repeat: Infinity, 
+                      delay: i * 0.4,
+                      ease: "linear"
+                    }}
+                    className="absolute top-1/2 w-1 h-1 bg-yellow-100/60 rounded-full blur-[1px]"
                     style={{ 
-                      top: i * 15 + 10, 
-                      left: i % 2 === 0 ? -8 : 4,
-                      transform: `rotate(${i % 2 === 0 ? -45 : 45}deg)`
+                      transform: `rotate(${(i - 2.5) * 12}deg) translateY(${(i - 2.5) * 25}px)`,
+                      transformOrigin: 'left center'
                     }}
                   />
                 ))}
+              </div>
+            )}
+
+            {/* Lamp Body - Premium Blue Metal */}
+            <div className="relative w-40 h-40 flex flex-col items-center">
+              {/* Base */}
+              <div className="absolute bottom-0 w-28 h-8 bg-[#1a3a8a] rounded-full border-b-4 border-[#0f172a] shadow-[0_10px_30px_rgba(0,0,0,0.5)]" />
+              {/* Arm Segment 1 */}
+              <div className="absolute bottom-6 w-4 h-28 bg-[#2563eb] rounded-full origin-bottom -rotate-15 border-r-2 border-[#1e40af]" />
+              {/* Joint 1 */}
+              <div className="absolute bottom-32 -left-4 w-8 h-8 bg-[#334155] rounded-full border-2 border-[#475569] shadow-lg" />
+              {/* Arm Segment 2 */}
+              <div className="absolute bottom-32 left-0 w-4 h-28 bg-[#2563eb] rounded-full origin-bottom rotate-[65deg] border-r-2 border-[#1e40af]" />
+              {/* Joint 2 */}
+              <div className="absolute bottom-[145px] left-[115px] w-8 h-8 bg-[#334155] rounded-full border-2 border-[#475569] shadow-lg" />
+              {/* Head - Larger, more technical */}
+              <div className="absolute bottom-[110px] left-[130px] w-32 h-28 bg-[#1e40af] rounded-t-full rotate-[125deg] border-b-[12px] border-[#0f172a] shadow-2xl flex items-center justify-center overflow-hidden">
+                <div className={cn(
+                  "w-24 h-24 rounded-full blur-2xl transition-all duration-700",
+                  !isPaused && light > 0 ? "bg-yellow-100 shadow-[0_0_80px_rgba(255,255,255,0.6)]" : "bg-slate-900"
+                )} />
+                <div className={cn(
+                  "absolute w-14 h-14 rounded-full border-4 border-white/10",
+                  !isPaused && light > 0 ? "bg-yellow-200/80" : "bg-slate-800"
+                )} />
+                <Lightbulb className={cn("absolute w-10 h-10 transition-all duration-500", !isPaused && light > 0 ? "text-yellow-600 fill-yellow-400/20 scale-110" : "text-slate-600")} />
+              </div>
+            </div>
+          </div>
+          <div className="mt-6 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em]">Distance: {distance}cm</span>
+          </div>
+        </motion.div>
+
+        {/* 2. Experimental Setup (Flask + Plant) - More Realistic */}
+        <motion.div 
+          animate={{ x: beakerPos.x, y: beakerPos.y }}
+          className="absolute z-20 flex flex-col items-center gap-6"
+        >
+          <div className="relative w-72 h-[450px] flex items-center justify-center">
+            {/* Glass Chamber - Subtle reflections */}
+            <div className="absolute inset-0 bg-blue-400/5 border border-white/10 rounded-3xl backdrop-blur-[2px] shadow-2xl overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            </div>
+            
+            {/* Conical Flask - Better Glass Shader */}
+            <div className="relative w-48 h-72 flex flex-col items-center justify-end">
+              {/* Water - Animated surface */}
+              <motion.div 
+                animate={{ height: [160, 162, 160] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-0 w-44 bg-blue-500/10 rounded-b-[2.5rem] border-t border-white/20" 
+              />
+              {/* Flask Body */}
+              <div className="absolute bottom-0 w-48 h-56 bg-white/5 border-x border-b border-white/20 rounded-b-[3rem] shadow-inner" 
+                style={{ clipPath: 'polygon(25% 0, 75% 0, 100% 100%, 0 100%)' }}
+              />
+              {/* Flask Neck */}
+              <div className="absolute top-0 w-14 h-20 bg-white/5 border-x border-t border-white/20 rounded-t-xl" />
+              {/* Stopper - Dark Rubber */}
+              <div className="absolute top-0 w-16 h-6 bg-[#1a1a1a] rounded shadow-2xl border-b border-white/10" />
+
+              {/* Detailed Elodea Plant */}
+              <div className="relative w-5 h-48 bg-[#064e3b] rounded-full mb-6 shadow-lg">
+                {Array.from({ length: 14 }).map((_, i) => (
+                  <div key={i} className="absolute w-16 h-10 flex items-center justify-center"
+                    style={{ 
+                      top: i * 14 + 8, 
+                      left: i % 2 === 0 ? -14 : 4, 
+                      transform: `rotate(${i % 2 === 0 ? -25 : 25}deg)` 
+                    }}
+                  >
+                    <div className="w-12 h-6 bg-[#059669]/90 rounded-full border border-emerald-400/20 shadow-sm" 
+                      style={{ borderRadius: '100% 0% 100% 0% / 100% 0% 100% 0%' }}
+                    >
+                      <div className="w-full h-[1px] bg-emerald-400/20 mt-3" />
+                    </div>
+                  </div>
+                ))}
                 
-                {/* Bubbles rising from plant into test tube */}
+                {/* Bubbles - Better Physics */}
                 <AnimatePresence>
                   {bubbles.map((bubble) => (
-                    <motion.div
-                      key={bubble.id}
-                      initial={{ y: 0, x: 0, opacity: 0 }}
+                    <motion.div 
+                      key={bubble.id} 
+                      initial={{ y: 0, x: 0, opacity: 0, scale: 0 }} 
                       animate={{ 
-                        y: -180, 
-                        x: bubble.x,
-                        opacity: [0, 1, 1, 0],
-                        scale: [0.5, 1.2, 1]
+                        y: -240, 
+                        x: bubble.x + Math.sin(Date.now() / 200) * 5, 
+                        opacity: [0, 1, 1, 0], 
+                        scale: [0.5, 1.4, 1.2] 
                       }}
-                      exit={{ opacity: 0 }}
-                      transition={{ 
-                        duration: 2.5, 
-                        ease: "linear"
-                      }}
-                      className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-white/40 rounded-full border border-white/20 shadow-sm"
-                    />
+                      transition={{ duration: 2.5, ease: "easeOut" }} 
+                      className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/40 rounded-full border border-white/30 shadow-[0_0_10px_rgba(255,255,255,0.3)] backdrop-blur-[1px]"
+                    >
+                      <div className="absolute top-1 left-1 w-1 h-1 bg-white/60 rounded-full" />
+                    </motion.div>
                   ))}
                 </AnimatePresence>
               </div>
-              
-              <div className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-2">Pondweed (Elodea)</div>
             </div>
           </div>
-          <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Water Bath (30°C Optimum)</div>
+          <div className="px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
+            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Bio-Chamber Alpha</span>
+          </div>
+        </motion.div>
+
+        {/* 3. Large CO2 Cylinder - Industrial Look */}
+        <div className="absolute left-[120px] bottom-[60px] z-10">
+          <div className="relative w-24 h-72 bg-[#262626] rounded-t-full border-x-4 border-t-4 border-[#404040] shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col items-center scale-90">
+            {/* High-Contrast Band */}
+            <div className="absolute top-28 w-full h-16 bg-[#2563eb] flex items-center justify-center border-y-2 border-white/10">
+              <span className="text-white font-black text-2xl tracking-[0.2em] drop-shadow-lg">CO₂</span>
+            </div>
+            {/* Industrial Valve */}
+            <div className="absolute -top-12 w-16 h-12 bg-[#404040] rounded-xl border-2 border-[#525252] flex flex-col items-center justify-center shadow-2xl">
+              <div className="w-14 h-3 bg-[#171717] rounded-full mb-1" />
+              <div className="w-8 h-8 bg-[#171717] rounded-full border-4 border-[#404040] flex items-center justify-center">
+                <div className="w-1 h-4 bg-red-500 rounded-full rotate-45" />
+              </div>
+            </div>
+            {/* Reinforced Tube */}
+            <div className="absolute top-4 left-full w-[180px] h-5 bg-[#d97706] rounded-full origin-left rotate-[12deg] shadow-2xl border-b-4 border-[#92400e]">
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_10px,rgba(0,0,0,0.1)_10px,rgba(0,0,0,0.1)_12px)]" />
+            </div>
+          </div>
+          <div className="mt-6 text-center">
+            <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">Pressure: 4.2 Bar</span>
+          </div>
         </div>
 
-        {/* 4. Tally & Controls Panel */}
-        <div className="w-64 flex flex-col gap-4 mb-4">
-          <div className="bg-black/40 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 shadow-2xl">
-            <div className="text-[10px] text-white/40 uppercase font-bold mb-4 tracking-widest">Bubble Counters</div>
-            
-            <div className="flex flex-col items-center gap-6">
-              {/* Manual Tally */}
-              <div className="relative w-32 h-32 flex items-center justify-center">
-                <svg className="w-full h-full -rotate-90">
-                  <circle cx="64" cy="64" r="58" fill="none" stroke="currentColor" strokeWidth="8" className="text-white/5" />
-                  <motion.circle 
-                    cx="64" cy="64" r="58" fill="none" stroke="currentColor" strokeWidth="8" 
-                    className="text-emerald-500"
-                    strokeDasharray="364.4"
-                    animate={{ strokeDashoffset: 364.4 - (tally % 60) * (364.4 / 60) }}
-                  />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className="text-4xl font-mono font-bold text-white">{tally}</span>
-                  <span className="text-[10px] text-white/40 uppercase font-bold">Manual</span>
-                </div>
-              </div>
-
-              {/* Automatic Readout */}
-              <div className="w-full bg-white/5 rounded-2xl p-4 border border-white/10 flex flex-col items-center gap-1">
-                <div className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Automatic Read</div>
-                <div className="text-2xl font-mono font-bold text-blue-400">
-                  {autoCount}
-                </div>
-                <div className="text-[8px] text-white/20 uppercase font-bold tracking-widest">Total Bubbles</div>
-              </div>
-
-              <div className="flex gap-2 w-full">
-                <button 
-                  onClick={() => setTally(prev => prev + 1)}
-                  className="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl shadow-lg shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-5 h-5" />
-                  <span className="font-bold">Tally</span>
-                </button>
-                <button 
-                  onClick={() => { setTally(0); setAutoCount(0); }}
-                  className="p-4 bg-white/5 hover:bg-white/10 text-white/60 rounded-2xl border border-white/10 transition-all active:scale-95"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                </button>
-              </div>
+        {/* 4. Heater Control Unit - Technical Dashboard Style */}
+        <div className="absolute right-[120px] bottom-[60px] z-10">
+          <div className="w-40 h-48 bg-[#171717] rounded-2xl border-2 border-white/5 shadow-2xl p-4 flex flex-col items-center gap-4 scale-90">
+            <div className="w-full flex justify-between items-center">
+              <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">Thermal Unit</span>
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
             </div>
-          </div>
-
-          {/* Environmental Status */}
-          <div className="bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex flex-col gap-3">
-            <div className="flex justify-between items-center">
-              <span className="text-[10px] text-white/40 uppercase font-bold">Temperature</span>
-              <span className={cn("text-xs font-mono font-bold", temp > 35 || temp < 20 ? "text-amber-400" : "text-emerald-400")}>
-                {temp}°C
-              </span>
+            {/* Large Digital Display */}
+            <div className="w-full h-16 bg-black rounded-xl border border-white/5 flex items-center justify-center shadow-inner">
+              <span className="text-3xl font-mono font-black text-red-500 tracking-tighter drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]">{temp}<span className="text-lg ml-1">°C</span></span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-[10px] text-white/40 uppercase font-bold">CO₂ Level</span>
-              <span className="text-xs font-mono font-bold text-blue-400">{co2}%</span>
+            {/* Precision Knob */}
+            <div className="relative w-20 h-20 bg-[#262626] rounded-full border-4 border-[#404040] shadow-2xl flex items-center justify-center group cursor-pointer">
+              <motion.div 
+                animate={{ rotate: (temp - 10) * 6 }}
+                className="w-1.5 h-10 bg-white/20 rounded-full origin-bottom -translate-y-5" 
+              />
+              <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent,rgba(255,255,255,0.05))]" />
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Status Guidance Overlay */}
-      <div className="absolute top-8 right-8 z-20">
-        <AnimatePresence mode="wait">
-          {isPaused ? (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="px-4 py-2 bg-amber-500/20 border border-amber-500/50 rounded-xl text-[10px] font-bold text-amber-400 uppercase tracking-widest backdrop-blur-md shadow-lg">
-              Experiment Paused: Start Timer
+        {/* 5. Main Data Logger - Moved to top to avoid blocking path */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30">
+          <div className="w-64 h-32 bg-[#111]/90 backdrop-blur-md rounded-[1.5rem] border-2 border-[#222] shadow-[0_20px_40px_rgba(0,0,0,0.8)] p-4 flex flex-col items-center gap-2 scale-90">
+            <div className="w-full flex justify-between items-center px-2">
+              <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">O₂ Flux Monitor</span>
+              <div className="flex gap-1">
+                <div className="w-1 h-1 bg-blue-500 rounded-full" />
+                <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+              </div>
+            </div>
+            <div className="w-full h-16 bg-[#050505] rounded-xl border border-white/5 flex flex-col items-center justify-center shadow-inner">
+              <div className="flex items-baseline gap-2">
+                <motion.span 
+                  key={combinedRate}
+                  initial={{ opacity: 0.5 }}
+                  animate={{ opacity: 1 }}
+                  className="text-3xl font-mono font-black text-emerald-400 tracking-tighter"
+                >
+                  {(combinedRate * 100).toFixed(1)}
+                </motion.span>
+                <span className="text-[10px] font-black text-emerald-900 uppercase">Units/Sec</span>
+              </div>
+              <div className="w-24 h-1 bg-emerald-950 rounded-full mt-1 overflow-hidden">
+                <motion.div 
+                  animate={{ width: `${combinedRate * 100}%` }}
+                  className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating UI Panels - Refined */}
+        
+        {/* 1. Lab Sensors - Bento Style */}
+        <motion.div 
+          drag
+          dragMomentum={false}
+          onDrag={(e, info) => setSensorsPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+          animate={{ x: sensorsPos.x, y: sensorsPos.y }}
+          className="absolute bottom-6 left-6 z-50 cursor-move"
+        >
+          <div className="bg-black/70 backdrop-blur-3xl p-3 rounded-[1.5rem] border border-white/10 shadow-2xl min-w-[150px]">
+            <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
+              <div className="w-5 h-5 bg-blue-600/20 rounded flex items-center justify-center border border-blue-500/30">
+                <Activity className="w-3 h-3 text-blue-400" />
+              </div>
+              <span className="text-[8px] text-white/80 uppercase font-black tracking-widest">Telemetry</span>
+            </div>
+            <div className="space-y-2">
+              {[
+                { label: 'Light', val: `${light}%`, color: 'text-yellow-400' },
+                { label: 'Temp', val: `${temp}°C`, color: 'text-red-400' },
+                { label: 'CO₂', val: `${co2}%`, color: 'text-emerald-400' }
+              ].map(s => (
+                <div key={s.label} className="flex justify-between items-center">
+                  <span className="text-[8px] text-white/40 uppercase font-bold tracking-wider">{s.label}</span>
+                  <span className={cn("text-[10px] font-mono font-black", s.color)}>{s.val}</span>
+                </div>
+              ))}
+              <div className="pt-2 border-t border-white/5 flex justify-between items-center">
+                <span className="text-[8px] text-blue-400 uppercase font-black tracking-widest">Rate</span>
+                <span className="text-sm font-mono font-black text-blue-400">{bpm} <span className="text-[7px] ml-0.5">BPM</span></span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 2. Bubble Counter - High Impact */}
+        <motion.div 
+          drag
+          dragMomentum={false}
+          onDrag={(e, info) => setCounterPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+          animate={{ x: counterPos.x, y: counterPos.y }}
+          className="absolute top-6 left-6 z-50 cursor-move"
+        >
+          <div className="bg-blue-600 p-3 rounded-[2rem] shadow-[0_0_40px_rgba(37,99,235,0.4)] flex flex-col items-center gap-1 border-2 border-white/20">
+            <span className="text-[8px] text-white/60 font-black uppercase tracking-[0.2em]">Bubbles</span>
+            <motion.div 
+              key={autoCount}
+              initial={{ scale: 1.1, opacity: 0.5 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-4xl font-mono font-black text-white drop-shadow-xl leading-none"
+            >
+              {autoCount.toString().padStart(2, '0')}
             </motion.div>
-          ) : (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/50 rounded-xl text-[10px] font-bold text-emerald-400 uppercase tracking-widest backdrop-blur-md animate-pulse shadow-lg">
-              Photosynthesis Active ({bpm} bpm)
-            </motion.div>
-          )}
-        </AnimatePresence>
+            <button 
+              onClick={() => { setTally(0); setAutoCount(0); }}
+              className="mt-1 px-3 py-1 bg-white text-blue-600 text-[8px] font-black uppercase tracking-widest rounded-full transition-all hover:bg-blue-50 hover:scale-105 active:scale-95 shadow-lg"
+            >
+              Reset
+            </button>
+          </div>
+        </motion.div>
+
+        {/* 3. Manual Tally - Floating Action */}
+        <motion.div 
+          drag
+          dragMomentum={false}
+          onDrag={(e, info) => setTallyPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+          animate={{ x: tallyPos.x, y: tallyPos.y }}
+          className="absolute bottom-6 right-6 z-50 cursor-move"
+        >
+          <motion.button 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setTally(prev => prev + 1)}
+            className="w-20 h-20 bg-white text-black rounded-full shadow-[0_10px_30px_rgba(255,255,255,0.2)] flex flex-col items-center justify-center border-[3px] border-blue-600"
+          >
+            <div className="text-xl font-mono font-black leading-none">{tally}</div>
+            <span className="text-[7px] font-black uppercase tracking-widest mt-1">Tally</span>
+          </motion.button>
+        </motion.div>
+
       </div>
     </div>
   );
 };
 
-export const LactoseBreakdownSimulation = ({ variables, isPaused = false }: { variables: Record<string, number>, isPaused?: boolean }) => {
+export const LactoseBreakdownSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
   const { temp, enzyme } = variables;
   
   // Model: Optimum temp around 37-40C, enzyme concentration increases rate

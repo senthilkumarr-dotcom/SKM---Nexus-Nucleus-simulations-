@@ -31,7 +31,7 @@ export default function App() {
   };
 
   // 1. Register your visual components here
-  const SIMULATION_COMPONENTS: Record<string, React.FC<{ variables: Record<string, number>, isPaused?: boolean }>> = {
+  const SIMULATION_COMPONENTS: Record<string, React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }>> = {
     'enzyme-action': EnzymeSimulation,
     'osmosis': OsmosisSimulation,
     'photosynthesis': PhotosynthesisSimulation,
@@ -62,9 +62,9 @@ export default function App() {
     },
   };
 
-  const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean) => {
+  const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>) => {
     const Component = SIMULATION_COMPONENTS[id];
-    if (Component) return <Component variables={variables} isPaused={isPaused} />;
+    if (Component) return <Component variables={variables} isPaused={isPaused} setVariables={setVariables} />;
 
     return (
       <div className="text-white/40 text-center p-8">
@@ -102,7 +102,7 @@ export default function App() {
     <SimulationLayout 
       lab={selectedLab}
       onBack={handleBack}
-      renderSimulation={(vars, isPaused) => renderSimulationContent(selectedLab.id, vars, isPaused)}
+      renderSimulation={(vars, isPaused, setVars) => renderSimulationContent(selectedLab.id, vars, isPaused, setVars)}
       calculateResult={(vars) => calculateResult(selectedLab.id, vars)}
     />
   );

@@ -8,7 +8,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter
 } from 'recharts';
 import { 
-  Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X
+  Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, ChevronRight, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, exportToCSV, getLabColorClasses } from '../utils';
@@ -16,7 +16,7 @@ import { cn, exportToCSV, getLabColorClasses } from '../utils';
 interface Props {
   lab: Lab;
   onBack: () => void;
-  renderSimulation: (variables: Record<string, number>, isPaused: boolean) => React.ReactNode;
+  renderSimulation: (variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>) => React.ReactNode;
   calculateResult: (variables: Record<string, number>) => number;
 }
 
@@ -26,6 +26,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
     lab.independentVariables.reduce((acc, v) => ({ ...acc, [v.id]: v.defaultValue }), {})
   );
   const [data, setData] = useState<DataPoint[]>([]);
+  const [activeIV, setActiveIV] = useState<string>(lab.independentVariables[0].id);
   const [activeTab, setActiveTab] = useState<'theory' | 'method'>('theory');
   const [isFullscreen, setIsFullscreen] = useState(false);
   
@@ -49,6 +50,9 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
     );
   };
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
+  const [isControlsCollapsed, setIsControlsCollapsed] = React.useState(false);
 
   const correctSafetyCount = useMemo(() => {
     return selectedSafety.filter(id => lab.safetyOptions.find(o => o.id === id)?.isCorrect).length;
@@ -115,9 +119,8 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
   };
 
   const addPoint = (y: number, type: 'manual' | 'auto') => {
-    const xVar = lab.independentVariables[0].id;
     const newDataPoint: DataPoint = {
-      x: variables[xVar],
+      x: variables[activeIV],
       y: y,
       timestamp: Date.now(),
       type
@@ -127,15 +130,16 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
 
   const handleClear = () => setData([]);
   const handleExport = () => {
+    const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
     const exportData = data.map(d => ({
-      [lab.independentVariables[0].name]: d.x,
+      [activeVar.name]: d.x,
       [lab.dependentVariable.label]: d.y
     }));
     exportToCSV(exportData, `${lab.id}-results.csv`);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className={cn("min-h-screen flex flex-col transition-colors duration-500", colors.light)}>
       {/* Header */}
       <header className="bg-white border-bottom border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-4">
@@ -168,15 +172,34 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
         </div>
       </header>
 
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-[1600px] mx-auto w-full">
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-[1800px] mx-auto w-full relative">
+        {/* Sidebar Toggle Button */}
+        <button 
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-50 p-2 bg-white border border-slate-200 rounded-full shadow-lg hover:bg-slate-50 transition-all lg:flex hidden"
+          title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
+
         {/* Left Column: Guide */}
-        <section className="lg:col-span-3 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden h-[calc(100vh-120px)] sticky top-[88px]">
+        <motion.section 
+          animate={{ 
+            width: isSidebarCollapsed ? 0 : 'auto',
+            opacity: isSidebarCollapsed ? 0 : 1,
+            marginRight: isSidebarCollapsed ? -24 : 0
+          }}
+          className={cn(
+            "lg:col-span-3 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden h-[calc(100vh-120px)] sticky top-[88px]",
+            isSidebarCollapsed && "pointer-events-none lg:hidden"
+          )}
+        >
           <div className="flex border-b border-slate-100">
             <button 
               onClick={() => setActiveTab('theory')}
               className={cn(
                 "flex-1 py-3 text-sm font-bold transition-all border-b-2",
-                activeTab === 'theory' ? cn("border-b-2", colors.border, colors.text) : "border-transparent text-slate-500 hover:text-slate-700"
+                activeTab === 'theory' ? "border-blue-600 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700"
               )}
             >
               Theory
@@ -184,8 +207,8 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
             <button 
               onClick={() => setActiveTab('method')}
               className={cn(
-                "flex-1 py-3 text-sm font-bold transition-all",
-                activeTab === 'method' ? cn("border-b-2", colors.border, colors.text) : "border-transparent text-slate-500 hover:text-slate-700"
+                "flex-1 py-3 text-sm font-bold transition-all border-b-2",
+                activeTab === 'method' ? "border-blue-600 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700"
               )}
             >
               Method
@@ -196,12 +219,15 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
               {activeTab === 'theory' ? lab.theory : lab.method}
             </ReactMarkdown>
           </div>
-        </section>
+        </motion.section>
 
         {/* Right Column: Simulation, Variables, and Analysis */}
-        <div className="lg:col-span-9 flex flex-col gap-6">
+        <div className={cn(
+          "flex flex-col gap-6 transition-all duration-300",
+          isSidebarCollapsed ? "lg:col-span-12" : "lg:col-span-9"
+        )}>
           {/* Panel 3: Simulation */}
-          <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[500px]">
+          <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[950px]">
             <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
               <Activity className={cn("w-4 h-4 text-emerald-400", isTimerRunning && "animate-pulse")} />
               <span className="text-xs font-mono text-white/80 uppercase tracking-widest">
@@ -243,7 +269,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                 >
                   <div className="p-6 border-b border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className={cn("w-5 h-5", colors.text)} />
+                      <ShieldCheck className="w-5 h-5 text-blue-400" />
                       <h3 className="text-sm font-bold text-white">Safety Precautions</h3>
                     </div>
                     <button onClick={() => setShowSafetyPanel(false)} className="p-1 hover:bg-white/10 rounded-full text-white/40 hover:text-white">
@@ -261,13 +287,13 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                           className={cn(
                             "w-full text-left p-4 rounded-2xl border transition-all flex gap-3 items-start group",
                             isSelected 
-                              ? cn(colors.bg.replace('bg-', 'bg-').replace('600', '600/20'), colors.border.replace('border-', 'border-').replace('600', '500/50')) 
+                              ? "bg-blue-600/20 border-blue-500/50" 
                               : "bg-white/5 border-white/5 hover:border-white/10"
                           )}
                         >
                           <div className={cn(
                             "mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-all",
-                            isSelected ? cn(colors.bg.replace('600', '500'), colors.border.replace('600', '400')) : "border-white/20 group-hover:border-white/40"
+                            isSelected ? "bg-blue-500 border-blue-400" : "border-white/20 group-hover:border-white/40"
                           )}>
                             {isSelected && <Check className="w-3 h-3 text-white" />}
                           </div>
@@ -303,12 +329,12 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
             </AnimatePresence>
 
             {/* Timer Overlay */}
-            <div className="absolute top-6 right-6 flex flex-col items-end gap-2 z-10">
+            <div className="absolute top-6 right-6 flex flex-col items-end gap-2 z-30">
               <div className={cn(
                 "flex items-center gap-3 px-4 py-2 rounded-xl border backdrop-blur-md transition-all",
-                isTimerRunning ? cn(colors.bg.replace('600', '600/20'), colors.border.replace('600', '500/50'), colors.ring) : "bg-black/40 border-white/10"
+                isTimerRunning ? "bg-blue-600/20 border-blue-500/50 ring-2 ring-blue-500/20" : "bg-black/40 border-white/10"
               )}>
-                <Timer className={cn("w-4 h-4", isTimerRunning ? colors.text.replace('600', '400') + " animate-spin-slow" : "text-white/40")} />
+                <Timer className={cn("w-4 h-4", isTimerRunning ? "text-blue-400 animate-spin-slow" : "text-white/40")} />
                 <span className="text-xl font-mono font-bold text-white">
                   {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                 </span>
@@ -329,21 +355,23 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                 ) : (
                   <button 
                     onClick={startTimer}
-                    className={cn("p-1.5 rounded-lg text-white transition-colors", colors.bg, colors.hover)}
+                    className="p-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white transition-colors"
                   >
                     <Play className="w-3 h-3 fill-current" />
                   </button>
                 )}
               </div>
               {!isTimerRunning && (
-                <div className="flex gap-1">
-                  {[30, 60, 120].map(d => (
+                <div className="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur-md border border-white/10">
+                  {[15, 30, 45, 60].map(d => (
                     <button
                       key={d}
                       onClick={() => { setTimerDuration(d); setTimeLeft(d); }}
                       className={cn(
-                        "px-2 py-1 rounded text-[10px] font-bold transition-all",
-                        timerDuration === d ? cn(colors.bg, "text-white") : "bg-black/40 text-white/40 hover:text-white/60"
+                        "px-3 py-1.5 rounded-lg text-[12px] font-black transition-all uppercase tracking-widest",
+                        timerDuration === d 
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40 scale-105" 
+                          : "text-white/40 hover:text-white/80 hover:bg-white/5"
                       )}
                     >
                       {d}s
@@ -353,7 +381,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
               )}
             </div>
 
-            {renderSimulation(variables, !isTimerRunning)}
+            {renderSimulation(variables, !isTimerRunning, setVariables)}
 
             {/* Start Overlay */}
             <AnimatePresence>
@@ -369,8 +397,8 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                     animate={{ scale: 1, y: 0 }}
                     className="bg-white p-8 rounded-[2.5rem] shadow-2xl text-center max-w-sm border border-slate-100"
                   >
-                    <div className={cn("w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4", colors.light)}>
-                      <Play className={cn("w-8 h-8 fill-current", colors.text)} />
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Play className="w-8 h-8 text-blue-600 fill-current" />
                     </div>
                     <h3 className="text-2xl font-black text-slate-900 mb-2">Ready to Start?</h3>
                     <p className="text-sm text-slate-500 mb-6 font-medium px-4">Adjust your variables below, then click start to begin the {timerDuration}s experiment.</p>
@@ -378,7 +406,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                     <div className="flex flex-col gap-3">
                       <button 
                         onClick={startTimer}
-                        className={cn("w-full py-4 text-white font-bold rounded-2xl shadow-lg transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2", colors.bg, colors.hover, colors.shadow.replace('500/5', '200'))}
+                        className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
                       >
                         <Play className="w-5 h-5 fill-current" />
                         Start Experiment
@@ -399,104 +427,157 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
           </section>
 
           {/* Panel 2: Variables */}
-          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
-            <div className="flex items-center justify-between mb-8">
+          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <button 
+              onClick={() => setIsControlsCollapsed(!isControlsCollapsed)}
+              className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors"
+            >
               <div className="flex items-center gap-2">
-                <Settings2 className={cn("w-6 h-6", colors.text)} />
+                <Settings2 className="w-6 h-6 text-blue-600" />
                 <h2 className="text-lg font-bold text-slate-800">Variable Controls</h2>
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 1: Adjust</div>
-            </div>
+              <div className="flex items-center gap-4">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 1: Adjust</div>
+                <div className={cn("transition-transform duration-300", isControlsCollapsed ? "rotate-180" : "")}>
+                  <ChevronRight className="w-5 h-5 text-slate-400 rotate-90" />
+                </div>
+              </div>
+            </button>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {lab.independentVariables.map(v => (
-                <div key={v.id} className="space-y-5">
-                  <div className="flex justify-between items-center">
-                    <label className="text-sm font-bold text-slate-700">{v.name}</label>
-                    <span className={cn("px-3 py-1 rounded-lg text-sm font-mono font-bold border", colors.light, colors.text, colors.border.replace('600', '100'))}>
-                      {variables[v.id]} {v.unit}
-                    </span>
-                  </div>
-                  <input 
-                    type="range"
-                    min={v.min}
-                    max={v.max}
-                    step={v.step}
-                    value={variables[v.id]}
-                    onChange={(e) => handleVariableChange(v.id, parseFloat(e.target.value))}
-                    className={cn("w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer", colors.accent)}
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                    <span>{v.min}{v.unit}</span>
-                    <span>{v.max}{v.unit}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <AnimatePresence>
+              {!isControlsCollapsed && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <div className="px-8 pb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      {lab.independentVariables.map(v => (
+                        <div key={v.id} className={cn(
+                          "space-y-5 p-6 rounded-2xl transition-all border-2",
+                          activeIV === v.id ? "bg-blue-50/50 border-blue-200 shadow-sm" : "bg-white border-transparent"
+                        )}>
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => {
+                                  if (activeIV !== v.id) {
+                                    if (data.length > 0 && !confirm("Changing the independent variable will clear current data. Continue?")) return;
+                                    setActiveIV(v.id);
+                                    setData([]);
+                                  }
+                                }}
+                                className={cn(
+                                  "group relative flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all",
+                                  activeIV === v.id 
+                                    ? "bg-blue-600 border-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]" 
+                                    : "bg-white border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-600"
+                                )}
+                              >
+                                <div className={cn(
+                                  "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all",
+                                  activeIV === v.id ? "border-white bg-white" : "border-slate-300 group-hover:border-blue-400"
+                                )}>
+                                  {activeIV === v.id && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest">
+                                  {activeIV === v.id ? "Active IV" : "Set as IV"}
+                                </span>
+                              </button>
+                              <div className="flex flex-col">
+                                <label className="text-sm font-bold text-slate-700">{v.name}</label>
+                              </div>
+                            </div>
+                            <span className="px-3 py-1 bg-blue-50 rounded-lg text-sm font-mono font-bold text-blue-700 border border-blue-100">
+                              {variables[v.id]} {v.unit}
+                            </span>
+                          </div>
+                          <input 
+                            type="range"
+                            min={v.min}
+                            max={v.max}
+                            step={v.step}
+                            value={variables[v.id]}
+                            onChange={(e) => handleVariableChange(v.id, parseFloat(e.target.value))}
+                            className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          />
+                          <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                            <span>{v.min}{v.unit}</span>
+                            <span>{v.max}{v.unit}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-            <div className="mt-10 pt-8 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 2: Manual Record</span>
-                  <div className={cn("flex items-center gap-1 text-[10px] font-bold", colors.text)}>
-                    <Info className="w-3.5 h-3.5" />
-                    Count & Enter
-                  </div>
-                </div>
-                <form onSubmit={handleManualRecord} className="flex gap-3">
-                  <div className="relative flex-1">
-                    <input 
-                      type="number"
-                      step="any"
-                      placeholder={`Enter ${lab.dependentVariable.unit}...`}
-                      value={manualValue}
-                      onChange={(e) => setManualValue(e.target.value)}
-                      className={cn("w-full pl-4 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-base focus:ring-2 outline-none transition-all font-medium", colors.ring.replace('500/20', '500'))}
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">
-                      {lab.dependentVariable.unit}
+                    <div className="mt-10 pt-8 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 2: Manual Record</span>
+                          <div className="flex items-center gap-1 text-[10px] text-blue-600 font-bold">
+                            <Info className="w-3.5 h-3.5" />
+                            Count & Enter
+                          </div>
+                        </div>
+                        <form onSubmit={handleManualRecord} className="flex gap-3">
+                          <div className="relative flex-1">
+                            <input 
+                              type="number"
+                              step="any"
+                              placeholder={`Enter ${lab.dependentVariable.unit}...`}
+                              value={manualValue}
+                              onChange={(e) => setManualValue(e.target.value)}
+                              className="w-full pl-4 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-base focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
+                            />
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">
+                              {lab.dependentVariable.unit}
+                            </div>
+                          </div>
+                          <button 
+                            type="submit"
+                            disabled={!manualValue}
+                            className={cn(
+                              "px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg",
+                              showSuccess 
+                                ? "bg-emerald-500 text-white shadow-emerald-200" 
+                                : "bg-slate-800 hover:bg-slate-900 text-white disabled:opacity-50 shadow-slate-200"
+                            )}
+                          >
+                            {showSuccess ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                            {showSuccess ? 'Added' : 'Add'}
+                          </button>
+                        </form>
+                      </div>
+
+                      <div className="space-y-4">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alternative: Auto Record</span>
+                        <button 
+                          onClick={handleRecord}
+                          className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 transition-all transform hover:-translate-y-1 active:translate-y-0"
+                        >
+                          <Play className="w-5 h-5 fill-current" />
+                          Auto-Calculate Result
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <button 
-                    type="submit"
-                    disabled={!manualValue}
-                    className={cn(
-                      "px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg",
-                      showSuccess 
-                        ? "bg-emerald-500 text-white shadow-emerald-200" 
-                        : "bg-slate-800 hover:bg-slate-900 text-white disabled:opacity-50 shadow-slate-200"
-                    )}
-                  >
-                    {showSuccess ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                    {showSuccess ? 'Added' : 'Add'}
-                  </button>
-                </form>
-              </div>
-
-              <div className="space-y-4">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alternative: Auto Record</span>
-                <button 
-                  onClick={handleRecord}
-                  className={cn("w-full flex items-center justify-center gap-3 py-4 text-white font-bold rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 active:translate-y-0", colors.bg, colors.hover, colors.shadow.replace('500/5', '100'))}
-                >
-                  <Play className="w-5 h-5 fill-current" />
-                  Auto-Calculate Result
-                </button>
-              </div>
-            </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
 
           {/* Panel 4: Analysis (Moved Below) */}
           <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BarChart3 className={cn("w-6 h-6", colors.text)} />
+                <BarChart3 className="w-6 h-6 text-blue-600" />
                 <h2 className="text-lg font-bold text-slate-800">Experimental Results & Data Analysis</h2>
               </div>
               <div className="flex items-center gap-2">
-                <div className={cn("flex items-center gap-1.5 px-3 py-1 rounded-full border", colors.light, colors.border.replace('600', '100'))}>
-                  <div className={cn("w-2 h-2 rounded-full", colors.bg)} />
-                  <span className={cn("text-[10px] font-bold uppercase tracking-tighter", colors.text.replace('600', '700'))}>Auto</span>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 rounded-full border border-blue-100">
+                  <div className="w-2 h-2 rounded-full bg-blue-600" />
+                  <span className="text-[10px] font-bold text-blue-700 uppercase tracking-tighter">Auto</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 rounded-full border border-amber-100">
                   <div className="w-2 h-2 rounded-full bg-amber-500" />
@@ -505,6 +586,29 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
               </div>
             </div>
             
+            <div className="px-8 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Experiment:</span>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 rounded-lg shadow-sm">
+                  <span className="text-xs font-bold text-slate-600">Investigating</span>
+                  <span className="text-xs font-black text-blue-600 uppercase">{lab.independentVariables.find(v => v.id === activeIV)?.name}</span>
+                  <span className="text-xs font-bold text-slate-600">vs</span>
+                  <span className="text-xs font-black text-blue-600 uppercase">{lab.dependentVariable.label}</span>
+                </div>
+              </div>
+              <div className="h-4 w-px bg-slate-200" />
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Constants:</span>
+                <div className="flex gap-2">
+                  {lab.independentVariables.filter(v => v.id !== activeIV).map(v => (
+                    <div key={v.id} className="px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-medium text-slate-500">
+                      {v.name}: <span className="font-bold text-slate-700">{variables[v.id]}{v.unit}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="p-8 grid grid-cols-1 xl:grid-cols-3 gap-8">
               <div className="xl:col-span-2 h-[450px] bg-slate-50 rounded-2xl p-6 border border-slate-100">
                 <ResponsiveContainer width="100%" height="100%">
@@ -516,7 +620,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                       domain={['auto', 'auto']}
                       tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
                       label={{ 
-                        value: `${lab.independentVariables[0].name} (${lab.independentVariables[0].unit})`, 
+                        value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0].unit})`, 
                         position: 'bottom', 
                         offset: 20, 
                         fontSize: 14, 
@@ -545,11 +649,15 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                       }}
                       itemStyle={{ fontWeight: 700, fontSize: '14px' }}
                       labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
+                      labelFormatter={(value) => {
+                        const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
+                        return `${activeVar.name}: ${value}${activeVar.unit}`;
+                      }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="y" 
-                      stroke={colors.chart} 
+                      stroke="#2563eb" 
                       strokeWidth={4} 
                       dot={(props: any) => {
                         const { cx, cy, payload } = props;
@@ -559,7 +667,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                             cx={cx} 
                             cy={cy} 
                             r={isManual ? 7 : 6} 
-                            fill={isManual ? '#f59e0b' : colors.chart} 
+                            fill={isManual ? '#f59e0b' : '#2563eb'} 
                             stroke="#fff" 
                             strokeWidth={3} 
                           />
@@ -578,9 +686,14 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                   <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 sticky top-0 z-10">
                       <tr>
-                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider">{lab.independentVariables[0].name}</th>
-                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider">{lab.dependentVariable.unit}</th>
-                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider">Source</th>
+                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">
+                          <div className="flex flex-col">
+                            <span>{lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name}</span>
+                            <span className="text-[8px] text-blue-500 font-black tracking-tighter">(Independent Variable)</span>
+                          </div>
+                        </th>
+                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">{lab.dependentVariable.unit}</th>
+                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">Source</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -595,11 +708,11 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                         data.map((d, i) => (
                           <tr key={i} className="hover:bg-slate-50 transition-colors">
                             <td className="p-4 font-mono font-bold text-slate-700">{d.x}</td>
-                            <td className={cn("p-4 font-mono font-bold", colors.text)}>{d.y.toFixed(2)}</td>
+                            <td className="p-4 font-mono font-bold text-blue-600">{d.y.toFixed(2)}</td>
                             <td className="p-4">
                               <span className={cn(
                                 "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider",
-                                d.type === 'manual' ? "bg-amber-100 text-amber-700" : cn(colors.light, colors.text.replace('600', '700'))
+                                d.type === 'manual' ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
                               )}>
                                 {d.type}
                               </span>
@@ -628,7 +741,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
             {/* Fullscreen Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-slate-900/50 backdrop-blur-md">
               <div className="flex items-center gap-3">
-                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", colors.bg)}>
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Activity className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -642,9 +755,9 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                 <div className="flex items-center gap-2">
                   <div className={cn(
                     "flex items-center gap-3 px-4 py-2 rounded-xl border backdrop-blur-md transition-all",
-                    isTimerRunning ? cn(colors.bg.replace('600', '600/20'), colors.border.replace('600', '500/50'), colors.ring) : "bg-black/40 border-white/10"
+                    isTimerRunning ? "bg-blue-600/20 border-blue-500/50 ring-2 ring-blue-500/20" : "bg-black/40 border-white/10"
                   )}>
-                    <Timer className={cn("w-4 h-4", isTimerRunning ? colors.text.replace('600', '400') + " animate-spin-slow" : "text-white/40")} />
+                    <Timer className={cn("w-4 h-4", isTimerRunning ? "text-blue-400 animate-spin-slow" : "text-white/40")} />
                     <span className="text-xl font-mono font-bold text-white">
                       {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </span>
@@ -796,8 +909,8 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                       >
                         <Plus className="w-5 h-5 text-slate-400 rotate-45" />
                       </button>
-                      <div className={cn("w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6", colors.light)}>
-                        <Play className={cn("w-10 h-10 fill-current", colors.text)} />
+                      <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Play className="w-10 h-10 text-blue-600 fill-current" />
                       </div>
                       <h3 className="text-2xl font-black text-slate-900 mb-3">Begin Experiment</h3>
                       <p className="text-base text-slate-500 mb-8 font-medium">Ready to observe the {lab.title} process for {timerDuration} seconds?</p>

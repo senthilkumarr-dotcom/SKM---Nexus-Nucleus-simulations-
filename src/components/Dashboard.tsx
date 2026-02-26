@@ -108,28 +108,28 @@ export default function Dashboard({ onSelectLab }: Props) {
                 transition={{ delay: index * 0.05 }}
                 onClick={() => onSelectLab(lab.id)}
                 className={cn(
-                  "group bg-white rounded-2xl border border-slate-200 p-6 transition-all cursor-pointer flex flex-col h-full",
-                  colors.hoverBorder,
-                  colors.shadow
+                  "group rounded-2xl border p-6 transition-all cursor-pointer flex flex-col h-full hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/5",
+                  colors.light,
+                  colors.border
                 )}
               >
                 <div className="mb-4 flex justify-between items-start">
-                  <div className={cn("p-3 bg-slate-50 rounded-xl transition-colors", colors.hoverBg)}>
-                    <Icon className={cn("w-6 h-6 text-slate-400 transition-colors", colors.hoverText)} />
+                  <div className="p-3 bg-white/80 rounded-xl group-hover:bg-blue-50 transition-colors">
+                    <Icon className="w-6 h-6 text-slate-400 group-hover:text-blue-600 transition-colors" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-slate-100 text-slate-500 rounded">
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-white/80 text-slate-500 rounded border border-slate-100">
                     {lab.category}
                   </span>
                 </div>
-                <h3 className={cn("text-lg font-bold text-slate-900 mb-2 transition-colors", colors.hoverText)}>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
                   {lab.title}
                 </h3>
                 <p className="text-sm text-slate-500 leading-relaxed mb-6 flex-1">
                   {lab.description}
                 </p>
-                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100/50">
                   <span className="text-xs font-bold text-slate-400">Interactive Lab</span>
-                  <div className={cn("w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-all group-hover:text-white", colors.hoverBg.replace('bg-', 'text-').replace('50', '600'), colors.hoverBg.replace('hover:bg-', 'bg-').replace('bg-', 'group-hover:bg-'))}>
+                  <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
