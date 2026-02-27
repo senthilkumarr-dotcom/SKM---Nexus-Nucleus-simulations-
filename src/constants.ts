@@ -70,6 +70,78 @@ If the temperature increases towards the optimum (37°C), then the rate of oxyge
       { id: 'gloves', text: 'Wear gloves when handling corrosive Hydrogen Peroxide', isCorrect: true },
       { id: 'taste', text: 'Taste the solution to check for oxygen production', isCorrect: false },
       { id: 'tongs', text: 'Use tongs for handling hot beakers', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'enz-q1',
+        question: 'What is the "active site" of an enzyme?',
+        options: ['The part that moves the enzyme', 'The specific region where the substrate binds', 'The part that produces energy', 'The outer shell of the enzyme'],
+        correctAnswer: 1,
+        explanation: 'The active site is the specific region of an enzyme where a substrate binds and a chemical reaction occurs.'
+      },
+      {
+        id: 'enz-q2',
+        question: 'What happens to an enzyme when it is "denatured"?',
+        options: ['It works faster', 'It changes color', 'Its active site changes shape and it can no longer bind substrate', 'It turns into a substrate'],
+        correctAnswer: 2,
+        explanation: 'Denaturation is the process where an enzyme loses its functional 3D shape, usually due to high temperature or extreme pH.'
+      },
+      {
+        id: 'enz-q3',
+        question: 'In this experiment, what is the substrate for the enzyme catalase?',
+        options: ['Oxygen', 'Water', 'Hydrogen Peroxide', 'Potato extract'],
+        correctAnswer: 2,
+        explanation: 'Catalase breaks down Hydrogen Peroxide (H2O2) into water and oxygen.'
+      },
+      {
+        id: 'enz-q4',
+        question: 'Why does the rate of reaction increase as temperature increases towards the optimum?',
+        options: ['The enzyme gets larger', 'Molecules have more kinetic energy and collide more frequently', 'The active site gets smaller', 'The substrate disappears'],
+        correctAnswer: 1,
+        explanation: 'Higher temperature increases kinetic energy, leading to more frequent and successful collisions between enzymes and substrates.'
+      },
+      {
+        id: 'enz-q5',
+        question: 'What is the independent variable when investigating the effect of pH on enzyme activity?',
+        options: ['Volume of oxygen produced', 'Temperature', 'pH level', 'Enzyme concentration'],
+        correctAnswer: 2,
+        explanation: 'The independent variable is the factor you change, which in this case is the pH.'
+      },
+      {
+        id: 'enz-q6',
+        question: 'What is the dependent variable in this investigation?',
+        options: ['pH', 'Temperature', 'Rate of oxygen production (bubbles/min)', 'Substrate concentration'],
+        correctAnswer: 2,
+        explanation: 'The dependent variable is what you measure, which is the rate of reaction.'
+      },
+      {
+        id: 'enz-q7',
+        question: 'Most human enzymes have an optimum temperature of approximately:',
+        options: ['0°C', '20°C', '37°C', '100°C'],
+        correctAnswer: 2,
+        explanation: 'Human enzymes are adapted to work best at normal body temperature, which is about 37°C.'
+      },
+      {
+        id: 'enz-q8',
+        question: 'Which of the following is a controlled variable in this experiment?',
+        options: ['pH', 'Temperature', 'Concentration of Hydrogen Peroxide', 'The rate of reaction'],
+        correctAnswer: 2,
+        explanation: 'Substrate concentration must be kept constant to ensure a fair test when investigating other factors.'
+      },
+      {
+        id: 'enz-q9',
+        question: 'If a reaction produces 30cm³ of oxygen in 2 minutes, what is the rate of reaction?',
+        options: ['15 cm³/min', '30 cm³/min', '60 cm³/min', '2 cm³/min'],
+        correctAnswer: 0,
+        explanation: 'Rate = Volume / Time = 30 / 2 = 15 cm³/min.'
+      },
+      {
+        id: 'enz-q10',
+        question: 'Enzymes are made of which type of biological molecule?',
+        options: ['Carbohydrates', 'Lipids', 'Proteins', 'Nucleic acids'],
+        correctAnswer: 2,
+        explanation: 'Enzymes are globular proteins.'
+      }
     ]
   },
   {
@@ -133,6 +205,78 @@ If the sucrose concentration increases, then the percentage change in mass will 
       { id: 'scalpel', text: 'Always cut away from your body with the scalpel', isCorrect: true },
       { id: 'spills', text: 'Wipe up sucrose spills to prevent slippery surfaces', isCorrect: true },
       { id: 'running', text: 'Run in the lab to get results faster', isCorrect: false }
+    ],
+    quiz: [
+      {
+        id: 'osm-q1',
+        question: 'What is osmosis?',
+        options: ['Movement of solute from high to low concentration', 'Net movement of water from high to low water potential', 'Movement of water from low to high water potential', 'Active transport of water'],
+        correctAnswer: 1,
+        explanation: 'Osmosis is the diffusion of water across a partially permeable membrane from a dilute to a concentrated solution.'
+      },
+      {
+        id: 'osm-q2',
+        question: 'What is a "partially permeable membrane"?',
+        options: ['A membrane that lets everything through', 'A membrane that lets nothing through', 'A membrane that lets some molecules through but not others', 'A membrane that only exists in plants'],
+        correctAnswer: 2,
+        explanation: 'It allows small molecules like water to pass through but blocks larger solute molecules.'
+      },
+      {
+        id: 'osm-q3',
+        question: 'If a potato cylinder is placed in pure water, what will happen to its mass?',
+        options: ['Decrease', 'Increase', 'Stay the same', 'Turn into sugar'],
+        correctAnswer: 1,
+        explanation: 'Pure water has a higher water potential than the potato cells, so water enters the cells by osmosis.'
+      },
+      {
+        id: 'osm-q4',
+        question: 'Why is the percentage change in mass calculated instead of just the change in mass?',
+        options: ['To make the numbers larger', 'To allow comparison between cylinders with different starting masses', 'Because it is easier to graph', 'To hide errors'],
+        correctAnswer: 1,
+        explanation: 'Percentage change accounts for variations in the initial mass of the potato cylinders.'
+      },
+      {
+        id: 'osm-q5',
+        question: 'What is the "isotonic point" on a graph of sucrose concentration vs. % mass change?',
+        options: ['The highest point', 'The lowest point', 'The point where the line crosses the x-axis (0% change)', 'The starting point'],
+        correctAnswer: 2,
+        explanation: 'At the isotonic point, the water potential of the solution equals the water potential of the potato cells.'
+      },
+      {
+        id: 'osm-q6',
+        question: 'What is the independent variable in this investigation?',
+        options: ['Initial mass of potato', 'Sucrose concentration', 'Percentage change in mass', 'Temperature'],
+        correctAnswer: 1,
+        explanation: 'The independent variable is the factor you change, which is the molarity of the sucrose solution.'
+      },
+      {
+        id: 'osm-q7',
+        question: 'What is the dependent variable in this investigation?',
+        options: ['Sucrose concentration', 'Time submerged', 'Percentage change in mass', 'Type of potato'],
+        correctAnswer: 2,
+        explanation: 'The dependent variable is what you measure as a result of changing the concentration.'
+      },
+      {
+        id: 'osm-q8',
+        question: 'Why is it important to blot the potato cylinders dry before weighing them?',
+        options: ['To remove excess surface solution that isn\'t part of the internal mass', 'To make them easier to handle', 'To warm them up', 'To stop osmosis'],
+        correctAnswer: 0,
+        explanation: 'Surface liquid would add extra mass that hasn\'t actually entered the cells.'
+      },
+      {
+        id: 'osm-q9',
+        question: 'A potato cylinder has an initial mass of 2.0g and a final mass of 2.2g. What is the % change?',
+        options: ['+2%', '+10%', '+20%', '-10%'],
+        correctAnswer: 1,
+        explanation: '% Change = ((2.2 - 2.0) / 2.0) * 100 = (0.2 / 2.0) * 100 = 10%.'
+      },
+      {
+        id: 'osm-q10',
+        question: 'What happens to a plant cell when it is placed in a very concentrated salt solution?',
+        options: ['It becomes turgid', 'It bursts', 'It becomes plasmolysed (cytoplasm pulls away from cell wall)', 'It grows faster'],
+        correctAnswer: 2,
+        explanation: 'Water leaves the cell, causing the vacuole to shrink and the cell membrane to pull away from the wall.'
+      }
     ]
   },
   {
@@ -204,6 +348,78 @@ If the light intensity increases, then the number of oxygen bubbles produced per
       { id: 'hot_lamp', text: 'Do not touch the lamp bulb as it may be hot', isCorrect: true },
       { id: 'wet_hands', text: 'Dry hands before touching the light switch', isCorrect: true },
       { id: 'drink', text: 'Drink the water bath water if thirsty', isCorrect: false }
+    ],
+    quiz: [
+      {
+        id: 'photo-q1',
+        question: 'What is the independent variable in an experiment investigating the effect of distance from a light source on photosynthesis?',
+        options: ['Rate of bubble production', 'Light intensity (distance)', 'Temperature of the water', 'Type of pondweed used'],
+        correctAnswer: 1,
+        explanation: 'The independent variable is the factor you deliberately change, which in this case is the light intensity or distance.'
+      },
+      {
+        id: 'photo-q2',
+        question: 'Why is sodium hydrogen carbonate often added to the water in this experiment?',
+        options: ['To provide oxygen', 'To provide carbon dioxide', 'To keep the temperature constant', 'To act as a catalyst'],
+        correctAnswer: 1,
+        explanation: 'Sodium hydrogen carbonate releases CO2 into the water, ensuring it is not a limiting factor.'
+      },
+      {
+        id: 'photo-q3',
+        question: 'What is the dependent variable in this investigation?',
+        options: ['Light intensity', 'Temperature', 'Number of bubbles produced per minute', 'Volume of water'],
+        correctAnswer: 2,
+        explanation: 'The dependent variable is what you measure, which is the rate of photosynthesis (bubbles/min).'
+      },
+      {
+        id: 'photo-q4',
+        question: 'Which of the following is a controlled variable in this experiment?',
+        options: ['Light intensity', 'Temperature', 'CO2 concentration', 'Both Temperature and CO2 concentration'],
+        correctAnswer: 3,
+        explanation: 'To ensure a fair test, all factors other than the independent variable must be kept constant.'
+      },
+      {
+        id: 'photo-q5',
+        question: 'What gas is contained in the bubbles produced by the pondweed?',
+        options: ['Carbon dioxide', 'Nitrogen', 'Oxygen', 'Hydrogen'],
+        correctAnswer: 2,
+        explanation: 'Photosynthesis produces oxygen gas as a byproduct.'
+      },
+      {
+        id: 'photo-q6',
+        question: 'If the light intensity is increased and the rate of photosynthesis does not change, what can be concluded?',
+        options: ['Light is the limiting factor', 'Light is not the limiting factor', 'The plant is dead', 'The experiment is finished'],
+        correctAnswer: 1,
+        explanation: 'If increasing a factor doesn\'t increase the rate, that factor is no longer limiting the reaction.'
+      },
+      {
+        id: 'photo-q7',
+        question: 'How does temperature affect the rate of photosynthesis?',
+        options: ['It has no effect', 'It increases the rate indefinitely', 'It increases the rate up to an optimum, then decreases it', 'It always decreases the rate'],
+        correctAnswer: 2,
+        explanation: 'Photosynthesis is controlled by enzymes, which have an optimum temperature.'
+      },
+      {
+        id: 'photo-q8',
+        question: 'Why should the pondweed be allowed to equilibrate for a few minutes after changing the light distance?',
+        options: ['To let the lamp cool down', 'To allow the plant to adjust its rate to the new intensity', 'To save power', 'To make the bubbles larger'],
+        correctAnswer: 1,
+        explanation: 'Equilibration ensures the measured rate reflects the new conditions accurately.'
+      },
+      {
+        id: 'photo-q9',
+        question: 'What is the primary pigment involved in absorbing light for photosynthesis?',
+        options: ['Carotene', 'Xanthophyll', 'Chlorophyll', 'Anthocyanin'],
+        correctAnswer: 2,
+        explanation: 'Chlorophyll is the main pigment that captures light energy.'
+      },
+      {
+        id: 'photo-q10',
+        question: 'Which equation correctly represents photosynthesis?',
+        options: ['Glucose + Oxygen -> CO2 + Water', 'CO2 + Water -> Glucose + Oxygen', 'CO2 + Oxygen -> Glucose + Water', 'Glucose + Water -> CO2 + Oxygen'],
+        correctAnswer: 1,
+        explanation: 'Photosynthesis uses CO2 and water to produce glucose and oxygen.'
+      }
     ]
   },
   {
@@ -294,6 +510,78 @@ If the wind speed increases, then the rate of water uptake will increase because
       { id: 'glass_care', text: 'Handle the fragile glass potometer with care', isCorrect: true },
       { id: 'spill_wipe', text: 'Wipe up water spills immediately', isCorrect: true },
       { id: 'wind_eye', text: 'Avoid looking directly into the fan', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'trans-q1',
+        question: 'What does a potometer actually measure?',
+        options: ['Water loss from leaves', 'Water uptake by the shoot', 'Rate of photosynthesis', 'Stomatal density'],
+        correctAnswer: 1,
+        explanation: 'A potometer measures water uptake, which is almost equal to water loss (transpiration).'
+      },
+      {
+        id: 'trans-q2',
+        question: 'Why must the potometer be assembled underwater?',
+        options: ['To keep the leaves wet', 'To prevent air bubbles from entering the xylem', 'To wash the plant', 'To cool the apparatus'],
+        correctAnswer: 1,
+        explanation: 'Air bubbles in the xylem would break the continuous column of water, stopping transpiration.'
+      },
+      {
+        id: 'trans-q3',
+        question: 'What is the independent variable when using a fan at different speeds?',
+        options: ['Humidity', 'Temperature', 'Wind speed', 'Light intensity'],
+        correctAnswer: 2,
+        explanation: 'The factor being changed is the wind speed.'
+      },
+      {
+        id: 'trans-q4',
+        question: 'How does high humidity affect the rate of transpiration?',
+        options: ['Increases it', 'Decreases it', 'Has no effect', 'Stops it completely'],
+        correctAnswer: 1,
+        explanation: 'High humidity reduces the concentration gradient of water vapor between the leaf and air.'
+      },
+      {
+        id: 'trans-q5',
+        question: 'What is the purpose of the reservoir in a potometer?',
+        options: ['To store spare plants', 'To reset the air bubble to the start of the scale', 'To measure water pressure', 'To collect oxygen'],
+        correctAnswer: 1,
+        explanation: 'The reservoir allows the bubble to be pushed back so multiple readings can be taken.'
+      },
+      {
+        id: 'trans-q6',
+        question: 'Which environmental factor would increase the rate of transpiration?',
+        options: ['Increased humidity', 'Decreased temperature', 'Increased light intensity', 'Decreased wind speed'],
+        correctAnswer: 2,
+        explanation: 'Increased light causes stomata to open, and higher temp increases evaporation.'
+      },
+      {
+        id: 'trans-q7',
+        question: 'What is the dependent variable in this experiment?',
+        options: ['Wind speed', 'Distance moved by the bubble per unit time', 'Leaf surface area', 'Temperature'],
+        correctAnswer: 1,
+        explanation: 'The dependent variable is the rate of water uptake (distance/time).'
+      },
+      {
+        id: 'trans-q8',
+        question: 'Why is it important to dry the leaves after assembly?',
+        options: ['To make them look nice', 'To prevent water on the surface from blocking stomata', 'To increase leaf mass', 'To prevent fungal growth'],
+        correctAnswer: 1,
+        explanation: 'Surface water blocks stomata and reduces the initial transpiration rate.'
+      },
+      {
+        id: 'trans-q9',
+        question: 'Through which structures does most water vapor leave the leaf?',
+        options: ['Cuticle', 'Epidermis', 'Stomata', 'Vascular bundles'],
+        correctAnswer: 2,
+        explanation: 'Stomata are the primary pores for gas exchange and transpiration.'
+      },
+      {
+        id: 'trans-q10',
+        question: 'What force pulls water up the xylem during transpiration?',
+        options: ['Root pressure', 'Capillary action', 'Transpiration pull (cohesion-tension)', 'Active transport'],
+        correctAnswer: 2,
+        explanation: 'The evaporation of water creates a tension that pulls the water column up.'
+      }
     ]
   },
   {

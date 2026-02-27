@@ -8,6 +8,14 @@ export interface SafetyOption {
   isCorrect: boolean;
 }
 
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number; // Index of the correct option
+  explanation: string;
+}
+
 export interface Lab {
   id: string;
   title: string;
@@ -25,6 +33,7 @@ export interface Lab {
   };
   controlledVariables: string[];
   safetyOptions: SafetyOption[];
+  quiz?: QuizQuestion[];
 }
 
 export interface VariableConfig {

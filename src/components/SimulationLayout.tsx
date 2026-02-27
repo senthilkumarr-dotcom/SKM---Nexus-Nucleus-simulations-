@@ -8,10 +8,11 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter
 } from 'recharts';
 import { 
-  Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, ChevronRight, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X
+  Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, ChevronRight, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, exportToCSV, getLabColorClasses } from '../utils';
+import Quiz from './Quiz';
 
 interface Props {
   lab: Lab;
@@ -28,6 +29,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
   const [data, setData] = useState<DataPoint[]>([]);
   const [activeIV, setActiveIV] = useState<string>(lab.independentVariables[0].id);
   const [activeTab, setActiveTab] = useState<'theory' | 'method'>('theory');
+  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'results' | 'quiz'>('results');
   const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Timer State
@@ -569,10 +571,32 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
 
           {/* Panel 4: Analysis (Moved Below) */}
           <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-6 h-6 text-blue-600" />
-                <h2 className="text-lg font-bold text-slate-800">Experimental Results & Data Analysis</h2>
+            <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex bg-slate-100 p-1 rounded-xl">
+                  <button 
+                    onClick={() => setActiveAnalysisTab('results')}
+                    className={cn(
+                      "px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2",
+                      activeAnalysisTab === 'results' ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    )}
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    Data Analysis
+                  </button>
+                  {lab.quiz && (
+                    <button 
+                      onClick={() => setActiveAnalysisTab('quiz')}
+                      className={cn(
+                        "px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2",
+                        activeAnalysisTab === 'quiz' ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                      )}
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                      Assessment Quiz
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 rounded-full border border-blue-100">
@@ -586,145 +610,166 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
               </div>
             </div>
             
-            <div className="px-8 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Experiment:</span>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 rounded-lg shadow-sm">
-                  <span className="text-xs font-bold text-slate-600">Investigating</span>
-                  <span className="text-xs font-black text-blue-600 uppercase">{lab.independentVariables.find(v => v.id === activeIV)?.name}</span>
-                  <span className="text-xs font-bold text-slate-600">vs</span>
-                  <span className="text-xs font-black text-blue-600 uppercase">{lab.dependentVariable.label}</span>
-                </div>
-              </div>
-              <div className="h-4 w-px bg-slate-200" />
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Constants:</span>
-                <div className="flex gap-2">
-                  {lab.independentVariables.filter(v => v.id !== activeIV).map(v => (
-                    <div key={v.id} className="px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-medium text-slate-500">
-                      {v.name}: <span className="font-bold text-slate-700">{variables[v.id]}{v.unit}</span>
+            <AnimatePresence mode="wait">
+              {activeAnalysisTab === 'results' ? (
+                <motion.div 
+                  key="results"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="px-8 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Experiment:</span>
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 rounded-lg shadow-sm">
+                        <span className="text-xs font-bold text-slate-600">Investigating</span>
+                        <span className="text-xs font-black text-blue-600 uppercase">{lab.independentVariables.find(v => v.id === activeIV)?.name}</span>
+                        <span className="text-xs font-bold text-slate-600">vs</span>
+                        <span className="text-xs font-black text-blue-600 uppercase">{lab.dependentVariable.label}</span>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-8 grid grid-cols-1 xl:grid-cols-3 gap-8">
-              <div className="xl:col-span-2 h-[450px] bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data} margin={{ top: 20, right: 40, left: 20, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis 
-                      dataKey="x" 
-                      type="number" 
-                      domain={['auto', 'auto']}
-                      tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
-                      label={{ 
-                        value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0].unit})`, 
-                        position: 'bottom', 
-                        offset: 20, 
-                        fontSize: 14, 
-                        fontWeight: 700,
-                        fill: '#1e293b'
-                      }}
-                    />
-                    <YAxis 
-                      tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
-                      label={{ 
-                        value: `${lab.dependentVariable.label} (${lab.dependentVariable.unit})`, 
-                        angle: -90, 
-                        position: 'left', 
-                        offset: 0, 
-                        fontSize: 14, 
-                        fontWeight: 700,
-                        fill: '#1e293b'
-                      }}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        borderRadius: '16px', 
-                        border: 'none', 
-                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-                        padding: '12px 16px'
-                      }}
-                      itemStyle={{ fontWeight: 700, fontSize: '14px' }}
-                      labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
-                      labelFormatter={(value) => {
-                        const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
-                        return `${activeVar.name}: ${value}${activeVar.unit}`;
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="y" 
-                      stroke="#2563eb" 
-                      strokeWidth={4} 
-                      dot={(props: any) => {
-                        const { cx, cy, payload } = props;
-                        const isManual = payload.type === 'manual';
-                        return (
-                          <circle 
-                            cx={cx} 
-                            cy={cy} 
-                            r={isManual ? 7 : 6} 
-                            fill={isManual ? '#f59e0b' : '#2563eb'} 
-                            stroke="#fff" 
-                            strokeWidth={3} 
-                          />
-                        );
-                      }}
-                      activeDot={{ r: 8, strokeWidth: 0 }}
-                      name={lab.dependentVariable.label}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              
-              <div className="flex flex-col gap-4">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Data Log</div>
-                <div className="flex-1 overflow-y-auto max-h-[400px] border border-slate-100 rounded-2xl bg-white shadow-inner">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50 sticky top-0 z-10">
-                      <tr>
-                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">
-                          <div className="flex flex-col">
-                            <span>{lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name}</span>
-                            <span className="text-[8px] text-blue-500 font-black tracking-tighter">(Independent Variable)</span>
+                    <div className="h-4 w-px bg-slate-200" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Constants:</span>
+                      <div className="flex gap-2">
+                        {lab.independentVariables.filter(v => v.id !== activeIV).map(v => (
+                          <div key={v.id} className="px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-medium text-slate-500">
+                            {v.name}: <span className="font-bold text-slate-700">{variables[v.id]}{v.unit}</span>
                           </div>
-                        </th>
-                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">{lab.dependentVariable.unit}</th>
-                        <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">Source</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {data.length === 0 ? (
-                        <tr>
-                          <td colSpan={3} className="p-12 text-center text-slate-400 italic">
-                            <BarChart3 className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                            No data recorded yet
-                          </td>
-                        </tr>
-                      ) : (
-                        data.map((d, i) => (
-                          <tr key={i} className="hover:bg-slate-50 transition-colors">
-                            <td className="p-4 font-mono font-bold text-slate-700">{d.x}</td>
-                            <td className="p-4 font-mono font-bold text-blue-600">{d.y.toFixed(2)}</td>
-                            <td className="p-4">
-                              <span className={cn(
-                                "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider",
-                                d.type === 'manual' ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
-                              )}>
-                                {d.type}
-                              </span>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-8 grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="xl:col-span-2 h-[450px] bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={data} margin={{ top: 20, right: 40, left: 20, bottom: 40 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                          <XAxis 
+                            dataKey="x" 
+                            type="number" 
+                            domain={['auto', 'auto']}
+                            tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
+                            label={{ 
+                              value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0].unit})`, 
+                              position: 'bottom', 
+                              offset: 20, 
+                              fontSize: 14, 
+                              fontWeight: 700,
+                              fill: '#1e293b'
+                            }}
+                          />
+                          <YAxis 
+                            tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
+                            label={{ 
+                              value: `${lab.dependentVariable.label} (${lab.dependentVariable.unit})`, 
+                              angle: -90, 
+                              position: 'left', 
+                              offset: 0, 
+                              fontSize: 14, 
+                              fontWeight: 700,
+                              fill: '#1e293b'
+                            }}
+                          />
+                          <Tooltip 
+                            contentStyle={{ 
+                              borderRadius: '16px', 
+                              border: 'none', 
+                              boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+                              padding: '12px 16px'
+                            }}
+                            itemStyle={{ fontWeight: 700, fontSize: '14px' }}
+                            labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
+                            labelFormatter={(value) => {
+                              const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
+                              return `${activeVar.name}: ${value}${activeVar.unit}`;
+                            }}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="y" 
+                            stroke="#2563eb" 
+                            strokeWidth={4} 
+                            dot={(props: any) => {
+                              const { cx, cy, payload } = props;
+                              const isManual = payload.type === 'manual';
+                              return (
+                                <circle 
+                                  cx={cx} 
+                                  cy={cy} 
+                                  r={isManual ? 7 : 6} 
+                                  fill={isManual ? '#f59e0b' : '#2563eb'} 
+                                  stroke="#fff" 
+                                  strokeWidth={3} 
+                                />
+                              );
+                            }}
+                            activeDot={{ r: 8, strokeWidth: 0 }}
+                            name={lab.dependentVariable.label}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                    
+                    <div className="flex flex-col gap-4">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Data Log</div>
+                      <div className="flex-1 overflow-y-auto max-h-[400px] border border-slate-100 rounded-2xl bg-white shadow-inner">
+                        <table className="w-full text-left text-sm">
+                          <thead className="bg-slate-50 sticky top-0 z-10">
+                            <tr>
+                              <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">
+                                <div className="flex flex-col">
+                                  <span>{lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name}</span>
+                                  <span className="text-[8px] text-blue-500 font-black tracking-tighter">(Independent Variable)</span>
+                                </div>
+                              </th>
+                              <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">{lab.dependentVariable.unit}</th>
+                              <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">Source</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {data.length === 0 ? (
+                              <tr>
+                                <td colSpan={3} className="p-12 text-center text-slate-400 italic">
+                                  <BarChart3 className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                                  No data recorded yet
+                                </td>
+                              </tr>
+                            ) : (
+                              data.map((d, i) => (
+                                <tr key={i} className="hover:bg-slate-50 transition-colors">
+                                  <td className="p-4 font-mono font-bold text-slate-700">{d.x}</td>
+                                  <td className="p-4 font-mono font-bold text-blue-600">{d.y.toFixed(2)}</td>
+                                  <td className="p-4">
+                                    <span className={cn(
+                                      "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider",
+                                      d.type === 'manual' ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
+                                    )}>
+                                      {d.type}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="quiz"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="p-8 max-w-4xl mx-auto"
+                >
+                  {lab.quiz && <Quiz questions={lab.quiz} />}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
         </div>
       </main>
