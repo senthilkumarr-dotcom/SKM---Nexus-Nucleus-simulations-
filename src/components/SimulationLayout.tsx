@@ -5,7 +5,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter,
+  BarChart, Bar, Cell
 } from 'recharts';
 import { 
   Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, ChevronRight, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X, HelpCircle
@@ -17,7 +18,7 @@ import Quiz from './Quiz';
 interface Props {
   lab: Lab;
   onBack: () => void;
-  renderSimulation: (variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>) => React.ReactNode;
+  renderSimulation: (variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean) => React.ReactNode;
   calculateResult: (variables: Record<string, number>) => number;
 }
 
@@ -229,7 +230,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
           isSidebarCollapsed ? "lg:col-span-12" : "lg:col-span-9"
         )}>
           {/* Panel 3: Simulation */}
-          <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[950px]">
+          <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[1050px]">
             <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
               <Activity className={cn("w-4 h-4 text-emerald-400", isTimerRunning && "animate-pulse")} />
               <span className="text-xs font-mono text-white/80 uppercase tracking-widest">
@@ -383,7 +384,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
               )}
             </div>
 
-            {renderSimulation(variables, !isTimerRunning, setVariables)}
+            {renderSimulation(variables, !isTimerRunning, setVariables, false)}
 
             {/* Start Overlay */}
             <AnimatePresence>
@@ -644,71 +645,131 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                   <div className="p-8 grid grid-cols-1 xl:grid-cols-3 gap-8">
                     <div className="xl:col-span-2 h-[450px] bg-slate-50 rounded-2xl p-6 border border-slate-100">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={data} margin={{ top: 20, right: 40, left: 20, bottom: 40 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                          <XAxis 
-                            dataKey="x" 
-                            type="number" 
-                            domain={['auto', 'auto']}
-                            tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
-                            label={{ 
-                              value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0].unit})`, 
-                              position: 'bottom', 
-                              offset: 20, 
-                              fontSize: 14, 
-                              fontWeight: 700,
-                              fill: '#1e293b'
-                            }}
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
-                            label={{ 
-                              value: `${lab.dependentVariable.label} (${lab.dependentVariable.unit})`, 
-                              angle: -90, 
-                              position: 'left', 
-                              offset: 0, 
-                              fontSize: 14, 
-                              fontWeight: 700,
-                              fill: '#1e293b'
-                            }}
-                          />
-                          <Tooltip 
-                            contentStyle={{ 
-                              borderRadius: '16px', 
-                              border: 'none', 
-                              boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-                              padding: '12px 16px'
-                            }}
-                            itemStyle={{ fontWeight: 700, fontSize: '14px' }}
-                            labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
-                            labelFormatter={(value) => {
-                              const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
-                              return `${activeVar.name}: ${value}${activeVar.unit}`;
-                            }}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="y" 
-                            stroke="#2563eb" 
-                            strokeWidth={4} 
-                            dot={(props: any) => {
-                              const { cx, cy, payload } = props;
-                              const isManual = payload.type === 'manual';
-                              return (
-                                <circle 
-                                  cx={cx} 
-                                  cy={cy} 
-                                  r={isManual ? 7 : 6} 
-                                  fill={isManual ? '#f59e0b' : '#2563eb'} 
-                                  stroke="#fff" 
-                                  strokeWidth={3} 
-                                />
-                              );
-                            }}
-                            activeDot={{ r: 8, strokeWidth: 0 }}
-                            name={lab.dependentVariable.label}
-                          />
-                        </LineChart>
+                        {lab.id === 'food-calorimetry' ? (
+                          <BarChart data={data} margin={{ top: 20, right: 40, left: 20, bottom: 40 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                            <XAxis 
+                              dataKey="x" 
+                              tickFormatter={(value) => {
+                                const foodNames: Record<number, string> = {
+                                  1: 'Peanut', 2: 'Chip', 3: 'Jerky', 4: 'Biscuit', 5: 'Crouton', 6: 'Popcorn'
+                                };
+                                return foodNames[value] || value;
+                              }}
+                              tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
+                              label={{ 
+                                value: 'Food Sample', 
+                                position: 'bottom', 
+                                offset: 20, 
+                                fontSize: 14, 
+                                fontWeight: 700,
+                                fill: '#1e293b'
+                              }}
+                            />
+                            <YAxis 
+                              tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
+                              label={{ 
+                                value: `${lab.dependentVariable.label} (${lab.dependentVariable.unit})`, 
+                                angle: -90, 
+                                position: 'left', 
+                                offset: 0, 
+                                fontSize: 14, 
+                                fontWeight: 700,
+                                fill: '#1e293b'
+                              }}
+                            />
+                            <Tooltip 
+                              contentStyle={{ 
+                                borderRadius: '16px', 
+                                border: 'none', 
+                                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+                                padding: '12px 16px'
+                              }}
+                              itemStyle={{ fontWeight: 700, fontSize: '14px' }}
+                              labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
+                              labelFormatter={(value) => {
+                                const foodNames: Record<number, string> = {
+                                  1: 'Peanut', 2: 'Chip', 3: 'Jerky', 4: 'Biscuit', 5: 'Crouton', 6: 'Popcorn'
+                                };
+                                return `Sample: ${foodNames[value] || value}`;
+                              }}
+                            />
+                            <Bar dataKey="y" radius={[8, 8, 0, 0]}>
+                              {data.map((entry, index) => {
+                                const foodColors: Record<number, string> = {
+                                  1: '#d97706', 2: '#fbbf24', 3: '#7f1d1d', 4: '#d6d3d1', 5: '#92400e', 6: '#fef3c7'
+                                };
+                                return <Cell key={`cell-${index}`} fill={foodColors[entry.x] || '#2563eb'} />;
+                              })}
+                            </Bar>
+                          </BarChart>
+                        ) : (
+                          <LineChart data={data} margin={{ top: 20, right: 40, left: 20, bottom: 40 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                            <XAxis 
+                              dataKey="x" 
+                              type="number" 
+                              domain={['auto', 'auto']}
+                              tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
+                              label={{ 
+                                value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0].unit})`, 
+                                position: 'bottom', 
+                                offset: 20, 
+                                fontSize: 14, 
+                                fontWeight: 700,
+                                fill: '#1e293b'
+                              }}
+                            />
+                            <YAxis 
+                              tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
+                              label={{ 
+                                value: `${lab.dependentVariable.label} (${lab.dependentVariable.unit})`, 
+                                angle: -90, 
+                                position: 'left', 
+                                offset: 0, 
+                                fontSize: 14, 
+                                fontWeight: 700,
+                                fill: '#1e293b'
+                              }}
+                            />
+                            <Tooltip 
+                              contentStyle={{ 
+                                borderRadius: '16px', 
+                                border: 'none', 
+                                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+                                padding: '12px 16px'
+                              }}
+                              itemStyle={{ fontWeight: 700, fontSize: '14px' }}
+                              labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
+                              labelFormatter={(value) => {
+                                const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
+                                return `${activeVar.name}: ${value}${activeVar.unit}`;
+                              }}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="y" 
+                              stroke="#2563eb" 
+                              strokeWidth={4} 
+                              dot={(props: any) => {
+                                const { cx, cy, payload } = props;
+                                const isManual = payload.type === 'manual';
+                                return (
+                                  <circle 
+                                    cx={cx} 
+                                    cy={cy} 
+                                    r={isManual ? 7 : 6} 
+                                    fill={isManual ? '#f59e0b' : '#2563eb'} 
+                                    stroke="#fff" 
+                                    strokeWidth={3} 
+                                  />
+                                );
+                              }}
+                              activeDot={{ r: 8, strokeWidth: 0 }}
+                              name={lab.dependentVariable.label}
+                            />
+                          </LineChart>
+                        )}
                       </ResponsiveContainer>
                     </div>
                     
@@ -850,9 +911,9 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
             </div>
 
             {/* Fullscreen Content */}
-            <div className="flex-1 relative flex items-center justify-center p-12 overflow-hidden">
-              <div className="w-full h-full max-w-6xl max-h-[80vh]">
-                {renderSimulation(variables, !isTimerRunning)}
+            <div className="flex-1 relative flex items-center justify-center p-4 lg:p-8 overflow-hidden">
+              <div className="w-full h-full">
+                {renderSimulation(variables, !isTimerRunning, undefined, true)}
               </div>
 
               {/* Safety Check Trigger in Fullscreen */}

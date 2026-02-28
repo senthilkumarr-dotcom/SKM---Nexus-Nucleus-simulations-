@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
-import { Plus, Scale, Weight, Waves, Thermometer, Lightbulb, FlaskConical, Timer, Check, RotateCcw, Play, Activity, Settings2 } from 'lucide-react';
+import { Plus, Scale, Weight, Waves, Thermometer, Lightbulb, FlaskConical, Timer, Check, RotateCcw, Play, Activity, Settings2, Flame } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
-export const EnzymeSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
+export const EnzymeSimulation = ({ variables, isPaused = false, setVariables, isFullscreen }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }) => {
   const { temp, ph } = variables;
   
   const tempEffect = Math.exp(-0.5 * Math.pow((temp - 37) / 15, 2));
@@ -278,7 +278,7 @@ export const EnzymeSimulation = ({ variables, isPaused = false, setVariables }: 
   );
 };
 
-export const OsmosisSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
+export const OsmosisSimulation = ({ variables, isPaused = false, setVariables, isFullscreen }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }) => {
   const { molarity } = variables;
   const [initialMass, setInitialMass] = React.useState<number | null>(null);
   const [currentMass, setCurrentMass] = React.useState<number>(0);
@@ -694,7 +694,7 @@ export const OsmosisSimulation = ({ variables, isPaused = false, setVariables }:
   );
 };
 
-export const PhotosynthesisSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
+export const PhotosynthesisSimulation = ({ variables, isPaused = false, setVariables, isFullscreen }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }) => {
   const { light, temp, co2 } = variables;
   
   // Sandbox State
@@ -1114,7 +1114,7 @@ export const PhotosynthesisSimulation = ({ variables, isPaused = false, setVaria
   );
 };
 
-export const LactoseBreakdownSimulation = ({ variables, isPaused = false, setVariables }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }) => {
+export const LactoseBreakdownSimulation = ({ variables, isPaused = false, setVariables, isFullscreen }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }) => {
   const { temp, enzyme } = variables;
   
   // Model: Optimum temp around 37-40C, enzyme concentration increases rate
@@ -1267,19 +1267,46 @@ export const LactoseBreakdownSimulation = ({ variables, isPaused = false, setVar
   );
 };
 
-export const TranspirationSimulation = ({ variables, isPaused = false }: { variables: Record<string, number>, isPaused?: boolean }) => {
-  const { wind, humidity } = variables;
-  
-  // Rate calculation (mm/min)
-  const windEffect = 1 + (wind / 5);
-  const humidityEffect = Math.max(0.1, (100 - humidity) / 50);
-  const rate = windEffect * humidityEffect * 5; 
-  
-  const [bubblePos, setBubblePos] = React.useState(0);
+export const TranspirationSimulation = ({ variables, isPaused = false, setVariables, isFullscreen }: { variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }) => {
+  const { wind, humidity, temp, light } = variables;
+  const [step, setStep] = useState<'IDLE' | 'SETUP' | 'RUNNING' | 'COMPLETE'>('IDLE');
+  const [bubblePos, setBubblePos] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [readings, setReadings] = useState<{ time: number, pos: number }[]>([]);
   const lastUpdate = React.useRef(Date.now());
+  const capillaryRef = useRef<HTMLDivElement>(null);
+  const [capillaryWidth, setCapillaryWidth] = useState(450);
 
-  React.useEffect(() => {
-    if (isPaused) {
+  useEffect(() => {
+    if (!capillaryRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setCapillaryWidth(entry.contentRect.width - 40); // Subtract padding
+      }
+    });
+    observer.observe(capillaryRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Rate calculation (mm/min)
+  // Base rate + environmental effects
+  const windEffect = 1 + (wind / 5);
+  const humidityEffect = Math.max(0.05, (100 - humidity) / 50);
+  const tempEffect = 1 + (temp - 20) / 30;
+  const lightEffect = 1 + (light / 100);
+  
+  const rate = windEffect * humidityEffect * tempEffect * lightEffect * 2; 
+
+  useEffect(() => {
+    if (step === 'IDLE') {
+      setBubblePos(0);
+      setElapsedTime(0);
+      setReadings([]);
+    }
+  }, [step]);
+
+  useEffect(() => {
+    if (isPaused || step !== 'RUNNING') {
       lastUpdate.current = Date.now();
       return;
     }
@@ -1289,142 +1316,895 @@ export const TranspirationSimulation = ({ variables, isPaused = false }: { varia
       const delta = (now - lastUpdate.current) / 1000;
       lastUpdate.current = now;
       
+      setElapsedTime(prev => prev + delta);
+
       // rate is mm/min, so rate/60 is mm/sec
-      // Let's scale it for the UI (capillary is ~400px wide)
-      const increment = (rate / 60) * 20 * delta; 
-      setBubblePos(prev => (prev + increment) % 400);
+      // Scale for UI: 1mm = 10px
+      const increment = (rate / 60) * 10 * delta; 
+      setBubblePos(prev => {
+        const next = prev + increment;
+        if (next >= 450) {
+          setStep('COMPLETE');
+          return 450;
+        }
+        return next;
+      });
     }, 50);
 
     return () => clearInterval(interval);
-  }, [isPaused, rate]);
+  }, [isPaused, step, rate]);
+
+  const handleResetBubble = () => {
+    setBubblePos(0);
+    if (step === 'COMPLETE') setStep('IDLE');
+  };
+
+  const handleRecordReading = () => {
+    setReadings(prev => [...prev, { time: elapsedTime, pos: bubblePos / 10 }]);
+  };
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center bg-slate-900/10 rounded-[3rem] overflow-hidden p-8">
-      {/* Environmental Effects */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Wind Particles */}
-        {wind > 0 && Array.from({ length: 10 }).map((_, i) => (
+    <div className="relative w-full h-full flex flex-col items-center justify-center bg-[#1a1a1a] rounded-[3rem] overflow-hidden p-8">
+      {/* Background Wall & Table */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a]" />
+        {/* Wooden Table */}
+        <div className="absolute bottom-0 w-full h-[40%] bg-[#3d2b1f] border-t-4 border-[#2d1f16] shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+          <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]" />
+          <div className="absolute top-0 w-full h-1 bg-white/5" />
+        </div>
+      </div>
+
+      {/* Environmental Effects Overlay */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+        {/* Wind Arrows (Matching Image) */}
+        {wind > 0 && Array.from({ length: 3 }).map((_, i) => (
           <motion.div
             key={i}
-            initial={{ x: -100, y: Math.random() * 600 }}
-            animate={{ x: 1200 }}
-            transition={{ 
-              duration: 2 / (1 + wind/5), 
-              repeat: Infinity, 
-              delay: i * 0.2,
-              ease: "linear"
+            initial={{ x: 100, y: 300 + i * 40, opacity: 0 }}
+            animate={{ 
+              x: [100, 350],
+              opacity: [0, 0.6, 0]
             }}
-            className="absolute h-px bg-white/20 w-20"
+            transition={{ 
+              duration: 1.5 / (1 + wind/5), 
+              repeat: Infinity, 
+              delay: i * 0.3,
+              ease: "easeOut"
+            }}
+            className="absolute flex items-center gap-1"
+          >
+            <div className="w-16 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_rgba(96,165,250,0.5)]" />
+            <div className="w-2 h-2 border-t-2 border-r-2 border-blue-400 rotate-45" />
+          </motion.div>
+        ))}
+        
+        {/* Humidity Droplets (Matching Image) */}
+        {humidity > 60 && Array.from({ length: 12 }).map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ 
+              x: 450 + (Math.random() - 0.5) * 150, 
+              y: 200 + (Math.random() - 0.5) * 100,
+              opacity: 0 
+            }}
+            animate={{ 
+              y: [null, 350],
+              opacity: [0, 0.4, 0]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              delay: Math.random() * 2 
+            }}
+            className="absolute w-1.5 h-2 bg-blue-400 rounded-full blur-[0.5px]"
+            style={{ borderRadius: '50% 50% 50% 50% / 100% 100% 0% 0%' }}
           />
         ))}
-        {/* Humidity Mist */}
-        <motion.div 
-          animate={{ opacity: humidity / 100 }}
-          className="absolute inset-0 bg-blue-100/5 backdrop-blur-[1px]"
-        />
       </div>
 
-      <div className="relative w-full max-w-5xl h-full flex flex-col items-center justify-center gap-12">
-        {/* 1. The Plant (Leafy Shoot) */}
-        <div className="relative z-10">
-          <div className="w-1 h-32 bg-emerald-900 rounded-full" />
-          {/* Leaves */}
-          {[0, 1, 2, 3, 4, 5].map(i => (
-            <motion.div
-              key={i}
-              animate={{ 
-                rotate: i % 2 === 0 ? [20, 22, 20] : [-20, -22, -20],
-                x: wind > 5 ? (i % 2 === 0 ? 5 : -5) : 0
-              }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className={cn(
-                "absolute w-24 h-12 bg-emerald-600 rounded-full border border-emerald-400/30",
-                i % 2 === 0 ? "left-1 origin-left" : "right-1 origin-right"
-              )}
-              style={{ top: i * 20 }}
-            >
-              <div className="w-full h-px bg-emerald-400/20 mt-6" />
-            </motion.div>
-          ))}
-        </div>
-
-        {/* 2. The Potometer Setup */}
-        <div className="relative w-full h-64 flex flex-col items-center">
-          {/* Reservoir / Flask */}
-          <div className="w-32 h-40 bg-blue-400/10 border border-white/20 rounded-t-3xl rounded-b-lg backdrop-blur-md relative">
-            <div className="absolute bottom-0 w-full h-32 bg-blue-500/20 rounded-b-lg" />
-            {/* Connection to capillary */}
-            <div className="absolute bottom-4 -right-4 w-8 h-4 bg-blue-400/20 border border-white/20" />
-          </div>
-
-          {/* Capillary Tube */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[500px] h-6 bg-white/5 border border-white/10 rounded-full flex items-center px-4 overflow-hidden">
-            {/* Water in capillary */}
-            <div className="absolute inset-0 bg-blue-500/10" />
-            
-            {/* Moving Air Bubble */}
-            <motion.div 
-              style={{ x: bubblePos }}
-              className="w-8 h-4 bg-white/40 rounded-full border border-white/60 shadow-[0_0_10px_rgba(255,255,255,0.3)] flex items-center justify-center"
-            >
-              <div className="w-1 h-1 bg-white/80 rounded-full" />
-            </motion.div>
-          </div>
-
-          {/* Ruler */}
-          <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 w-[500px] h-8 bg-amber-50 border border-amber-200 rounded flex items-end px-4 pb-1">
-            {Array.from({ length: 51 }).map((_, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center">
-                <div className={cn("w-px bg-amber-400", i % 10 === 0 ? "h-4" : i % 5 === 0 ? "h-3" : "h-2")} />
-                {i % 10 === 0 && <span className="text-[8px] font-bold text-amber-800 mt-0.5">{i}</span>}
+      <div className={cn(
+        "relative w-full h-full flex flex-col items-center justify-between z-20 transition-all duration-500",
+        isFullscreen ? "py-16 px-12" : "py-12 px-8"
+      )}>
+        {/* Top Section: Main Apparatus */}
+        <div className={cn(
+          "flex items-end justify-between w-full h-[45%] min-h-[400px] transition-all duration-500",
+          isFullscreen ? "max-w-none px-20" : "max-w-7xl"
+        )}>
+          
+          {/* 1. Realistic Fan (Far Left) */}
+          <div className="relative flex flex-col items-center scale-100 lg:scale-110 origin-bottom-left ml-8">
+            <div className="w-48 h-48 lg:w-56 lg:h-56 bg-[#111] rounded-full border-4 border-[#222] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex items-center justify-center relative overflow-hidden">
+              {/* Fan Grille */}
+              <div className="absolute inset-0 z-10 border-[14px] border-[#111] rounded-full opacity-60" />
+              <div className="absolute inset-0 z-10 grid grid-cols-12 gap-0 opacity-20">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} className="w-px h-full bg-white" />
+                ))}
               </div>
-            ))}
-            <div className="absolute top-1 left-4 text-[7px] font-black text-amber-900/40 uppercase tracking-widest">Millimeters (mm)</div>
+              {/* Blades */}
+              <motion.div 
+                animate={{ rotate: wind * 360 }}
+                transition={{ duration: wind > 0 ? 0.4 / (wind/2) : 0, repeat: Infinity, ease: "linear" }}
+                className="relative w-40 h-40 lg:w-48 lg:h-48 flex items-center justify-center"
+              >
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="absolute w-12 h-40 lg:w-14 lg:h-48 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-[50%_50%_10%_10%] opacity-95 shadow-inner" style={{ transform: `rotate(${i * 120}deg)` }} />
+                ))}
+              </motion.div>
+              <div className="absolute w-10 h-10 lg:w-12 lg:h-12 bg-[#222] rounded-full border-2 border-[#333] z-20 shadow-lg" />
+            </div>
+            {/* Fan Base */}
+            <div className="w-32 h-6 bg-[#111] rounded-t-2xl mt-[-4px]" />
+            <div className="w-44 h-3 bg-[#0a0a0a] rounded-full shadow-xl" />
+          </div>
+
+          {/* 2. Potometer Apparatus (Center) */}
+          <div className="relative flex flex-col items-center scale-110 lg:scale-125 origin-bottom">
+            {/* Plant in Tube */}
+            <div className="relative z-30 mb-[-10px]">
+              <div className="w-2.5 h-40 lg:h-48 bg-gradient-to-r from-[#2d1f16] to-[#3d2b1f] rounded-full relative shadow-lg">
+                {/* 3D Realistic Leaves */}
+                {[0, 1, 2, 3, 4, 5, 6].map(i => (
+                  <motion.div
+                    key={i}
+                    animate={{ 
+                      rotate: i % 2 === 0 ? [10, 13, 10] : [-10, -13, -10],
+                      skewX: wind > 5 ? (i % 2 === 0 ? 8 : -8) : 0,
+                      scale: [1, 1.02, 1]
+                    }}
+                    transition={{ duration: 4 + Math.random(), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                    className={cn(
+                      "absolute w-24 h-14 lg:w-28 lg:h-18 origin-bottom rounded-[100%_10%_100%_10%] shadow-[4px_8px_15px_rgba(0,0,0,0.4)] overflow-hidden",
+                      i % 2 === 0 ? "left-1.5 -rotate-[15deg]" : "right-1.5 rotate-[15deg] scale-x-[-1]"
+                    )}
+                    style={{ 
+                      top: i * 22,
+                      background: 'linear-gradient(135deg, #065f46 0%, #064e3b 50%, #022c22 100%)',
+                      boxShadow: 'inset -2px -2px 10px rgba(0,0,0,0.5), inset 2px 2px 10px rgba(255,255,255,0.1)'
+                    }}
+                  >
+                    {/* Leaf Veins & Texture */}
+                    <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/leaf.png')] mix-blend-overlay" />
+                    <div className="absolute top-1/2 left-0 w-full h-[2px] bg-emerald-400/20 blur-[0.5px]" />
+                    {/* Leaf Highlight */}
+                    <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent" />
+                  </motion.div>
+                ))}
+              </div>
+              {/* Rubber Bung */}
+              <div className="w-12 h-12 lg:h-14 bg-gradient-to-b from-[#1a1a1a] to-[#050505] rounded-b-xl border-x-2 border-b-2 border-[#222] relative z-40 flex items-center justify-center shadow-lg">
+                <div className="w-10 h-2 bg-white/5 rounded-full" />
+              </div>
+            </div>
+
+            {/* Glass T-Junction & Base */}
+            <div className="relative w-64 lg:w-72 h-24 lg:h-28 flex items-center justify-center">
+              {/* Heavy Metal Base */}
+              <div className="absolute bottom-0 w-80 lg:w-96 h-12 lg:h-14 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-xl border-t border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.6)]" />
+              {/* Glass Connection */}
+              <div className="w-48 lg:w-56 h-6 lg:h-8 bg-white/10 border border-white/20 rounded-full relative overflow-hidden backdrop-blur-md shadow-inner">
+                <div className="absolute inset-0 bg-blue-500/30" />
+                {/* T-Junction Block */}
+                <div className="absolute left-1/2 -translate-x-1/2 top-[-12px] w-12 lg:w-14 h-20 lg:h-24 bg-gradient-to-b from-[#111] to-[#050505] rounded-lg border border-white/10 z-10 shadow-xl" />
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Desk Lamp (Far Right) */}
+          <div className="relative flex flex-col items-center scale-100 lg:scale-110 origin-bottom-right mr-8">
+            <div className="relative w-40 lg:w-48 h-64 lg:h-72 flex flex-col items-center">
+              {/* Lamp Head */}
+              <motion.div 
+                animate={{ rotate: -25 }}
+                className="w-28 h-28 lg:w-36 lg:h-36 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] rounded-[100%_0_0_100%] relative z-20 border-r-8 border-yellow-400/20 shadow-2xl"
+              >
+                {/* Light Bulb & Glow */}
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 lg:w-18 lg:h-18 bg-white rounded-full blur-2xl opacity-90" />
+                <motion.div 
+                  animate={{ 
+                    opacity: light / 100,
+                    scale: 1 + (light / 100) * 0.6
+                  }}
+                  className="absolute left-[-120px] top-[-60px] w-[300px] h-[300px] lg:w-[350px] lg:h-[350px] bg-yellow-400/25 rounded-full blur-[100px] pointer-events-none"
+                />
+              </motion.div>
+              {/* Lamp Arm */}
+              <div className="w-3 lg:w-4 h-40 lg:h-48 bg-gradient-to-r from-[#111] to-[#222] rotate-[25deg] origin-bottom mt-[-20px] border-x border-white/5 shadow-lg" />
+              {/* Lamp Base */}
+              <div className="w-32 lg:w-40 h-6 lg:h-8 bg-gradient-to-b from-[#111] to-[#050505] rounded-t-3xl shadow-[0_10px_40px_rgba(0,0,0,0.8)]" />
+            </div>
           </div>
         </div>
 
-        {/* 3. The Fan (Wind Source) */}
-        <div className="absolute left-[-150px] top-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
-          <div className="relative w-32 h-32 bg-slate-800 rounded-full border-4 border-slate-700 flex items-center justify-center shadow-2xl">
-            <motion.div 
-              animate={{ rotate: wind * 100 }}
-              transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
-              className="relative w-28 h-28 flex items-center justify-center"
-            >
-              {[0, 1, 2].map(i => (
-                <div key={i} className="absolute w-4 h-24 bg-slate-600 rounded-full" style={{ transform: `rotate(${i * 120}deg)` }} />
-              ))}
-            </motion.div>
-            <div className="absolute w-8 h-8 bg-slate-700 rounded-full border-2 border-slate-600 shadow-inner" />
+        {/* Middle Section: Measurement Apparatus */}
+        <div className="relative w-full h-[20%] min-h-[180px] flex items-center justify-center gap-12 lg:gap-20">
+          
+          {/* Left: Syringe & Beaker */}
+          <div className="flex items-end gap-6 scale-100 lg:scale-110">
+            <div className="relative w-16 lg:w-20 h-20 lg:h-24 bg-white/5 border-x border-b border-white/20 rounded-b-2xl backdrop-blur-md shadow-2xl">
+              <div className="absolute bottom-0 w-full h-14 lg:h-18 bg-blue-500/40 rounded-b-2xl" />
+              {/* Syringe */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-6 lg:w-8 h-32 lg:h-40 bg-white/10 border border-white/30 rounded-t-xl flex flex-col items-center shadow-xl">
+                <div className="w-1.5 h-20 lg:h-28 bg-white/20 mt-3 rounded-full" />
+                <button 
+                  onClick={handleResetBubble}
+                  className="w-9 h-9 lg:w-11 lg:h-11 bg-slate-800 rounded-full border-2 border-white/20 mt-[-10px] flex items-center justify-center hover:bg-slate-700 hover:border-white/40 transition-all active:scale-90 group shadow-2xl"
+                >
+                  <RotateCcw className="w-4 h-4 lg:w-5 lg:h-5 text-white/60 group-hover:text-white" />
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
-            <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Wind Gen v2</span>
+
+          {/* Center: Capillary Tube & Ruler */}
+          <div className="flex flex-col items-center gap-4 scale-100 lg:scale-110 flex-1 max-w-4xl">
+            <div 
+              ref={capillaryRef}
+              className="relative w-full h-8 lg:h-10 bg-white/5 border-2 border-white/20 rounded-full flex items-center px-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] backdrop-blur-md"
+            >
+              <div className="absolute inset-0 bg-blue-500/20 rounded-full" />
+              {/* Bubble */}
+              <motion.div 
+                animate={{ x: (bubblePos / 450) * capillaryWidth }}
+                transition={{ type: "tween", ease: "linear" }}
+                className="w-10 h-5 lg:w-12 lg:h-6 bg-white/90 rounded-full border border-white shadow-[0_0_20px_rgba(255,255,255,0.8)] z-10"
+              />
+            </div>
+            {/* Wooden Ruler Aesthetic */}
+            <div className="w-full h-10 lg:h-12 bg-[#c19a6b] border-2 border-[#5d2e0c] rounded-lg flex items-end px-6 pb-1.5 relative overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]" />
+              <div className="absolute top-0 left-0 w-full h-1 bg-white/10" />
+              {Array.from({ length: 51 }).map((_, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center">
+                  <div className={cn("w-[1.5px] bg-[#5d2e0c]", i % 10 === 0 ? "h-5 lg:h-6" : i % 5 === 0 ? "h-3 lg:h-4" : "h-1.5 lg:h-2")} />
+                  {i % 10 === 0 && <span className="text-[8px] lg:text-[10px] font-black text-[#3d1f08] mt-1">{i}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Vertical Tube & Digital Thermometer */}
+          <div className="flex items-end gap-8 lg:gap-12 scale-100 lg:scale-110">
+            {/* Vertical Graduated Tube */}
+            <div className="relative w-12 lg:w-14 h-44 lg:h-56 bg-white/5 border-x-2 border-white/20 rounded-t-2xl backdrop-blur-md flex flex-col justify-between py-6 shadow-2xl">
+              <div className="absolute bottom-0 w-full h-28 lg:h-36 bg-blue-500/40 rounded-t-sm" />
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 px-2">
+                  <div className="w-3 lg:w-4 h-px bg-white/40" />
+                  <span className="text-[8px] lg:text-[10px] text-white/40 font-mono font-bold">{10 - i}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Digital Thermometer */}
+            <div className="bg-gradient-to-b from-[#f0f0f0] to-[#d0d0d0] p-3 lg:p-4 rounded-2xl border-4 border-[#aaa] shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col items-center min-w-[130px] lg:min-w-[160px]">
+              <div className="text-[8px] lg:text-[10px] text-slate-500 font-black uppercase mb-2 tracking-widest">Temperature</div>
+              <div className="bg-[#b8c9b0] px-3 lg:px-5 py-2 lg:py-3 rounded-lg border-2 border-black/15 w-full text-center shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)]">
+                <span className="text-2xl lg:text-4xl font-mono font-black text-slate-800 tracking-tighter">
+                  {temp.toFixed(1)}<span className="text-lg lg:text-2xl ml-1">°C</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: Control & Data Panels */}
+        <div className={cn(
+          "flex gap-8 lg:gap-12 w-full justify-center scale-100 lg:scale-110 mb-4 transition-all duration-500",
+          isFullscreen ? "max-w-none px-20" : "max-w-6xl"
+        )}>
+          {/* Experiment Control */}
+          <div className="bg-black/70 backdrop-blur-2xl p-6 lg:p-8 rounded-[3rem] border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] min-w-[300px] lg:min-w-[340px]">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Timer className="w-4 h-4 lg:w-5 lg:h-5 text-blue-400" />
+                <span className="text-[10px] lg:text-[12px] text-white font-black uppercase tracking-[0.2em]">Lab Control</span>
+              </div>
+              <div className={cn(
+                "px-3 lg:px-4 py-1 lg:py-1.5 rounded-full text-[8px] lg:text-[10px] font-black uppercase tracking-widest",
+                step === 'RUNNING' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50" : "bg-slate-500/20 text-slate-400 border border-slate-500/50"
+              )}>
+                {step === 'RUNNING' ? 'Active' : 'Standby'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 lg:gap-6 mb-8">
+              <div className="bg-white/5 p-4 rounded-2xl lg:rounded-3xl border border-white/5 shadow-inner">
+                <span className="text-[8px] lg:text-[10px] text-white/40 uppercase font-black block mb-2 tracking-widest">Time</span>
+                <div className="text-xl lg:text-3xl font-mono font-black text-white tracking-tighter">
+                  {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toFixed(0).padStart(2, '0')}
+                </div>
+              </div>
+              <div className="bg-white/5 p-4 rounded-2xl lg:rounded-3xl border border-white/5 shadow-inner">
+                <span className="text-[8px] lg:text-[10px] text-white/40 uppercase font-black block mb-2 tracking-widest">Position</span>
+                <div className="text-xl lg:text-3xl font-mono font-black text-blue-400 tracking-tighter">
+                  {(bubblePos / 10).toFixed(1)}<span className="text-sm ml-1">mm</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 lg:gap-4">
+              <button 
+                onClick={() => setStep(step === 'RUNNING' ? 'IDLE' : 'RUNNING')}
+                className={cn(
+                  "py-4 lg:py-5 rounded-2xl lg:rounded-3xl font-black text-[10px] lg:text-[12px] uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-2xl",
+                  step === 'RUNNING' ? "bg-red-600 text-white shadow-red-900/40" : "bg-emerald-600 text-white shadow-emerald-900/40"
+                )}
+              >
+                {step === 'RUNNING' ? <RotateCcw className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                {step === 'RUNNING' ? 'Stop' : 'Start'}
+              </button>
+              <button 
+                disabled={step !== 'RUNNING'}
+                onClick={handleRecordReading}
+                className="py-4 lg:py-5 bg-white/10 hover:bg-white/20 disabled:opacity-30 rounded-2xl lg:rounded-3xl font-black text-[10px] lg:text-[12px] text-white uppercase tracking-[0.2em] transition-all active:scale-95 border border-white/10 shadow-xl"
+              >
+                Record
+              </button>
+            </div>
+          </div>
+
+          {/* Readings Log */}
+          <div className="bg-black/50 backdrop-blur-2xl p-6 lg:p-8 rounded-[3rem] border border-white/10 min-w-[200px] lg:min-w-[240px] max-h-[220px] lg:max-h-[280px] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+            <span className="text-[10px] lg:text-[12px] text-white/40 uppercase font-black block mb-4 tracking-[0.2em]">Data Log</span>
+            <div className="flex-1 overflow-y-auto space-y-2 lg:space-y-3 pr-3 custom-scrollbar">
+              {readings.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-[10px] lg:text-[12px] text-white/20 italic font-medium">No data recorded</div>
+              ) : (
+                readings.map((r, i) => (
+                  <div key={i} className="flex justify-between items-center bg-white/5 p-2.5 lg:p-3 rounded-xl lg:rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <span className="text-[10px] lg:text-[12px] font-mono text-white/40">{r.time.toFixed(0)}s</span>
+                    <span className="text-[10px] lg:text-[12px] font-mono font-black text-blue-400">{r.pos.toFixed(1)} mm</span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Lab Sensors */}
-      <div className="absolute bottom-8 left-8 flex flex-col gap-4">
-        <div className="bg-black/60 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-2xl min-w-[160px]">
-          <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
-            <Activity className="w-3 h-3 text-blue-400" />
-            <span className="text-[9px] text-white/80 uppercase font-black tracking-widest">Atmospheric Data</span>
+      {/* Data Analysis Workspace */}
+      <AnimatePresence>
+        {step === 'COMPLETE' && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="absolute inset-0 z-50 bg-slate-900/90 backdrop-blur-xl p-12 flex flex-col items-center justify-center"
+          >
+            <div className="max-w-4xl w-full bg-black/40 border border-white/10 rounded-[3rem] p-12 shadow-2xl">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Experiment Analysis</h2>
+                <button 
+                  onClick={() => setStep('IDLE')}
+                  className="p-3 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 text-white transition-all"
+                >
+                  <RotateCcw className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-12">
+                <div className="space-y-8">
+                  <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
+                    <span className="text-[10px] text-white/40 uppercase font-black block mb-4">Experimental Summary</span>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-slate-400 font-medium">Total Distance</span>
+                        <span className="text-xl font-mono font-black text-blue-400">{(bubblePos / 10).toFixed(1)} mm</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-slate-400 font-medium">Total Time</span>
+                        <span className="text-xl font-mono font-black text-white">{Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toFixed(0).padStart(2, '0')} min</span>
+                      </div>
+                      <div className="h-px bg-white/10 my-4" />
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-emerald-400 font-black uppercase">Calculated Rate</span>
+                        <span className="text-2xl font-mono font-black text-emerald-400">
+                          {((bubblePos / 10) / (elapsedTime / 60)).toFixed(2)} <span className="text-xs">mm/min</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-600/10 p-6 rounded-3xl border border-blue-500/20">
+                    <span className="text-[10px] text-blue-400 uppercase font-black block mb-2">Scientific Principle</span>
+                    <p className="text-xs text-blue-200/70 leading-relaxed italic">
+                      "The rate of transpiration is directly proportional to the distance moved by the air bubble per unit time. Environmental factors like wind and light increase this rate by maintaining a steep water potential gradient."
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-6">
+                  <div className="bg-white/5 p-6 rounded-3xl border border-white/10 flex-1">
+                    <span className="text-[10px] text-white/40 uppercase font-black block mb-4">Calculation Formula</span>
+                    <div className="bg-black/40 p-6 rounded-2xl border border-white/5 flex items-center justify-center">
+                       <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                        {"$$Rate = \\frac{\\text{Distance (mm)}}{\\text{Time (min)}}$$"}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => setStep('IDLE')}
+                    className="w-full py-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-3xl font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center gap-3"
+                  >
+                    <Check className="w-6 h-6" />
+                    Reset Experiment
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export const FoodCalorimetrySimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = ({ variables, isPaused, isFullscreen }) => {
+  const { foodType, waterVolume } = variables;
+  const [step, setStep] = useState<'IDLE' | 'WEIGHING' | 'PREPARING' | 'INITIAL_TEMP' | 'BURNING' | 'FINAL_TEMP' | 'COMPLETE'>('IDLE');
+  const [temp, setTemp] = useState(20);
+  const [isBurning, setIsBurning] = useState(false);
+  const [burnProgress, setBurnProgress] = useState(0);
+  const [targetTemp, setTargetTemp] = useState(20);
+  const [initialTemp, setInitialTemp] = useState<number | null>(null);
+  const [finalTemp, setFinalTemp] = useState<number | null>(null);
+  const [mass, setMass] = useState<number | null>(null);
+
+  // Food properties
+  const getFoodData = (type: number) => {
+    switch (type) {
+      case 1: return { name: 'Peanut', color: '#d97706', energy: 28000, speed: 0.2, group: 'Lipid' };
+      case 2: return { name: 'Potato Chip', color: '#fbbf24', energy: 23000, speed: 0.3, group: 'Lipid' };
+      case 3: return { name: 'Beef Jerky', color: '#7f1d1d', energy: 17000, speed: 0.5, group: 'Protein' };
+      case 4: return { name: 'Biscuit', color: '#d6d3d1', energy: 16000, speed: 0.6, group: 'Carb' };
+      case 5: return { name: 'Crouton', color: '#92400e', energy: 15000, speed: 0.7, group: 'Carb' };
+      case 6: return { name: 'Popcorn', color: '#fef3c7', energy: 12000, speed: 0.9, group: 'Carb' };
+      default: return { name: 'Unknown', color: '#ffffff', energy: 0, speed: 1, group: 'N/A' };
+    }
+  };
+
+  const foodData = getFoodData(foodType);
+  const foodName = foodData.name;
+  const foodColor = foodData.color;
+
+  useEffect(() => {
+    const energyPerGram = foodData.energy;
+    const massBurnt = 0.5; 
+    const energyReleased = energyPerGram * massBurnt;
+    const heatLossFactor = 0.25; 
+    const energyCaptured = energyReleased * heatLossFactor;
+    const tempRise = energyCaptured / (waterVolume * 4.18);
+    setTargetTemp(20 + tempRise);
+  }, [foodType, waterVolume, foodData.energy]);
+
+  useEffect(() => {
+    if (isPaused) return;
+
+    let interval: NodeJS.Timeout;
+    if (isBurning) {
+      const burnSpeed = foodData.speed;
+      
+      interval = setInterval(() => {
+        setBurnProgress(prev => {
+          if (prev >= 100) {
+            setIsBurning(false);
+            setStep('FINAL_TEMP');
+            return 100;
+          }
+          return prev + burnSpeed;
+        });
+
+        setTemp(prev => {
+          if (prev < targetTemp) {
+            const riseSpeed = (targetTemp - 20) / (100 / burnSpeed);
+            return prev + riseSpeed;
+          }
+          return prev;
+        });
+      }, 50);
+    }
+
+    return () => clearInterval(interval);
+  }, [isBurning, isPaused, targetTemp, foodData.speed]);
+
+  const handleWeigh = () => {
+    setStep('WEIGHING');
+    setTimeout(() => setMass(0.50), 1000);
+  };
+
+  const handlePrepare = () => {
+    setStep('PREPARING');
+    setTimeout(() => setStep('INITIAL_TEMP'), 1500);
+  };
+
+  const handleRecordInitial = () => {
+    setInitialTemp(temp);
+    setStep('BURNING');
+  };
+
+  const handleStartBurn = () => {
+    setIsBurning(true);
+    setBurnProgress(0);
+  };
+
+  const handleRecordFinal = () => {
+    setFinalTemp(temp);
+    setStep('COMPLETE');
+  };
+
+  const handleReset = () => {
+    setStep('IDLE');
+    setTemp(20);
+    setIsBurning(false);
+    setBurnProgress(0);
+    setInitialTemp(null);
+    setFinalTemp(null);
+    setMass(null);
+  };
+
+  return (
+    <div className="relative w-full h-full bg-slate-950 overflow-hidden rounded-3xl">
+      {/* Dynamic Lighting Glow */}
+      <AnimatePresence>
+        {isBurning && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-orange-500/20 blur-[100px] pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Background Lab Scene */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-10 right-10 w-32 h-64 bg-slate-800/40 rounded-lg border border-white/10 flex flex-col items-center justify-center gap-4">
+          {/* Improved Fire Extinguisher */}
+          <div className="relative w-12 h-40 bg-red-600 rounded-lg border-2 border-red-700 shadow-lg flex flex-col items-center">
+            <div className="absolute -top-4 w-6 h-6 bg-slate-400 rounded-full border-2 border-slate-500" />
+            <div className="absolute top-4 w-10 h-4 bg-white/20 rounded-sm" />
+            <div className="mt-12 w-8 h-20 border-2 border-white/20 rounded-sm flex items-center justify-center">
+              <div className="w-1 h-16 bg-white/10" />
+            </div>
           </div>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] text-white/40 uppercase font-bold">Wind</span>
-              <span className="text-xs font-mono font-black text-blue-400">{wind} m/s</span>
+          <span className="text-[8px] text-red-500 font-black uppercase tracking-widest">Fire Safety</span>
+        </div>
+        <div className="absolute bottom-20 left-20 w-48 h-72 bg-slate-800/40 rounded-3xl border border-white/5" />
+      </div>
+
+      {/* Main Apparatus */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative w-[500px] h-[500px]">
+          {/* Retort Stand Base */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-10 w-80 h-6 bg-slate-800 rounded-xl shadow-2xl border-b-4 border-slate-900" />
+          {/* Vertical Pole */}
+          <div className="absolute left-1/2 -translate-x-[140px] bottom-10 w-5 h-[420px] bg-gradient-to-r from-slate-600 to-slate-700 rounded-full shadow-inner" />
+          
+          {/* Clamp and Test Tube Assembly */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-10 w-full h-full">
+            {/* Horizontal Clamp Arm */}
+            <div className="absolute left-1/2 -translate-x-[140px] top-24 w-40 h-3 bg-slate-500 rounded-full shadow-lg" />
+            {/* Clamp Head */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-24 w-16 h-4 bg-slate-400 rounded-md border-2 border-slate-500" />
+            
+            {/* Test Tube */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-12 w-14 h-56 bg-white/5 backdrop-blur-md rounded-b-full border border-white/20 overflow-hidden shadow-2xl">
+              {/* Glass Highlights */}
+              <div className="absolute top-0 left-2 w-1 h-full bg-white/10 rounded-full blur-[1px]" />
+              
+              {/* Water */}
+              <motion.div 
+                className="absolute bottom-0 w-full bg-sky-400/20"
+                animate={{ height: `${waterVolume * 1.8}%` }}
+                transition={{ type: 'spring', stiffness: 50 }}
+              >
+                <div className="absolute top-0 w-full h-3 bg-sky-300/30 rounded-full blur-[2px]" />
+                
+                {/* Convection Currents / Bubbles */}
+                {isBurning && (
+                  <div className="absolute inset-0 overflow-hidden">
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute bottom-0 w-1.5 h-1.5 bg-white/20 rounded-full blur-[0.5px]"
+                        animate={{ 
+                          y: [-10, -120],
+                          x: [Math.random() * 50, Math.random() * 50],
+                          opacity: [0, 0.6, 0],
+                          scale: [0.5, 1.2, 0.8]
+                        }}
+                        transition={{ 
+                          duration: 1.5 + Math.random(),
+                          repeat: Infinity,
+                          delay: Math.random() * 2
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Digital Thermometer Probe (Inserted) */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-0 w-1.5 h-48 bg-gradient-to-b from-slate-300 to-slate-500 rounded-full shadow-md">
+                <div className="absolute bottom-0 w-2.5 h-6 bg-slate-400 rounded-full left-1/2 -translate-x-1/2 border border-white/10" />
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] text-white/40 uppercase font-bold">Humidity</span>
-              <span className="text-xs font-mono font-black text-sky-400">{humidity}%</span>
-            </div>
-            <div className="pt-2 border-t border-white/5 flex justify-between items-center">
-              <span className="text-[9px] text-emerald-400 uppercase font-black">Uptake</span>
-              <span className="text-sm font-mono font-black text-emerald-400">{rate.toFixed(1)} <span className="text-[8px]">mm/min</span></span>
-            </div>
+
+            {/* Advanced Digital Thermometer Display */}
+            <motion.div 
+              className="absolute left-1/2 translate-x-16 top-4 bg-slate-900/90 backdrop-blur-2xl p-4 rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] min-w-[140px]"
+              animate={isBurning ? { scale: [1, 1.02, 1] } : {}}
+              transition={{ duration: 0.5, repeat: Infinity }}
+            >
+              <div className="flex items-center gap-2 mb-2 border-b border-white/5 pb-2">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[8px] text-white/60 uppercase font-black tracking-widest">Digital Precision</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-mono font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)] tabular-nums">
+                  {temp.toFixed(1)}
+                </span>
+                <span className="text-sm font-bold text-red-400/60 uppercase">°C</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Horizontal Food Holder Assembly */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-24 w-full">
+            {/* Horizontal Arm from Pole */}
+            <div className="absolute left-1/2 -translate-x-[140px] bottom-4 w-32 h-2.5 bg-slate-600 rounded-full shadow-md" />
+            
+            {/* Mounted Needle (Horizontal) */}
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-4 w-40 h-1 bg-gradient-to-r from-slate-400 to-slate-200 rounded-full" />
+            
+            {/* Food Sample (Horizontal Orientation) */}
+            <AnimatePresence>
+              {(step === 'INITIAL_TEMP' || step === 'BURNING' || step === 'FINAL_TEMP' || step === 'COMPLETE') && (
+                <motion.div 
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 100, opacity: 0 }}
+                  className="absolute left-1/2 -translate-x-1/2 bottom-0 w-12 h-8 rounded-2xl shadow-2xl cursor-pointer group"
+                  style={{ 
+                    backgroundColor: foodColor,
+                    scale: 1 - (burnProgress / 250),
+                    filter: burnProgress > 80 ? 'grayscale(1) brightness(0.3)' : 'none',
+                    boxShadow: isBurning ? `0 0 40px ${foodColor}44` : 'none'
+                  }}
+                >
+                  {/* Heat Haze Effect */}
+                  {isBurning && (
+                    <motion.div 
+                      className="absolute -inset-4 bg-white/5 rounded-full blur-xl"
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                      transition={{ duration: 0.5, repeat: Infinity }}
+                    />
+                  )}
+
+                  {/* Advanced Flame System */}
+                  <AnimatePresence>
+                    {isBurning && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                        className="absolute bottom-full left-1/2 -translate-x-1/2 w-16 h-28 mb-1"
+                      >
+                        <div className="absolute inset-0 bg-orange-500/20 blur-2xl rounded-full" />
+                        <motion.div 
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-24 bg-gradient-to-t from-red-600 via-orange-500 to-yellow-200 rounded-full blur-[2px]"
+                          animate={{ 
+                            height: [80, 100, 90, 110, 85],
+                            scaleX: [1, 1.1, 0.9, 1.05, 1],
+                            skewX: [-2, 2, -1, 3, 0]
+                          }}
+                          transition={{ duration: 0.3, repeat: Infinity }}
+                        />
+                        <motion.div 
+                          className="absolute bottom-2 left-1/2 -translate-x-1/2 w-5 h-14 bg-gradient-to-t from-orange-400 to-white rounded-full blur-[1px]"
+                          animate={{ 
+                            height: [40, 55, 45],
+                            opacity: [0.8, 1, 0.8]
+                          }}
+                          transition={{ duration: 0.15, repeat: Infinity }}
+                        />
+                        {[...Array(5)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="absolute bottom-10 left-1/2 w-1 h-1 bg-yellow-200 rounded-full shadow-[0_0_5px_#fff]"
+                            animate={{ 
+                              y: [-20, -100],
+                              x: [Math.random() * 40 - 20, Math.random() * 40 - 20],
+                              opacity: [1, 0],
+                              scale: [1, 0]
+                            }}
+                            transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+                          />
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
+      </div>
+
+      {/* Controls Overlay */}
+      <div className="absolute top-8 left-8 flex flex-col gap-4">
+        <div className="bg-slate-900/80 backdrop-blur-xl p-5 rounded-3xl border border-white/10 shadow-2xl min-w-[240px]">
+          <div className="flex items-center gap-3 mb-4 border-b border-white/5 pb-3">
+            <div className="p-2 bg-orange-500/20 rounded-xl">
+              <Flame className="w-4 h-4 text-orange-400" />
+            </div>
+            <div>
+              <span className="block text-[10px] text-white/80 uppercase font-black tracking-widest">Calorimetry</span>
+              <span className="block text-[8px] text-white/40 uppercase font-bold">Sample: {foodName} ({foodData.group})</span>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            {step === 'IDLE' && (
+              <button onClick={handleWeigh} className="w-full py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white hover:bg-emerald-400 transition-all">
+                1. Weigh Food Sample
+              </button>
+            )}
+
+            {step === 'WEIGHING' && (
+              <div className="text-center py-2">
+                <Activity className="w-6 h-6 text-emerald-400 mx-auto animate-pulse mb-2" />
+                <span className="text-[10px] text-white/60 uppercase font-bold">Weighing...</span>
+                {mass && <div className="text-xl font-mono font-black text-emerald-400 mt-1">{mass.toFixed(3)}g</div>}
+                {mass && (
+                  <button onClick={handlePrepare} className="w-full mt-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-blue-500 text-white hover:bg-blue-400 transition-all">
+                    2. Mount Sample
+                  </button>
+                )}
+              </div>
+            )}
+
+            {step === 'PREPARING' && (
+              <div className="text-center py-2">
+                <Settings2 className="w-6 h-6 text-blue-400 mx-auto animate-spin mb-2" />
+                <span className="text-[10px] text-white/60 uppercase font-bold">Mounting Sample...</span>
+              </div>
+            )}
+
+            {step === 'INITIAL_TEMP' && (
+              <div className="space-y-3">
+                <div className="text-center text-[10px] text-white/40 uppercase font-bold">Record Initial Temperature (T₁)</div>
+                <button onClick={handleRecordInitial} className="w-full py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-red-500 text-white hover:bg-red-400 transition-all">
+                  3. Record T₁ ({temp.toFixed(1)}°C)
+                </button>
+              </div>
+            )}
+
+            {step === 'BURNING' && !isBurning && (
+              <button onClick={handleStartBurn} className="w-full py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-orange-500 text-white hover:bg-orange-400 transition-all">
+                4. Ignite Sample
+              </button>
+            )}
+
+            {isBurning && (
+              <div className="text-center py-2">
+                <Flame className="w-6 h-6 text-orange-500 mx-auto animate-pulse mb-2" />
+                <span className="text-[10px] text-white/60 uppercase font-bold">Combustion in Progress...</span>
+                <div className="w-full h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
+                  <motion.div className="h-full bg-orange-500" initial={{ width: 0 }} animate={{ width: `${burnProgress}%` }} />
+                </div>
+              </div>
+            )}
+
+            {step === 'FINAL_TEMP' && (
+              <div className="space-y-3">
+                <div className="text-center text-[10px] text-white/40 uppercase font-bold">Record Final Temperature (T₂)</div>
+                <button onClick={handleRecordFinal} className="w-full py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-red-500 text-white hover:bg-red-400 transition-all">
+                  5. Record T₂ ({temp.toFixed(1)}°C)
+                </button>
+              </div>
+            )}
+
+            {step === 'COMPLETE' && (
+              <div className="space-y-3">
+                <div className="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+                  <div className="flex justify-between text-[8px] text-emerald-400 uppercase font-black mb-1">
+                    <span>Results</span>
+                    <Check className="w-2 h-2" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[10px]">
+                    <div className="text-white/40">Mass: <span className="text-white">{mass}g</span></div>
+                    <div className="text-white/40">ΔT: <span className="text-white">{(finalTemp! - initialTemp!).toFixed(1)}°C</span></div>
+                  </div>
+                </div>
+
+                {/* Data Analysis Workspace */}
+                <div className="bg-blue-500/10 p-3 rounded-xl border border-blue-500/20 space-y-2">
+                  <div className="text-[8px] text-blue-400 uppercase font-black">Analysis Workspace</div>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center bg-black/20 p-1.5 rounded-lg border border-white/5">
+                      <span className="text-[7px] text-white/40 uppercase">1. Energy (Q)</span>
+                      <span className="text-[9px] font-mono text-blue-300">{(waterVolume * 4.18 * (finalTemp! - initialTemp!)).toFixed(0)} J</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-black/20 p-1.5 rounded-lg border border-white/5">
+                      <span className="text-[7px] text-white/40 uppercase">2. Energy Density</span>
+                      <span className="text-[9px] font-mono text-emerald-300">{((waterVolume * 4.18 * (finalTemp! - initialTemp!)) / mass!).toFixed(0)} J/g</span>
+                    </div>
+                  </div>
+                  <div className="text-[6px] text-white/30 italic leading-tight">
+                    *Calculation: (Water Mass × 4.18 × ΔT) ÷ Food Mass
+                  </div>
+                </div>
+
+                <button onClick={handleReset} className="w-full py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-slate-700 text-white hover:bg-slate-600 transition-all flex items-center justify-center gap-2">
+                  <RotateCcw className="w-3 h-3" />
+                  New Trial
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Energy Formula Card */}
+        <div className="bg-slate-900/80 backdrop-blur-xl p-4 rounded-3xl border border-white/10 shadow-2xl">
+          <div className="text-[8px] text-white/40 uppercase font-black mb-2 tracking-widest">Energy Calculation</div>
+          <div className="font-serif italic text-white/90 text-sm mb-2">
+            Q = m × c × ΔT
+          </div>
+          <div className="space-y-1 text-[7px] text-white/50 leading-tight">
+            <p><span className="text-white/80 font-bold">Q</span> = Energy captured (Joules)</p>
+            <p><span className="text-white/80 font-bold">m</span> = Mass of water (g)</p>
+            <p><span className="text-white/80 font-bold">c</span> = Specific heat capacity (4.18 J/g°C)</p>
+            <p><span className="text-white/80 font-bold">ΔT</span> = Temperature rise (°C)</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Advanced Lab Equipment Background */}
+      <div className="absolute bottom-10 right-10 flex items-end gap-8 opacity-60">
+        {/* Modern Digital Scale - Improved Color */}
+        <div className="group relative">
+          <motion.div 
+            animate={step === 'WEIGHING' ? { y: [0, -2, 0] } : {}}
+            className="w-32 h-16 bg-gradient-to-b from-slate-200 to-slate-400 rounded-2xl border-2 border-slate-500 flex flex-col items-center justify-center p-2 shadow-2xl"
+          >
+            <div className="w-24 h-6 bg-slate-900 rounded-lg flex items-center justify-end px-2 border border-slate-700 shadow-inner">
+              <span className="text-[10px] font-mono text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]">
+                {step === 'WEIGHING' ? (mass ? mass.toFixed(3) : '---') : '0.000'}g
+              </span>
+            </div>
+            <span className="text-[7px] text-slate-800 mt-2 uppercase font-black tracking-tighter">Precision Balance</span>
+            
+            {/* Food on scale during weighing */}
+            {step === 'WEIGHING' && (
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-4 w-6 h-4 rounded-full shadow-md"
+                style={{ backgroundColor: foodColor }}
+              />
+            )}
+          </motion.div>
+        </div>
+        
+        {/* Improved Beaker */}
+        <div className="w-20 h-32 bg-white/10 border-2 border-white/30 rounded-2xl flex flex-col items-center justify-end p-0 backdrop-blur-sm overflow-hidden shadow-xl">
+          <div className="w-full h-1/2 bg-sky-500/40 border-t-2 border-sky-300/50 relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-white/20" />
+          </div>
+          <div className="absolute top-4 left-2 w-1 h-24 bg-white/10 rounded-full" />
+          <span className="absolute bottom-2 text-[7px] text-white/60 uppercase font-black">Beaker</span>
+        </div>
+      </div>
+
+      {/* Immersive Student Silhouette */}
+      <div className="absolute -bottom-10 -left-10 w-[450px] h-[450px] opacity-[0.03] pointer-events-none rotate-12">
+        <svg viewBox="0 0 100 100" className="w-full h-full fill-white">
+          <path d="M50 15c-6 0-11 5-11 11s5 11 11 11 11-5 11-11-5-11-11-11zm-25 35c-7 0-12 5-12 12v25h74v-25c0-7-5-12-12-12h-50z" />
+        </svg>
       </div>
     </div>
   );

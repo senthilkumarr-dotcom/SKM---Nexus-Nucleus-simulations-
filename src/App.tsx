@@ -8,7 +8,7 @@ import Dashboard from './components/Dashboard';
 import SimulationLayout from './components/SimulationLayout';
 import VariableIdentification from './components/VariableIdentification';
 import { LABS } from './constants';
-import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation } from './components/Simulations';
+import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation } from './components/Simulations';
 
 export default function App() {
   const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
@@ -31,12 +31,13 @@ export default function App() {
   };
 
   // 1. Register your visual components here
-  const SIMULATION_COMPONENTS: Record<string, React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>> }>> = {
+  const SIMULATION_COMPONENTS: Record<string, React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }>> = {
     'enzyme-action': EnzymeSimulation,
     'osmosis': OsmosisSimulation,
     'photosynthesis': PhotosynthesisSimulation,
     'lactose-breakdown': LactoseBreakdownSimulation,
     'transpiration': TranspirationSimulation,
+    'food-calorimetry': FoodCalorimetrySimulation,
   };
 
   // 2. Register your mathematical models here
@@ -57,11 +58,10 @@ export default function App() {
     },
     'transpiration': (vars) => {
       const { wind, humidity, temp, light } = vars;
-      // Wind increases rate, humidity decreases it
       const windEffect = 1 + (wind / 5);
-      const humidityEffect = Math.max(0.1, (100 - humidity) / 50);
-      const tempEffect = 1 + (temp - 25) / 50; // Rate increases with temp
-      const lightEffect = 1 + (light / 100); // Stomata open more in light
+      const humidityEffect = Math.max(0.05, (100 - humidity) / 50);
+      const tempEffect = 1 + (temp - 20) / 30;
+      const lightEffect = 1 + (light / 100);
       return windEffect * humidityEffect * tempEffect * lightEffect * 2; // mm/min
     },
     'lactose-breakdown': (vars) => {
@@ -70,11 +70,26 @@ export default function App() {
       const enzymeEffect = enzyme / 10;
       return tempEffect * enzymeEffect * 50;
     },
+    'food-calorimetry': (vars) => {
+      const { foodType, waterVolume } = vars;
+      // Energy per gram (approx): 
+      // 1: Peanut (28000), 2: Chip (23000), 3: Jerky (17000), 4: Biscuit (16000), 5: Crouton (15000), 6: Popcorn (12000)
+      const energyMap: Record<number, number> = {
+        1: 28000, 2: 23000, 3: 17000, 4: 16000, 5: 15000, 6: 12000
+      };
+      const energyPerGram = energyMap[foodType] || 15000;
+      const massBurnt = 0.5; // g
+      const energyReleased = energyPerGram * massBurnt;
+      const heatLossFactor = 0.25; // Matches simulation efficiency
+      const energyCaptured = energyReleased * heatLossFactor;
+      const tempRise = energyCaptured / (waterVolume * 4.18);
+      return tempRise;
+    },
   };
 
-  const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>) => {
+  const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean) => {
     const Component = SIMULATION_COMPONENTS[id];
-    if (Component) return <Component variables={variables} isPaused={isPaused} setVariables={setVariables} />;
+    if (Component) return <Component variables={variables} isPaused={isPaused} setVariables={setVariables} isFullscreen={isFullscreen} />;
 
     return (
       <div className="text-white/40 text-center p-8">

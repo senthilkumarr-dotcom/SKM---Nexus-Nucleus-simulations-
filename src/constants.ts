@@ -473,30 +473,53 @@ If the temperature increases, then the rate of oxygen uptake will increase becau
     description: 'Potometer measuring water uptake under varying conditions.',
     icon: 'Leaf',
     color: 'teal',
-    theory: `### Transpiration
-Transpiration is the loss of water vapor from the leaves of a plant through the stomata.`,
+    theory: `### Transpiration and the Potometer
+Transpiration is the process of water movement through a plant and its evaporation from aerial parts, such as leaves, stems, and flowers. It is a vital part of the water cycle and is essential for nutrient transport and cooling the plant.
+
+#### 1. The Transpiration Stream
+Water is absorbed by the roots via osmosis and travels up the **xylem** vessels. This movement is driven by the **transpiration pull**, created by the evaporation of water from the spongy mesophyll cells into the air spaces within the leaf. Due to the **cohesion** of water molecules (hydrogen bonding) and **adhesion** to xylem walls, a continuous column of water is pulled upwards.
+
+#### 2. Factors Affecting Rate
+*   **Light Intensity:** Increases the rate as stomata open wider to allow for gas exchange during photosynthesis, providing more pathways for water vapor to escape.
+*   **Temperature:** Higher temperatures increase the kinetic energy of water molecules, accelerating evaporation from the mesophyll cells.
+*   **Wind Speed:** Wind removes the "boundary layer" of humid air surrounding the leaf, maintaining a steep concentration gradient between the inside of the leaf and the outside air.
+*   **Humidity:** High humidity decreases the rate because it reduces the concentration gradient, making it harder for water vapor to diffuse out of the stomata.
+
+#### 3. Measuring with a Potometer
+A potometer measures the **rate of water uptake**, which is a close proxy for the rate of transpiration (though a small amount of water is used for photosynthesis and turgidity).`,
     method: `### 1. Research Question
-How does wind speed or humidity affect the rate of transpiration in a leafy shoot?
+How do varying environmental conditions (wind, humidity, light, and temperature) influence the rate of water uptake in a leafy shoot?
 
 ### 2. Hypothesis
-If the wind speed increases, then the rate of water uptake will increase because wind removes the water vapor boundary layer from the leaf surface, maintaining a steeper concentration gradient for diffusion.
+*   **Wind:** Increasing wind speed will increase the transpiration rate by removing the saturated boundary layer.
+*   **Humidity:** Increasing humidity will decrease the transpiration rate by reducing the water potential gradient.
+*   **Light:** Increasing light intensity will increase the rate as stomata open for photosynthesis.
 
 ### 3. Procedure
-1. Adjust environmental factors like wind speed or humidity.
-2. Measure the distance moved by the air bubble in the potometer.
+1.  **Assembly:** Ensure the potometer is assembled underwater to prevent air bubbles from entering the xylem, which would break the transpiration stream.
+2.  **Seal:** Check that all joints (especially where the shoot meets the tube) are airtight using petroleum jelly if necessary.
+3.  **Equilibration:** Allow the plant to acclimate to the laboratory conditions for 5-10 minutes before taking readings.
+4.  **Introduction of Bubble:** Use the reservoir tap to introduce a single air bubble into the capillary tube.
+5.  **Baseline:** Record the starting position of the bubble on the millimeter scale.
+6.  **Variable Adjustment:** Set your independent variable (e.g., Wind Speed to 5 m/s).
+7.  **Measurement:** Start the timer and record the distance moved by the bubble over a fixed period (e.g., 5 minutes).
+8.  **Reset:** Open the reservoir tap to push the bubble back to the start for the next trial.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Wind speed or Humidity.
-*   **Controlled Variables (CV):** Light intensity, Temperature.
+### 4. Variable Manipulation
+*   **Independent Variable (IV):** Environmental factor (Wind, Humidity, Light, or Temp).
+*   **Dependent Variable (DV):** Distance moved by the bubble (mm) per unit time (min).
+*   **Controlled Variables (CV):** Leaf surface area (use the same shoot), total water volume, and time interval.
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Reliability & Accuracy
+*   **Repeatability:** Perform three trials for each condition and calculate the mean rate.
+*   **Precision:** Use the digital readout to confirm the exact distance moved.
+*   **Anomalies:** If a bubble stops moving, check for leaks or blockages in the xylem.
 
-### 4. Safety Precautions
+### 6. Safety Precautions
 *   **Glassware:** Potometers are fragile; handle with care.
 *   **Water:** Clean up spills to prevent slipping.
 
-### 5. Suggested Improvements
+### 7. Suggested Improvements
 *   Use a digital potometer for more precise water uptake readings.`,
     independentVariables: [
       { id: 'wind', name: 'Wind Speed', min: 0, max: 10, step: 1, defaultValue: 0, unit: 'm/s' },
@@ -1269,6 +1292,146 @@ If the lactase concentration increases, then the glucose concentration produced 
       { id: 'spills', text: 'Clean up milk spills immediately to avoid slips', isCorrect: true },
       { id: 'goggles', text: 'Wear safety goggles to protect from splashes', isCorrect: true },
       { id: 'boil', text: 'Boil the milk and drink it after the experiment', isCorrect: false }
+    ]
+  },
+  {
+    id: 'food-calorimetry',
+    title: 'Food Calorimetry',
+    category: 'Biochemistry',
+    description: 'Measuring the energy content of different food samples (Carbs, Lipids, Proteins).',
+    icon: 'Flame',
+    color: 'orange',
+    theory: `### Measuring Food Energy
+Food contains chemical energy stored in the bonds of its molecules (carbohydrates, fats, proteins). We can measure this energy by burning a food sample and using the heat released to warm a known volume of water.
+
+**Energy Content by Molecule Type:**
+*   **Lipids (Fats):** ~37 kJ/g (Highest energy density)
+*   **Carbohydrates:** ~17 kJ/g
+*   **Proteins:** ~17 kJ/g
+
+**The Equation:**
+The energy captured by the water ($Q$) is calculated using:
+$$Q = m \times c \times \Delta T$$
+*   $Q$: Energy captured (Joules)
+*   $m$: Mass of water (grams, where $1\text{ml} = 1\text{g}$)
+*   $c$: Specific heat capacity of water ($4.18 \text{ J/g°C}$)
+*   $\Delta T$: Temperature change ($T_{\text{final}} - T_{\text{initial}}$)
+
+**Energy Content per Gram:**
+To compare different foods, we calculate the energy per gram:
+$$\text{Energy per gram (J/g)} = \frac{Q}{\text{Mass of food burnt (g)}}$$`,
+    method: `### 1. Research Question
+Which food sample (Peanut, Chip, Jerky, Biscuit, Crouton, Popcorn) contains the most energy per gram?
+
+### 2. Hypothesis
+If a food sample has a higher lipid (fat) content (like a peanut or potato chip), then it will release significantly more energy when burnt because fats contain more than double the energy per gram compared to carbohydrates or proteins.
+
+### 3. Procedure
+1. **Measure Water:** Pour exactly 20ml of water into the test tube.
+2. **Initial Temp:** Record the starting temperature ($T_1$) of the water.
+3. **Weigh Food:** Select a food sample and record its initial mass.
+4. **Burn:** Light the food sample and hold it directly under the test tube.
+5. **Final Temp:** Once the food has finished burning, record the highest temperature reached ($T_2$).
+6. **Calculate:** Use the formula to find the energy content.
+
+### 2. Variable Manipulation
+*   **Independent Variable (IV):** Type of food sample (6 different sources).
+*   **Controlled Variables (CV):** Volume of water (20ml), distance of flame from tube, same type of calorimeter setup.
+
+### 3. Reliability & Accuracy
+*   **Heat Loss:** A significant amount of heat is lost to the surroundings. Using a draft shield can improve accuracy.
+*   **Complete Combustion:** Ensure the food is completely burnt to ash.
+
+### 4. Safety Precautions
+*   **Goggles:** Mandatory to protect from "spitting" hot oil.
+*   **Allergies:** Be aware of nut allergies in the lab.
+*   **Fire:** Keep the setup on a heat-resistant mat.
+
+### 5. Suggested Improvements
+*   Use a **Bomb Calorimeter** for much more accurate results as it minimizes heat loss and ensures complete combustion.`,
+    independentVariables: [
+      { id: 'foodType', name: 'Food Sample', min: 1, max: 6, step: 1, defaultValue: 1, unit: '' },
+      { id: 'waterVolume', name: 'Water Volume', min: 10, max: 50, step: 5, defaultValue: 20, unit: 'ml' }
+    ],
+    dependentVariable: { name: 'tempRise', unit: '°C', label: 'Temperature Rise' },
+    controlledVariables: ['Distance from Flame', 'Initial Temperature', 'Draft Conditions'],
+    safetyOptions: [
+      { id: 'goggles', text: 'Wear safety goggles at all times', isCorrect: true },
+      { id: 'mat', text: 'Place the apparatus on a heat-resistant mat', isCorrect: true },
+      { id: 'hair', text: 'Tie back long hair near the flame', isCorrect: true },
+      { id: 'touch_flame', text: 'Touch the burning food to see if it is hot', isCorrect: false }
+    ],
+    quiz: [
+      {
+        id: 'cal-q1',
+        question: 'What is the primary energy transformation occurring in this experiment?',
+        options: ['Kinetic to Potential', 'Chemical to Thermal', 'Thermal to Chemical', 'Light to Chemical'],
+        correctAnswer: 1,
+        explanation: 'Chemical energy stored in the food is converted into thermal (heat) energy during combustion.'
+      },
+      {
+        id: 'cal-q2',
+        question: 'What does "c" represent in the formula Q = mcΔT?',
+        options: ['Speed of light', 'Caloric value', 'Specific heat capacity', 'Concentration'],
+        correctAnswer: 2,
+        explanation: 'c is the specific heat capacity, which for water is 4.18 J/g°C.'
+      },
+      {
+        id: 'cal-q3',
+        question: 'Why is the calculated energy value usually much lower than the actual value on the food packaging?',
+        options: ['The food is old', 'Heat is lost to the surroundings', 'The thermometer is broken', 'Water has no energy'],
+        correctAnswer: 1,
+        explanation: 'A lot of heat energy escapes into the air or is absorbed by the glass tube rather than the water.'
+      },
+      {
+        id: 'cal-q4',
+        question: 'Which food group generally contains the most energy per gram?',
+        options: ['Carbohydrates', 'Proteins', 'Fats (Lipids)', 'Vitamins'],
+        correctAnswer: 2,
+        explanation: 'Fats contain more than double the energy per gram compared to carbohydrates or proteins.'
+      },
+      {
+        id: 'cal-q5',
+        question: 'What is the independent variable in this investigation?',
+        options: ['Temperature rise', 'Volume of water', 'Type of food sample', 'Mass of water'],
+        correctAnswer: 2,
+        explanation: 'The independent variable is the factor you are testing, which is the type of food.'
+      },
+      {
+        id: 'cal-q6',
+        question: 'What is the dependent variable in this investigation?',
+        options: ['Type of food', 'Temperature rise of the water', 'Volume of water', 'Specific heat capacity'],
+        correctAnswer: 1,
+        explanation: 'The dependent variable is what you measure (the temperature change) as a result of burning the food.'
+      },
+      {
+        id: 'cal-q7',
+        question: 'If 20g of water rises by 10°C, how much energy was captured? (c = 4.18)',
+        options: ['83.6 J', '836 J', '200 J', '41.8 J'],
+        correctAnswer: 1,
+        explanation: 'Q = m * c * ΔT = 20 * 4.18 * 10 = 836 Joules.'
+      },
+      {
+        id: 'cal-q8',
+        question: 'How can the accuracy of this experiment be improved?',
+        options: ['Using more water', 'Using a draft shield', 'Burning the food faster', 'Using a smaller test tube'],
+        correctAnswer: 1,
+        explanation: 'A draft shield reduces heat loss to the surroundings, making the measurement more accurate.'
+      },
+      {
+        id: 'cal-q9',
+        question: 'Why is it important to stir the water before taking the final temperature reading?',
+        options: ['To cool it down', 'To ensure the heat is distributed evenly', 'To make it evaporate', 'To speed up the reaction'],
+        correctAnswer: 1,
+        explanation: 'Stirring ensures that the thermometer measures the average temperature of all the water.'
+      },
+      {
+        id: 'cal-q10',
+        question: 'What is a "Bomb Calorimeter"?',
+        options: ['An explosive device', 'A highly accurate device for measuring energy content', 'A type of thermometer', 'A food sample'],
+        correctAnswer: 1,
+        explanation: 'A bomb calorimeter is a specialized piece of equipment that ensures complete combustion and minimal heat loss.'
+      }
     ]
   }
 ];
