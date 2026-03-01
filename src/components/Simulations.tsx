@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../utils';
-import { Plus, Scale, Weight, Waves, Thermometer, Lightbulb, FlaskConical, Timer, Check, RotateCcw, Play, Activity, Settings2, Flame } from 'lucide-react';
+import { Plus, Scale, Weight, Waves, Thermometer, Lightbulb, FlaskConical, Timer, Check, RotateCcw, Play, Activity, Settings2, Flame, Palette, Zap } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -1277,6 +1277,14 @@ export const TranspirationSimulation = ({ variables, isPaused = false, setVariab
   const capillaryRef = useRef<HTMLDivElement>(null);
   const [capillaryWidth, setCapillaryWidth] = useState(450);
 
+  // Draggable Positions
+  const [fanPos, setFanPos] = useState({ x: -450, y: -150 });
+  const [potometerPos, setPotometerPos] = useState({ x: 0, y: 0 });
+  const [lampPos, setLampPos] = useState({ x: 450, y: -150 });
+  const [controlsPos, setControlsPos] = useState({ x: -250, y: 350 });
+  const [logPos, setLogPos] = useState({ x: 250, y: 350 });
+  const [meterPos, setMeterPos] = useState({ x: 0, y: 350 });
+
   useEffect(() => {
     if (!capillaryRef.current) return;
     const observer = new ResizeObserver((entries) => {
@@ -1404,104 +1412,152 @@ export const TranspirationSimulation = ({ variables, isPaused = false, setVariab
       </div>
 
       <div className={cn(
-        "relative w-full h-full flex flex-col items-center justify-between z-20 transition-all duration-500",
-        isFullscreen ? "py-16 px-12" : "py-12 px-8"
+        "relative w-full h-full flex flex-col items-center justify-center z-20 transition-all duration-500",
+        isFullscreen ? "p-10" : "p-6"
       )}>
-        {/* Top Section: Main Apparatus */}
-        <div className={cn(
-          "flex items-end justify-between w-full h-[45%] min-h-[400px] transition-all duration-500",
-          isFullscreen ? "max-w-none px-20" : "max-w-7xl"
-        )}>
+        {/* Draggable Workspace */}
+        <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
           
-          {/* 1. Realistic Fan (Far Left) */}
-          <div className="relative flex flex-col items-center scale-100 lg:scale-110 origin-bottom-left ml-8">
-            <div className="w-48 h-48 lg:w-56 lg:h-56 bg-[#111] rounded-full border-4 border-[#222] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex items-center justify-center relative overflow-hidden">
-              {/* Fan Grille */}
+          {/* 1. Realistic Fan */}
+          <motion.div 
+            drag
+            dragMomentum={false}
+            onDrag={(e, info) => setFanPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+            animate={{ x: fanPos.x, y: fanPos.y }}
+            className="absolute z-30 cursor-grab active:cursor-grabbing flex flex-col items-center scale-75 lg:scale-85 origin-bottom"
+          >
+            <div className="w-40 h-40 lg:w-48 lg:h-48 bg-[#111] rounded-full border-4 border-[#222] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex items-center justify-center relative overflow-hidden">
               <div className="absolute inset-0 z-10 border-[14px] border-[#111] rounded-full opacity-60" />
               <div className="absolute inset-0 z-10 grid grid-cols-12 gap-0 opacity-20">
                 {Array.from({ length: 12 }).map((_, i) => (
                   <div key={i} className="w-px h-full bg-white" />
                 ))}
               </div>
-              {/* Blades */}
               <motion.div 
                 animate={{ rotate: wind * 360 }}
                 transition={{ duration: wind > 0 ? 0.4 / (wind/2) : 0, repeat: Infinity, ease: "linear" }}
-                className="relative w-40 h-40 lg:w-48 lg:h-48 flex items-center justify-center"
+                className="relative w-32 h-32 lg:w-40 lg:h-40 flex items-center justify-center"
               >
                 {[0, 1, 2].map(i => (
-                  <div key={i} className="absolute w-12 h-40 lg:w-14 lg:h-48 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-[50%_50%_10%_10%] opacity-95 shadow-inner" style={{ transform: `rotate(${i * 120}deg)` }} />
+                  <div key={i} className="absolute w-10 h-32 lg:w-12 lg:h-40 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-[50%_50%_10%_10%] opacity-95 shadow-inner" style={{ transform: `rotate(${i * 120}deg)` }} />
                 ))}
               </motion.div>
-              <div className="absolute w-10 h-10 lg:w-12 lg:h-12 bg-[#222] rounded-full border-2 border-[#333] z-20 shadow-lg" />
+              <div className="absolute w-8 h-8 lg:w-10 lg:h-10 bg-[#222] rounded-full border-2 border-[#333] z-20 shadow-lg" />
             </div>
-            {/* Fan Base */}
             <div className="w-32 h-6 bg-[#111] rounded-t-2xl mt-[-4px]" />
             <div className="w-44 h-3 bg-[#0a0a0a] rounded-full shadow-xl" />
-          </div>
+          </motion.div>
 
-          {/* 2. Potometer Apparatus (Center) */}
-          <div className="relative flex flex-col items-center scale-110 lg:scale-125 origin-bottom">
-            {/* Plant in Tube */}
-            <div className="relative z-30 mb-[-10px]">
-              <div className="w-2.5 h-40 lg:h-48 bg-gradient-to-r from-[#2d1f16] to-[#3d2b1f] rounded-full relative shadow-lg">
-                {/* 3D Realistic Leaves */}
-                {[0, 1, 2, 3, 4, 5, 6].map(i => (
-                  <motion.div
-                    key={i}
-                    animate={{ 
-                      rotate: i % 2 === 0 ? [10, 13, 10] : [-10, -13, -10],
-                      skewX: wind > 5 ? (i % 2 === 0 ? 8 : -8) : 0,
-                      scale: [1, 1.02, 1]
-                    }}
-                    transition={{ duration: 4 + Math.random(), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-                    className={cn(
-                      "absolute w-24 h-14 lg:w-28 lg:h-18 origin-bottom rounded-[100%_10%_100%_10%] shadow-[4px_8px_15px_rgba(0,0,0,0.4)] overflow-hidden",
-                      i % 2 === 0 ? "left-1.5 -rotate-[15deg]" : "right-1.5 rotate-[15deg] scale-x-[-1]"
-                    )}
-                    style={{ 
-                      top: i * 22,
-                      background: 'linear-gradient(135deg, #065f46 0%, #064e3b 50%, #022c22 100%)',
-                      boxShadow: 'inset -2px -2px 10px rgba(0,0,0,0.5), inset 2px 2px 10px rgba(255,255,255,0.1)'
-                    }}
-                  >
-                    {/* Leaf Veins & Texture */}
-                    <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/leaf.png')] mix-blend-overlay" />
-                    <div className="absolute top-1/2 left-0 w-full h-[2px] bg-emerald-400/20 blur-[0.5px]" />
-                    {/* Leaf Highlight */}
-                    <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent" />
-                  </motion.div>
-                ))}
+          {/* 2. Realistic Potometer Setup (Based on Image) */}
+          <motion.div 
+            drag
+            dragMomentum={false}
+            onDrag={(e, info) => setPotometerPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+            animate={{ x: potometerPos.x, y: potometerPos.y }}
+            className="absolute z-20 cursor-grab active:cursor-grabbing flex flex-col items-center scale-90 lg:scale-110"
+          >
+            <div className="relative w-[600px] h-[400px]">
+              {/* Left: Air Tight Container with Plant */}
+              <div className="absolute left-0 bottom-20 flex flex-col items-center">
+                <div className="relative z-30 mb-[-10px]">
+                  <div className="w-2 h-24 lg:h-32 bg-gradient-to-r from-[#2d1f16] to-[#3d2b1f] rounded-full relative shadow-lg">
+                    {[0, 1, 2, 3, 4, 5, 6].map(i => (
+                      <motion.div
+                        key={i}
+                        animate={{ 
+                          rotate: i % 2 === 0 ? [10, 13, 10] : [-10, -13, -10],
+                          skewX: wind > 5 ? (i % 2 === 0 ? 8 : -8) : 0,
+                          scale: [1, 1.02, 1]
+                        }}
+                        transition={{ duration: 4 + Math.random(), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                        className={cn(
+                          "absolute w-16 h-10 lg:w-20 lg:h-12 origin-bottom rounded-[100%_10%_100%_10%] shadow-[4px_8px_15px_rgba(0,0,0,0.4)] overflow-hidden",
+                          i % 2 === 0 ? "left-1 -rotate-[15deg]" : "right-1 rotate-[15deg] scale-x-[-1]"
+                        )}
+                        style={{ 
+                          top: i * 14,
+                          background: 'linear-gradient(135deg, #065f46 0%, #064e3b 50%, #022c22 100%)',
+                          boxShadow: 'inset -2px -2px 10px rgba(0,0,0,0.5), inset 2px 2px 10px rgba(255,255,255,0.1)'
+                        }}
+                      >
+                        <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/leaf.png')] mix-blend-overlay" />
+                        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-emerald-400/20 blur-[0.5px]" />
+                        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent" />
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+                {/* Air Tight Container Cup */}
+                <div className="w-24 h-28 bg-blue-500/20 border-2 border-white/30 rounded-b-[2rem] rounded-t-lg relative backdrop-blur-sm shadow-inner flex items-center justify-center">
+                  <div className="absolute inset-0 bg-blue-400/10" />
+                  <div className="w-20 h-4 bg-[#3d2b1f] rounded-full absolute top-0 border border-white/10" />
+                  <span className="absolute -bottom-8 text-[8px] font-black text-white/40 uppercase tracking-widest text-center w-32">Air Tight Container</span>
+                </div>
               </div>
-              {/* Rubber Bung */}
-              <div className="w-12 h-12 lg:h-14 bg-gradient-to-b from-[#1a1a1a] to-[#050505] rounded-b-xl border-x-2 border-b-2 border-[#222] relative z-40 flex items-center justify-center shadow-lg">
-                <div className="w-10 h-2 bg-white/5 rounded-full" />
+
+              {/* Center: Reservoir with Tap */}
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-0 flex flex-col items-center">
+                {/* Reservoir Bottle */}
+                <div className="w-20 h-32 bg-blue-500/20 border-2 border-white/30 rounded-t-full rounded-b-lg relative backdrop-blur-sm shadow-inner mb-[-10px]">
+                  <div className="absolute bottom-0 w-full h-20 bg-blue-400/40 rounded-b-lg" />
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/40 uppercase tracking-widest">Reservoir</span>
+                </div>
+                {/* Funnel/Tap Junction */}
+                <div className="w-16 h-16 bg-gradient-to-b from-[#222] to-[#111] rounded-full border border-white/10 flex items-center justify-center relative z-10 shadow-xl">
+                  <div className="w-4 h-4 bg-emerald-500/20 rounded-full border border-emerald-500/50 flex items-center justify-center">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full" />
+                  </div>
+                  {/* Tap Handle */}
+                  <div className="absolute -right-4 w-8 h-2 bg-[#333] rounded-full border border-white/10" />
+                </div>
+                {/* Stand */}
+                <div className="w-32 h-40 bg-white/5 border-x border-white/10 relative flex flex-col items-center">
+                  <div className="w-2 h-full bg-gradient-to-b from-[#222] to-[#111]" />
+                  <div className="w-40 h-8 bg-[#3d2b1f] rounded-xl border-t-2 border-white/10 shadow-2xl" />
+                </div>
+              </div>
+
+              {/* Right: Beaker with Water */}
+              <div className="absolute right-0 bottom-0 flex flex-col items-center">
+                <div className="w-32 h-40 bg-white/5 border-x border-b border-white/20 rounded-b-lg relative backdrop-blur-md shadow-2xl">
+                  <div className="absolute bottom-0 w-full h-28 bg-blue-500/30 rounded-b-lg border-t border-white/20" />
+                  {/* Capillary End */}
+                  <div className="absolute left-1/2 -translate-x-1/2 top-0 w-2 h-32 bg-white/10 border-x border-white/20" />
+                  <div className="w-36 h-4 bg-[#3d2b1f] rounded-full absolute top-[-2px] border border-white/10" />
+                </div>
+              </div>
+
+              {/* Connecting Capillary Tube */}
+              <div className="absolute left-12 right-16 bottom-[140px] h-3 bg-white/10 border-y border-white/20 backdrop-blur-sm shadow-inner flex items-center">
+                <div className="absolute inset-0 bg-blue-400/10" />
+                {/* Air Bubble */}
+                <motion.div 
+                  animate={{ x: 450 - (bubblePos / 450) * 450 }}
+                  transition={{ type: "tween", ease: "linear" }}
+                  className="w-12 h-4 bg-white/90 rounded-full border border-white shadow-[0_0_20px_rgba(255,255,255,0.8)] z-10 relative"
+                >
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/60 uppercase tracking-widest whitespace-nowrap">Air Bubble</span>
+                </motion.div>
               </div>
             </div>
+          </motion.div>
 
-            {/* Glass T-Junction & Base */}
-            <div className="relative w-64 lg:w-72 h-24 lg:h-28 flex items-center justify-center">
-              {/* Heavy Metal Base */}
-              <div className="absolute bottom-0 w-80 lg:w-96 h-12 lg:h-14 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-xl border-t border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.6)]" />
-              {/* Glass Connection */}
-              <div className="w-48 lg:w-56 h-6 lg:h-8 bg-white/10 border border-white/20 rounded-full relative overflow-hidden backdrop-blur-md shadow-inner">
-                <div className="absolute inset-0 bg-blue-500/30" />
-                {/* T-Junction Block */}
-                <div className="absolute left-1/2 -translate-x-1/2 top-[-12px] w-12 lg:w-14 h-20 lg:h-24 bg-gradient-to-b from-[#111] to-[#050505] rounded-lg border border-white/10 z-10 shadow-xl" />
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Desk Lamp (Far Right) */}
-          <div className="relative flex flex-col items-center scale-100 lg:scale-110 origin-bottom-right mr-8">
-            <div className="relative w-40 lg:w-48 h-64 lg:h-72 flex flex-col items-center">
+          {/* 3. Desk Lamp */}
+          <motion.div 
+            drag
+            dragMomentum={false}
+            onDrag={(e, info) => setLampPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+            animate={{ x: lampPos.x, y: lampPos.y }}
+            className="absolute z-30 cursor-grab active:cursor-grabbing flex flex-col items-center scale-75 lg:scale-85 origin-bottom"
+          >
+            <div className="relative w-32 lg:w-40 h-56 lg:h-64 flex flex-col items-center">
               {/* Lamp Head */}
               <motion.div 
                 animate={{ rotate: -25 }}
-                className="w-28 h-28 lg:w-36 lg:h-36 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] rounded-[100%_0_0_100%] relative z-20 border-r-8 border-yellow-400/20 shadow-2xl"
+                className="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] rounded-[100%_0_0_100%] relative z-20 border-r-8 border-yellow-400/20 shadow-2xl"
               >
                 {/* Light Bulb & Glow */}
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 lg:w-18 lg:h-18 bg-white rounded-full blur-2xl opacity-90" />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 lg:w-16 lg:h-16 bg-white rounded-full blur-2xl opacity-90" />
                 <motion.div 
                   animate={{ 
                     opacity: light / 100,
@@ -1515,88 +1571,67 @@ export const TranspirationSimulation = ({ variables, isPaused = false, setVariab
               {/* Lamp Base */}
               <div className="w-32 lg:w-40 h-6 lg:h-8 bg-gradient-to-b from-[#111] to-[#050505] rounded-t-3xl shadow-[0_10px_40px_rgba(0,0,0,0.8)]" />
             </div>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* Middle Section: Measurement Apparatus */}
-        <div className="relative w-full h-[20%] min-h-[180px] flex items-center justify-center gap-12 lg:gap-20">
-          
-          {/* Left: Syringe & Beaker */}
-          <div className="flex items-end gap-6 scale-100 lg:scale-110">
-            <div className="relative w-16 lg:w-20 h-20 lg:h-24 bg-white/5 border-x border-b border-white/20 rounded-b-2xl backdrop-blur-md shadow-2xl">
-              <div className="absolute bottom-0 w-full h-14 lg:h-18 bg-blue-500/40 rounded-b-2xl" />
-              {/* Syringe */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-6 lg:w-8 h-32 lg:h-40 bg-white/10 border border-white/30 rounded-t-xl flex flex-col items-center shadow-xl">
-                <div className="w-1.5 h-20 lg:h-28 bg-white/20 mt-3 rounded-full" />
-                <button 
-                  onClick={handleResetBubble}
-                  className="w-9 h-9 lg:w-11 lg:h-11 bg-slate-800 rounded-full border-2 border-white/20 mt-[-10px] flex items-center justify-center hover:bg-slate-700 hover:border-white/40 transition-all active:scale-90 group shadow-2xl"
-                >
-                  <RotateCcw className="w-4 h-4 lg:w-5 lg:h-5 text-white/60 group-hover:text-white" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Center: Capillary Tube & Ruler */}
-          <div className="flex flex-col items-center gap-4 scale-100 lg:scale-110 flex-1 max-w-4xl">
-            <div 
-              ref={capillaryRef}
-              className="relative w-full h-8 lg:h-10 bg-white/5 border-2 border-white/20 rounded-full flex items-center px-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] backdrop-blur-md"
-            >
-              <div className="absolute inset-0 bg-blue-500/20 rounded-full" />
-              {/* Bubble */}
-              <motion.div 
-                animate={{ x: (bubblePos / 450) * capillaryWidth }}
-                transition={{ type: "tween", ease: "linear" }}
-                className="w-10 h-5 lg:w-12 lg:h-6 bg-white/90 rounded-full border border-white shadow-[0_0_20px_rgba(255,255,255,0.8)] z-10"
-              />
-            </div>
-            {/* Wooden Ruler Aesthetic */}
-            <div className="w-full h-10 lg:h-12 bg-[#c19a6b] border-2 border-[#5d2e0c] rounded-lg flex items-end px-6 pb-1.5 relative overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]" />
-              <div className="absolute top-0 left-0 w-full h-1 bg-white/10" />
-              {Array.from({ length: 51 }).map((_, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center">
-                  <div className={cn("w-[1.5px] bg-[#5d2e0c]", i % 10 === 0 ? "h-5 lg:h-6" : i % 5 === 0 ? "h-3 lg:h-4" : "h-1.5 lg:h-2")} />
-                  {i % 10 === 0 && <span className="text-[8px] lg:text-[10px] font-black text-[#3d1f08] mt-1">{i}</span>}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Vertical Tube & Digital Thermometer */}
-          <div className="flex items-end gap-8 lg:gap-12 scale-100 lg:scale-110">
-            {/* Vertical Graduated Tube */}
-            <div className="relative w-12 lg:w-14 h-44 lg:h-56 bg-white/5 border-x-2 border-white/20 rounded-t-2xl backdrop-blur-md flex flex-col justify-between py-6 shadow-2xl">
-              <div className="absolute bottom-0 w-full h-28 lg:h-36 bg-blue-500/40 rounded-t-sm" />
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 px-2">
-                  <div className="w-3 lg:w-4 h-px bg-white/40" />
-                  <span className="text-[8px] lg:text-[10px] text-white/40 font-mono font-bold">{10 - i}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Digital Thermometer */}
-            <div className="bg-gradient-to-b from-[#f0f0f0] to-[#d0d0d0] p-3 lg:p-4 rounded-2xl border-4 border-[#aaa] shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col items-center min-w-[130px] lg:min-w-[160px]">
-              <div className="text-[8px] lg:text-[10px] text-slate-500 font-black uppercase mb-2 tracking-widest">Temperature</div>
-              <div className="bg-[#b8c9b0] px-3 lg:px-5 py-2 lg:py-3 rounded-lg border-2 border-black/15 w-full text-center shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)]">
+          {/* 4. Digital Uptake Meter */}
+          <motion.div
+            drag
+            dragMomentum={false}
+            onDrag={(e, info) => setMeterPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+            animate={{ x: meterPos.x, y: meterPos.y }}
+            className="absolute z-40 cursor-grab active:cursor-grabbing bg-gradient-to-b from-[#f0f0f0] to-[#d0d0d0] p-4 lg:p-6 rounded-[2rem] border-4 border-[#aaa] shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col items-center min-w-[220px] lg:min-w-[280px]"
+          >
+            <div className="text-[10px] lg:text-[12px] text-slate-500 font-black uppercase mb-4 tracking-[0.2em]">Transpiration Rate Meter</div>
+            <div className="bg-[#b8c9b0] p-4 lg:p-6 rounded-xl border-2 border-black/15 w-full text-center shadow-[inset_0_4px_15px_rgba(0,0,0,0.2)] space-y-4">
+              <div>
+                <span className="text-[8px] lg:text-[10px] text-slate-600 font-bold uppercase block mb-1">Transpiration Rate</span>
                 <span className="text-2xl lg:text-4xl font-mono font-black text-slate-800 tracking-tighter">
-                  {temp.toFixed(1)}<span className="text-lg lg:text-2xl ml-1">°C</span>
+                  {step === 'RUNNING' ? rate.toFixed(2) : '0.00'}<span className="text-sm lg:text-lg ml-1">mm/min</span>
                 </span>
               </div>
+              <div className="h-px bg-black/5" />
+              <div>
+                <span className="text-[8px] lg:text-[10px] text-slate-600 font-bold uppercase block mb-1">Total Distance (mm)</span>
+                <span className="text-2xl lg:text-4xl font-mono font-black text-blue-700 tracking-tighter">
+                  {(bubblePos / 10).toFixed(2)}<span className="text-sm lg:text-lg ml-1">mm</span>
+                </span>
+              </div>
+
+              {/* Explicit Calculation UI */}
+              <div className="pt-3 border-t border-black/10">
+                <span className="text-[7px] lg:text-[9px] text-slate-500 font-black uppercase block mb-2 tracking-widest">Calculation: d / t</span>
+                <div className="flex items-center justify-center gap-1.5 font-mono text-[10px] lg:text-[12px] text-slate-700 bg-white/30 py-2 rounded-lg border border-black/5">
+                  <span className="font-bold">{(bubblePos / 10).toFixed(1)}</span>
+                  <span className="opacity-40">/</span>
+                  <span className="font-bold">{(elapsedTime / 60).toFixed(1)}</span>
+                  <span className="opacity-40">=</span>
+                  <span className="text-blue-600 font-black">
+                    {elapsedTime > 0 ? ((bubblePos / 10) / (elapsedTime / 60)).toFixed(2) : '0.00'}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
+            <div className="mt-4 flex gap-2">
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-slate-300" />
+              <div className="w-2 h-2 rounded-full bg-slate-300" />
+            </div>
+          </motion.div>
         </div>
 
         {/* Bottom Section: Control & Data Panels */}
         <div className={cn(
-          "flex gap-8 lg:gap-12 w-full justify-center scale-100 lg:scale-110 mb-4 transition-all duration-500",
+          "absolute bottom-10 flex gap-8 lg:gap-12 w-full justify-center scale-85 lg:scale-95 mb-4 transition-all duration-500",
           isFullscreen ? "max-w-none px-20" : "max-w-6xl"
         )}>
           {/* Experiment Control */}
-          <div className="bg-black/70 backdrop-blur-2xl p-6 lg:p-8 rounded-[3rem] border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] min-w-[300px] lg:min-w-[340px]">
+          <motion.div 
+            drag
+            dragMomentum={false}
+            onDrag={(e, info) => setControlsPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+            animate={{ x: controlsPos.x, y: controlsPos.y }}
+            className="cursor-move bg-black/70 backdrop-blur-2xl p-6 lg:p-8 rounded-[3rem] border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] min-w-[300px] lg:min-w-[340px]"
+          >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <Timer className="w-4 h-4 lg:w-5 lg:h-5 text-blue-400" />
@@ -1628,6 +1663,7 @@ export const TranspirationSimulation = ({ variables, isPaused = false, setVariab
             <div className="grid grid-cols-2 gap-3 lg:gap-4">
               <button 
                 onClick={() => setStep(step === 'RUNNING' ? 'IDLE' : 'RUNNING')}
+                onPointerDown={(e) => e.stopPropagation()}
                 className={cn(
                   "py-4 lg:py-5 rounded-2xl lg:rounded-3xl font-black text-[10px] lg:text-[12px] uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-2xl",
                   step === 'RUNNING' ? "bg-red-600 text-white shadow-red-900/40" : "bg-emerald-600 text-white shadow-emerald-900/40"
@@ -1639,15 +1675,22 @@ export const TranspirationSimulation = ({ variables, isPaused = false, setVariab
               <button 
                 disabled={step !== 'RUNNING'}
                 onClick={handleRecordReading}
+                onPointerDown={(e) => e.stopPropagation()}
                 className="py-4 lg:py-5 bg-white/10 hover:bg-white/20 disabled:opacity-30 rounded-2xl lg:rounded-3xl font-black text-[10px] lg:text-[12px] text-white uppercase tracking-[0.2em] transition-all active:scale-95 border border-white/10 shadow-xl"
               >
                 Record
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Readings Log */}
-          <div className="bg-black/50 backdrop-blur-2xl p-6 lg:p-8 rounded-[3rem] border border-white/10 min-w-[200px] lg:min-w-[240px] max-h-[220px] lg:max-h-[280px] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+          <motion.div 
+            drag
+            dragMomentum={false}
+            onDrag={(e, info) => setLogPos(prev => ({ x: prev.x + info.delta.x, y: prev.y + info.delta.y }))}
+            animate={{ x: logPos.x, y: logPos.y }}
+            className="cursor-move bg-black/50 backdrop-blur-2xl p-6 lg:p-8 rounded-[3rem] border border-white/10 min-w-[200px] lg:min-w-[240px] max-h-[220px] lg:max-h-[280px] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)]"
+          >
             <span className="text-[10px] lg:text-[12px] text-white/40 uppercase font-black block mb-4 tracking-[0.2em]">Data Log</span>
             <div className="flex-1 overflow-y-auto space-y-2 lg:space-y-3 pr-3 custom-scrollbar">
               {readings.length === 0 ? (
@@ -1661,7 +1704,7 @@ export const TranspirationSimulation = ({ variables, isPaused = false, setVariab
                 ))
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -2209,3 +2252,362 @@ export const FoodCalorimetrySimulation: React.FC<{ variables: Record<string, num
     </div>
   );
 };
+
+export const LeafChromatographySimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = ({ variables, isPaused, isFullscreen }) => {
+  const { leafType, solvent } = variables;
+  const [progress, setProgress] = useState(0);
+  const [internalIsPaused, setInternalIsPaused] = useState(false);
+  const [step, setStep] = useState('IDLE');
+  const [isCrushed, setIsCrushed] = useState(false);
+  const [isSpotted, setIsSpotted] = useState(false);
+  const [isPlaced, setIsPlaced] = useState(false);
+
+  const getLeafData = (type: number) => {
+    switch (type) {
+      case 1: return { 
+        name: 'Spinach', 
+        color: '#166534',
+        pigments: [
+          { name: 'Carotene', color: '#f97316', rf: 0.95, label: 'Orange' },
+          { name: 'Xanthophyll', color: '#eab308', rf: 0.75, label: 'Yellow' },
+          { name: 'Chlorophyll a', color: '#15803d', rf: 0.45, label: 'Blue-Green' },
+          { name: 'Chlorophyll b', color: '#4ade80', rf: 0.25, label: 'Yellow-Green' }
+        ]
+      };
+      case 2: return { 
+        name: 'Coleus (Purple)', 
+        color: '#701a75',
+        pigments: [
+          { name: 'Anthocyanin', color: '#a21caf', rf: 0.85, label: 'Purple' },
+          { name: 'Carotene', color: '#f97316', rf: 0.92, label: 'Orange' },
+          { name: 'Chlorophyll a', color: '#15803d', rf: 0.40, label: 'Green' }
+        ]
+      };
+      case 3: return { 
+        name: 'Autumn Maple', 
+        color: '#991b1b',
+        pigments: [
+          { name: 'Anthocyanin', color: '#dc2626', rf: 0.88, label: 'Red' },
+          { name: 'Carotene', color: '#fb923c', rf: 0.94, label: 'Orange' },
+          { name: 'Xanthophyll', color: '#facc15', rf: 0.70, label: 'Yellow' }
+        ]
+      };
+      default: return { name: 'Unknown', color: '#ffffff', pigments: [] };
+    }
+  };
+
+  const leafData = getLeafData(leafType);
+
+  useEffect(() => {
+    if (isPlaced && !isPaused && !internalIsPaused && progress < 100) {
+      const timer = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            setStep('COMPLETE');
+            return 100;
+          }
+          return prev + 0.2;
+        });
+      }, 50);
+      return () => clearInterval(timer);
+    }
+  }, [isPlaced, isPaused, internalIsPaused, progress]);
+
+  const handleCrush = () => {
+    setStep('CRUSHING');
+    setTimeout(() => {
+      setIsCrushed(true);
+      setStep('SPOTTING');
+    }, 1500);
+  };
+
+  const handleSpot = () => {
+    setIsSpotted(true);
+    setStep('READY');
+  };
+
+  const handlePlace = () => {
+    setIsPlaced(true);
+    setStep('RUNNING');
+  };
+
+  const handleReset = () => {
+    setStep('IDLE');
+    setProgress(0);
+    setIsCrushed(false);
+    setIsSpotted(false);
+    setIsPlaced(false);
+  };
+
+  return (
+    <div className="relative w-full h-full bg-slate-950 overflow-hidden rounded-3xl flex flex-col">
+      {/* Lab Bench Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:30px_30px] opacity-20" />
+      
+      <div className="relative flex-1 flex items-center justify-center gap-12 p-8">
+        {/* Left Side: Extraction Area */}
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative w-48 h-48">
+            {/* Mortar and Pestle */}
+            <div className="absolute inset-0 bg-slate-800 rounded-full border-b-8 border-slate-900 shadow-2xl flex items-center justify-center">
+              <div className="w-40 h-40 bg-slate-700 rounded-full border-inner shadow-inner flex items-center justify-center overflow-hidden">
+                {isCrushed ? (
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-32 h-32 rounded-full blur-2xl"
+                    style={{ backgroundColor: leafData.color }}
+                  />
+                ) : (
+                  <div className="flex flex-wrap gap-2 p-6 justify-center">
+                    {[...Array(12)].map((_, i) => (
+                      <div key={i} className="w-5 h-5 rounded-full" style={{ backgroundColor: leafData.color }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            {step === 'CRUSHING' && (
+              <motion.div 
+                animate={{ 
+                  rotate: [0, 20, -20, 0],
+                  x: [0, 15, -15, 0],
+                  y: [0, -10, 10, 0]
+                }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+                className="absolute -top-12 left-1/2 -translate-x-1/2 w-10 h-40 bg-slate-500 rounded-full border-b-4 border-slate-600 shadow-2xl z-10"
+              />
+            )}
+          </div>
+          <div className="text-center">
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40 block mb-1">Extraction Area</span>
+            <span className="text-xs font-bold text-white/80">{leafData.name}</span>
+          </div>
+        </div>
+
+        {/* Center: Chromatography Setup */}
+        <div className="relative w-80 h-[550px] flex items-center justify-center">
+          {/* Beaker */}
+          <div className="absolute bottom-10 w-64 h-80 bg-white/5 backdrop-blur-md rounded-b-[3rem] border-2 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
+            {/* Solvent */}
+            <div className="absolute bottom-0 w-full h-20 bg-sky-500/10 border-t border-sky-400/20">
+              <div className="absolute top-0 w-full h-3 bg-sky-400/20 blur-[2px]" />
+            </div>
+            
+            {/* Paper Strip */}
+            <motion.div 
+              animate={isPlaced ? { y: 60 } : isSpotted ? { y: -120 } : { y: -250 }}
+              className="absolute left-1/2 -translate-x-1/2 w-32 h-[450px] bg-slate-50 shadow-2xl border border-white/10 flex flex-col items-center"
+            >
+              {/* Pencil Line */}
+              <div className="absolute bottom-24 w-full h-[1px] bg-slate-300" />
+              
+              {/* Pigment Spot */}
+              {isSpotted && (
+                <motion.div 
+                  className="absolute bottom-[22px] w-6 h-6 rounded-full blur-[3px]"
+                  style={{ backgroundColor: leafData.color }}
+                  animate={isPlaced ? { opacity: 0 } : { opacity: 1 }}
+                />
+              )}
+
+              {/* Separating Pigments */}
+              {isPlaced && leafData.pigments.map((p, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-24 h-12 rounded-full blur-[12px] opacity-70"
+                  style={{ backgroundColor: p.color }}
+                  animate={{ 
+                    bottom: `${24 + (progress * p.rf)}%`,
+                    scale: [1, 1.1, 1],
+                    opacity: progress > 5 ? 0.7 : 0
+                  }}
+                />
+              ))}
+
+              {/* Solvent Front */}
+              {isPlaced && (
+                <motion.div 
+                  className="absolute w-full h-2 bg-sky-400/20 blur-[2px]"
+                  animate={{ bottom: `${24 + progress}%` }}
+                />
+              )}
+            </motion.div>
+          </div>
+
+          {/* Glass Rod Holder */}
+          <div className="absolute top-20 w-72 h-3 bg-slate-700 rounded-full shadow-lg border-b border-white/5" />
+        </div>
+
+        {/* Right Side: Controls & Info */}
+        <div className="w-72 flex flex-col gap-6">
+          <div className="bg-slate-900/80 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-2xl space-y-6">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">Experiment Status</div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/60">Leaf Source</span>
+                  <span className="text-xs font-bold text-white">{leafData.name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/60">Solvent</span>
+                  <span className="text-xs font-bold text-white">{solvent === 1 ? 'Propanone' : 'Ethanol'}</span>
+                </div>
+              </div>
+            </div>
+
+            {isPlaced && (
+              <div className="pt-6 border-t border-white/5">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-white/40">Migration</div>
+                  <span className="text-[10px] font-mono text-sky-400">{progress.toFixed(1)}%</span>
+                </div>
+                <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,0.5)]"
+                    animate={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {step === 'IDLE' && (
+              <button 
+                onClick={handleCrush}
+                className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
+              >
+                1. Crush Leaf
+              </button>
+            )}
+            {step === 'SPOTTING' && (
+              <button 
+                onClick={handleSpot}
+                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20"
+              >
+                2. Apply Pigment Spot
+              </button>
+            )}
+            {step === 'READY' && (
+              <button 
+                onClick={handlePlace}
+                className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20"
+              >
+                3. Place in Solvent
+              </button>
+            )}
+            {step === 'RUNNING' && (
+              <button 
+                onClick={() => setInternalIsPaused(!internalIsPaused)}
+                className="w-full py-4 bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-700 transition-all"
+              >
+                {internalIsPaused ? 'Resume' : 'Pause Development'}
+              </button>
+            )}
+            {step === 'COMPLETE' && (
+              <button 
+                onClick={handleReset}
+                className="w-full py-4 bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reset Experiment
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Results Overlay */}
+      <AnimatePresence>
+        {step === 'COMPLETE' && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl min-w-[500px]"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Chromatogram Analysis</h4>
+              <div className="px-3 py-1 bg-sky-500/20 rounded-full border border-sky-500/30 text-[8px] font-black text-sky-400 uppercase">Success</div>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              {leafData.pigments.map((p, i) => (
+                <div key={i} className="flex flex-col items-center p-4 rounded-3xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
+                  <div className="w-6 h-6 rounded-full mb-3 shadow-lg" style={{ backgroundColor: p.color }} />
+                  <span className="text-[9px] font-bold text-white/60 mb-1">{p.name}</span>
+                  <span className="text-xl font-mono font-black text-sky-400 tracking-tighter">
+                    {p.rf.toFixed(2)}
+                  </span>
+                  <span className="text-[7px] font-black text-white/20 uppercase mt-1 tracking-widest">Rf Value</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export const AcidBaseTitrationSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = () => {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-slate-900 rounded-3xl p-8">
+      <div className="text-center space-y-4">
+        <FlaskConical className="w-16 h-16 text-blue-400 mx-auto animate-pulse" />
+        <h3 className="text-xl font-bold text-white uppercase tracking-widest">Chemistry Lab Foundation</h3>
+        <p className="text-slate-400 max-w-md mx-auto">
+          The Acid-Base Titration simulation is currently being prepared. 
+          Soon you will be able to perform precise volumetric analysis with digital burettes and indicators.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export const ReactionRatesGasSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = () => {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-slate-900 rounded-3xl p-8">
+      <div className="text-center space-y-4">
+        <Timer className="w-16 h-16 text-emerald-400 mx-auto animate-pulse" />
+        <h3 className="text-xl font-bold text-white uppercase tracking-widest">Chemistry Lab Foundation</h3>
+        <p className="text-slate-400 max-w-md mx-auto">
+          The Rates of Reaction simulation is under development. 
+          Investigate collision theory using gas syringes and real-time data logging.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export const HookesLawSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = () => {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-slate-900 rounded-3xl p-8">
+      <div className="text-center space-y-4">
+        <Scale className="w-16 h-16 text-orange-400 mx-auto animate-pulse" />
+        <h3 className="text-xl font-bold text-white uppercase tracking-widest">Physics Lab Foundation</h3>
+        <p className="text-slate-400 max-w-md mx-auto">
+          The Hooke's Law simulation is being calibrated. 
+          Measure spring constants and elastic limits with high-precision virtual apparatus.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export const OhmsLawSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = () => {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-slate-900 rounded-3xl p-8">
+      <div className="text-center space-y-4">
+        <Zap className="w-16 h-16 text-yellow-400 mx-auto animate-pulse" />
+        <h3 className="text-xl font-bold text-white uppercase tracking-widest">Physics Lab Foundation</h3>
+        <p className="text-slate-400 max-w-md mx-auto">
+          The Ohm's Law circuit simulator is in the wiring phase. 
+          Build virtual circuits to explore the fundamental relationships of electricity.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+

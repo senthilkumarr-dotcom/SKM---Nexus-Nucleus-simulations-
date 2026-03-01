@@ -1,63 +1,61 @@
 import React, { useState } from 'react';
 import { LABS } from '../constants';
-import { Search, FlaskConical, GraduationCap, ArrowRight, Beaker, Droplets, Sun, Wind, Leaf, Layers, Microscope, Dna, Zap, Activity, Palette, Globe, Syringe, Droplet, Cloud, CircleDot, Maximize, TestTube, Milk } from 'lucide-react';
+import { Search, FlaskConical, GraduationCap, ArrowRight, Beaker, Droplets, Sun, Wind, Leaf, Layers, Microscope, Dna, Zap, Activity, Palette, Globe, Syringe, Droplet, Cloud, CircleDot, Maximize, TestTube, Milk, Timer, Scale, Atom } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn, getLabColorClasses } from '../utils';
+import { Subject } from '../types';
 
 const ICON_MAP: Record<string, any> = {
-  Beaker, Droplets, Sun, Wind, Leaf, Layers, Microscope, Dna, Zap, Activity, Palette, Globe, Syringe, Droplet, Cloud, CircleDot, Maximize, TestTube, Milk
+  Beaker, Droplets, Sun, Wind, Leaf, Layers, Microscope, Dna, Zap, Activity, Palette, Globe, Syringe, Droplet, Cloud, CircleDot, Maximize, TestTube, Milk, FlaskConical, Timer, Scale, Atom
 };
 
 interface Props {
   onSelectLab: (id: string) => void;
+  selectedSubject: Subject;
+  onBack: () => void;
 }
 
-export default function Dashboard({ onSelectLab }: Props) {
+export default function Dashboard({ onSelectLab, selectedSubject, onBack }: Props) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<string>('All');
 
-  const categories = ['All', 'Biochemistry', 'Cell Biology', 'Physiology', 'Genetics', 'Ecology'];
+  const categoriesMap: Record<Subject, string[]> = {
+    'Biology': ['All', 'Biochemistry', 'Cell Biology', 'Physiology', 'Genetics', 'Ecology'],
+    'Chemistry': ['All', 'Physical Chemistry', 'Inorganic Chemistry', 'Organic Chemistry'],
+    'Physics': ['All', 'Mechanics', 'Electricity', 'Thermal Physics', 'Waves']
+  };
+
+  const categories = categoriesMap[selectedSubject];
 
   const filteredLabs = LABS.filter(lab => {
     const matchesSearch = lab.title.toLowerCase().includes(search.toLowerCase()) || 
                          lab.description.toLowerCase().includes(search.toLowerCase());
+    const matchesSubject = lab.subject === selectedSubject;
     const matchesFilter = filter === 'All' || lab.category === filter;
-    return matchesSearch && matchesFilter;
+    return matchesSearch && matchesSubject && matchesFilter;
   });
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Hero Section */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-2 text-blue-600 font-bold text-sm uppercase tracking-widest mb-4">
-                <FlaskConical className="w-5 h-5" />
-                Digital Laboratory Hub
-              </div>
-              <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-6">
-                SKM Bio <span className="text-blue-600">Simulations</span>
+      {/* Header */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={onBack}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500"
+            >
+              <ArrowRight className="w-5 h-5 rotate-180" />
+            </button>
+            <div>
+              <h1 className="text-xl font-black text-slate-900 tracking-tight">
+                {selectedSubject} <span className="text-blue-600">Simulations</span>
               </h1>
-              <p className="text-lg text-slate-600 leading-relaxed">
-                Interactive, high-fidelity biological simulations designed for IGCSE, IBDP, and A-Level excellence. 
-                Explore complex concepts through real-time data analysis and virtual experimentation.
-              </p>
             </div>
-            <div className="flex flex-col gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-                  {LABS.length}
-                </div>
-                <div className="text-sm font-bold text-slate-700">Active Simulations</div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white">
-                  <GraduationCap className="w-6 h-6" />
-                </div>
-                <div className="text-sm font-bold text-slate-700">Exam Board Ready</div>
-              </div>
-            </div>
+          </div>
+          <div className="hidden md:flex items-center gap-3 text-slate-400 text-sm font-bold uppercase tracking-widest">
+            <FlaskConical className="w-4 h-4" />
+            SKM Digital Science Hub
           </div>
         </div>
       </div>
@@ -65,32 +63,34 @@ export default function Dashboard({ onSelectLab }: Props) {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Controls */}
-        <div className="flex flex-col md:flex-row gap-6 mb-12">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input 
-              type="text"
-              placeholder="Search experiments (e.g., 'Enzyme', 'Osmosis')..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
-            />
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={cn(
-                  "px-6 py-4 rounded-xl font-bold text-sm whitespace-nowrap transition-all",
-                  filter === cat 
-                    ? "bg-slate-900 text-white shadow-lg" 
-                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
+        <div className="flex flex-col gap-6 mb-12">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input 
+                type="text"
+                placeholder={`Search ${selectedSubject.toLowerCase()} experiments...`}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
+              />
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={cn(
+                    "px-6 py-4 rounded-xl font-bold text-sm whitespace-nowrap transition-all",
+                    filter === cat 
+                      ? "bg-slate-900 text-white shadow-lg" 
+                      : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

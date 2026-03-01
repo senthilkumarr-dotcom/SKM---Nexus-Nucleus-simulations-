@@ -4,6 +4,7 @@ export const LABS: Lab[] = [
   {
     id: 'enzyme-action',
     title: 'Enzyme Action',
+    subject: 'Biology',
     category: 'Biochemistry',
     description: 'Investigate the effect of pH and temperature on catalase activity.',
     icon: 'Beaker',
@@ -15,7 +16,7 @@ Enzymes are biological catalysts that speed up chemical reactions without being 
 The substrate fits into the complementary active site of the enzyme, forming an enzyme-substrate complex.
 
 **Curriculum-Specific Experiments:**
-*   **IGCSE / MYP / GCSE:**
+*   **IBMYP / IGCSE / GCSE:**
     *   **Catalase Activity:** Using potato or liver discs in Hydrogen Peroxide ($H_2O_2$) to measure oxygen bubble production.
     *   **Amylase & Starch:** Investigating the effect of pH on the time taken for amylase to break down starch (using Iodine test).
     *   **Protease & Milk:** Measuring the time taken for protease (like trypsin) to clear a cloudy milk suspension.
@@ -147,6 +148,7 @@ If the temperature increases towards the optimum (37°C), then the rate of oxyge
   {
     id: 'osmosis',
     title: 'Osmosis in Potatoes',
+    subject: 'Biology',
     category: 'Cell Biology',
     description: 'Measure mass change of potato tubers in varying sucrose concentrations.',
     icon: 'Droplets',
@@ -163,7 +165,7 @@ Osmosis is the net movement of water molecules from a region of higher water pot
 $$\% \text{ Change in Mass} = \frac{\text{Final Mass} - \text{Initial Mass}}{\text{Initial Mass}} \times 100$$
 
 **Curriculum-Specific Experiments:**
-*   **IGCSE / MYP:** Measuring the change in mass of potato cylinders in different sucrose concentrations.
+*   **IBMYP / IGCSE:** Measuring the change in mass of potato cylinders in different sucrose concentrations.
 *   **IBDP / A-Level:** Determining the **Isotonic Point** (where there is no net change in mass).`,
     method: `### 1. Research Question
 How does the concentration of sucrose solution affect the percentage change in mass of potato cylinders?
@@ -282,6 +284,7 @@ If the sucrose concentration increases, then the percentage change in mass will 
   {
     id: 'photosynthesis',
     title: 'Photosynthesis Rate',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'Light intensity vs. bubble rate from Elodea (pondweed).',
     icon: 'Sun',
@@ -298,7 +301,7 @@ $$6CO_2 + 6H_2O \\xrightarrow{\\text{Light}} C_6H_{12}O_6 + 6O_2$$
 *   **Temperature:** Affects the enzymes involved (e.g., Rubisco).
 
 **Curriculum-Specific Experiments:**
-*   **IGCSE / MYP:** 
+*   **IBMYP / IGCSE:** 
     *   Investigating the effect of light intensity on the rate of photosynthesis by counting bubbles from pondweed (Elodea).
     *   Testing leaves for starch to prove photosynthesis occurred.
 *   **IBDP / A-Level:**
@@ -425,6 +428,7 @@ If the light intensity increases, then the number of oxygen bubbles produced per
   {
     id: 'respiration',
     title: 'Cellular Respiration',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'Respirometer measuring O2 consumption in germinating seeds.',
     icon: 'Wind',
@@ -469,8 +473,9 @@ If the temperature increases, then the rate of oxygen uptake will increase becau
   {
     id: 'transpiration',
     title: 'Transpiration Rate',
+    subject: 'Biology',
     category: 'Physiology',
-    description: 'Potometer measuring water uptake under varying conditions.',
+    description: 'Potometer measuring transpiration rate under varying conditions.',
     icon: 'Leaf',
     color: 'teal',
     theory: `### Transpiration and the Potometer
@@ -488,7 +493,7 @@ Water is absorbed by the roots via osmosis and travels up the **xylem** vessels.
 #### 3. Measuring with a Potometer
 A potometer measures the **rate of water uptake**, which is a close proxy for the rate of transpiration (though a small amount of water is used for photosynthesis and turgidity).`,
     method: `### 1. Research Question
-How do varying environmental conditions (wind, humidity, light, and temperature) influence the rate of water uptake in a leafy shoot?
+How do varying environmental conditions (wind, humidity, light, and temperature) influence the rate of transpiration in a leafy shoot?
 
 ### 2. Hypothesis
 *   **Wind:** Increasing wind speed will increase the transpiration rate by removing the saturated boundary layer.
@@ -527,7 +532,7 @@ How do varying environmental conditions (wind, humidity, light, and temperature)
       { id: 'temp', name: 'Temperature', min: 10, max: 50, step: 1, defaultValue: 25, unit: '°C' },
       { id: 'light', name: 'Light Intensity', min: 0, max: 100, step: 5, defaultValue: 50, unit: '%' }
     ],
-    dependentVariable: { name: 'water_uptake', unit: 'mm/min', label: 'Rate of Water Uptake' },
+    dependentVariable: { name: 'water_uptake', unit: 'mm/min', label: 'Rate of Transpiration' },
     controlledVariables: ['Leaf Surface Area'],
     safetyOptions: [
       { id: 'glass_care', text: 'Handle the fragile glass potometer with care', isCorrect: true },
@@ -582,7 +587,7 @@ How do varying environmental conditions (wind, humidity, light, and temperature)
         question: 'What is the dependent variable in this experiment?',
         options: ['Wind speed', 'Distance moved by the bubble per unit time', 'Leaf surface area', 'Temperature'],
         correctAnswer: 1,
-        explanation: 'The dependent variable is the rate of water uptake (distance/time).'
+        explanation: 'The dependent variable is the rate of transpiration (distance/time).'
       },
       {
         id: 'trans-q8',
@@ -610,6 +615,7 @@ How do varying environmental conditions (wind, humidity, light, and temperature)
   {
     id: 'membrane-permeability',
     title: 'Membrane Permeability',
+    subject: 'Biology',
     category: 'Cell Biology',
     description: 'Effect of temperature on beetroot pigment leakage.',
     icon: 'Layers',
@@ -653,6 +659,7 @@ If the temperature increases, then the absorbance of the solution will increase 
   {
     id: 'mitotic-index',
     title: 'Mitotic Index',
+    subject: 'Biology',
     category: 'Cell Biology',
     description: 'Calculate the ratio of cells in mitosis in a root tip squash.',
     icon: 'Microscope',
@@ -696,6 +703,7 @@ If the observation is made closer to the root tip (meristematic region), then th
   {
     id: 'natural-selection',
     title: 'Natural Selection',
+    subject: 'Biology',
     category: 'Ecology',
     description: 'Peppered moth simulation across different environments.',
     icon: 'Dna',
@@ -738,6 +746,7 @@ If the pollution level increases (darkening the trees), then the frequency of da
   {
     id: 'energy-flow',
     title: 'Energy Flow',
+    subject: 'Biology',
     category: 'Ecology',
     description: 'Trophic level pyramids and the 10% rule.',
     icon: 'Zap',
@@ -776,8 +785,93 @@ If the primary production increases, then the energy at the tertiary level will 
     ]
   },
   {
+    id: 'leaf-chromatography',
+    title: 'Leaf Chromatography',
+    subject: 'Biology',
+    category: 'Biochemistry',
+    description: 'Separate and identify photosynthetic pigments using paper chromatography.',
+    icon: 'Palette',
+    color: 'emerald',
+    theory: `### Paper Chromatography
+Chromatography is a technique used to separate the components of a mixture based on their different solubilities in a solvent and their different attractions to the stationary phase (the paper).
+
+**Key Concepts:**
+*   **Stationary Phase:** The chromatography paper (cellulose).
+*   **Mobile Phase:** The solvent (e.g., propanone or ethanol).
+*   **Pigments:** Leaves contain several pigments:
+    *   **Carotene:** Yellow-orange (travels furthest).
+    *   **Xanthophyll:** Yellow.
+    *   **Chlorophyll a:** Blue-green.
+    *   **Chlorophyll b:** Yellow-green (travels least).
+
+**The $R_f$ Value Formula:**
+The Retention Factor ($R_f$) is a ratio used to identify substances.
+$$R_f = \frac{\text{Distance traveled by pigment}}{\text{Distance traveled by solvent front}}$$
+
+**Curriculum-Specific Experiments:**
+*   **IBMYP / IGCSE:** Separating pigments from spinach or grass to see different colors.
+*   **IBDP / A-Level:** Calculating $R_f$ values and identifying pigments by comparing to standard values.`,
+    method: `### 1. Research Question
+How do the $R_f$ values of different photosynthetic pigments compare when using propanone as a solvent?
+
+### 2. Hypothesis
+If the pigments are separated, then Carotene will have the highest $R_f$ value because it is the most soluble in the solvent and has the least affinity for the paper.
+
+### 3. Procedure
+1.  **Extraction:** Select a leaf type (e.g., Spinach).
+2.  **Preparation:** Click **'Crush Leaf'** to extract the concentrated pigment.
+3.  **Spotting:** Click **'Apply Spot'** to place a small, concentrated drop of pigment on the pencil line of the chromatography paper. Repeat to ensure the spot is dark.
+4.  **Development:** Click **'Place in Solvent'**. Ensure the solvent level is *below* the pigment spot.
+5.  **Observation:** Watch as the solvent front rises, carrying the pigments at different speeds.
+6.  **Measurement:** Click **'Mark Solvent Front'** once it near the top.
+7.  **Calculation:** Measure the distance from the origin to the solvent front and to the center of each pigment spot. Calculate $R_f$ values.
+
+### 4. Variable Manipulation
+*   **Independent Variable (IV):** Leaf type or Solvent type.
+*   **Dependent Variable (DV):** $R_f$ values of pigments.
+
+### 5. Safety Precautions
+*   **Solvents:** Propanone and ethanol are highly flammable; keep away from open flames.
+*   **Ventilation:** Use solvents in a well-ventilated area or fume cupboard.`,
+    independentVariables: [
+      { id: 'leafType', name: 'Leaf Type', min: 1, max: 3, step: 1, defaultValue: 1, unit: '' },
+      { id: 'solvent', name: 'Solvent', min: 1, max: 2, step: 1, defaultValue: 1, unit: '' }
+    ],
+    dependentVariable: { name: 'rf_value', unit: '', label: 'Rf Value' },
+    controlledVariables: ['Paper Type', 'Temperature', 'Solvent Volume'],
+    safetyOptions: [
+      { id: 'flame', text: 'Keep flammable solvents away from Bunsen burners', isCorrect: true },
+      { id: 'fume', text: 'Use propanone in a well-ventilated area', isCorrect: true },
+      { id: 'goggles_chrom', text: 'Wear safety goggles to protect eyes from solvent splashes', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'chrom-q1',
+        question: 'Why must the solvent level be below the pigment spot?',
+        options: ['To stop the paper getting too wet', 'To prevent the pigment from dissolving into the bulk solvent', 'To make the pigments travel faster', 'To keep the paper straight'],
+        correctAnswer: 1,
+        explanation: 'If the spot is submerged, the pigment will simply dissolve into the beaker of solvent instead of traveling up the paper.'
+      },
+      {
+        id: 'chrom-q2',
+        question: 'Which pigment typically travels the furthest in a propanone solvent?',
+        options: ['Chlorophyll a', 'Chlorophyll b', 'Xanthophyll', 'Carotene'],
+        correctAnswer: 3,
+        explanation: 'Carotene is the most soluble and has the least attraction to the paper, so it travels the furthest.'
+      },
+      {
+        id: 'chrom-q3',
+        question: 'What does a high Rf value indicate?',
+        options: ['The substance is very heavy', 'The substance is highly soluble in the mobile phase', 'The substance is strongly attracted to the paper', 'The substance is not a pigment'],
+        correctAnswer: 1,
+        explanation: 'A high Rf value means the substance traveled nearly as far as the solvent, indicating high solubility in that solvent.'
+      }
+    ]
+  },
+  {
     id: 'ventilation',
     title: 'Ventilation & Exercise',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'Breathing rate and tidal volume at rest vs exercise.',
     icon: 'Activity',
@@ -821,6 +915,7 @@ If the exercise intensity increases, then the ventilation rate will increase bec
   {
     id: 'nerve-impulses',
     title: 'Nerve Impulses',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'Oscilloscope traces of Action Potentials.',
     icon: 'Zap',
@@ -861,6 +956,7 @@ If the stimulus strength reaches the threshold, then an action potential will fi
   {
     id: 'genetics',
     title: 'Genetics Simulator',
+    subject: 'Biology',
     category: 'Genetics',
     description: 'Monohybrid and Dihybrid Punnett Square simulator.',
     icon: 'Dna',
@@ -899,51 +995,9 @@ If both parents are heterozygous (Aa), then the phenotypic ratio of the offsprin
     ]
   },
   {
-    id: 'chromatography',
-    title: 'Leaf Chromatography',
-    category: 'Biochemistry',
-    description: 'Rf value calculation for leaf pigments.',
-    icon: 'Palette',
-    color: 'pink',
-    theory: `### Chromatography
-Chromatography is used to separate the components of a mixture based on their solubility and affinity for the stationary phase.`,
-    method: `### 1. Research Question
-How does solvent polarity affect the Rf values of different leaf pigments?
-
-### 2. Hypothesis
-If the solvent polarity increases, then the Rf values of polar pigments will increase because they will have a higher solubility in the mobile phase and travel further up the paper.
-
-### 3. Procedure
-1. Select the solvent type.
-2. Run the chromatogram and measure the distance moved by each pigment.
-
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Solvent polarity.
-*   **Controlled Variables (CV):** Paper type, temperature.
-
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean Rf values.
-
-### 4. Safety Precautions
-*   **Solvents:** Many solvents are flammable and toxic; use in a fume cupboard.
-*   **Fire:** Keep away from naked flames.
-
-### 5. Suggested Improvements
-*   Use Two-Dimensional chromatography for better separation of similar pigments.`,
-    independentVariables: [
-      { id: 'solvent', name: 'Solvent Polarity', min: 1, max: 5, step: 1, defaultValue: 3, unit: 'Scale' }
-    ],
-    dependentVariable: { name: 'rf', unit: '', label: 'Rf Value of Chlorophyll a' },
-    controlledVariables: ['Paper Type', 'Temperature'],
-    safetyOptions: [
-      { id: 'fume_hood', text: 'Use a fume cupboard for volatile solvents', isCorrect: true },
-      { id: 'no_flame', text: 'Keep flammable solvents away from Bunsen burners', isCorrect: true },
-      { id: 'solvent_skin', text: 'Avoid skin contact with organic solvents', isCorrect: true }
-    ]
-  },
-  {
     id: 'speciation',
     title: 'Speciation',
+    subject: 'Biology',
     category: 'Ecology',
     description: 'Reproductive isolation in island populations.',
     icon: 'Globe',
@@ -984,6 +1038,7 @@ If the isolation time increases, then the genetic divergence will increase becau
   {
     id: 'hormone-control',
     title: 'Hormone Control',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'Feedback loops of Glucose and Insulin.',
     icon: 'Syringe',
@@ -1024,6 +1079,7 @@ If glucose intake increases, then the insulin concentration will increase becaus
   {
     id: 'kidney-function',
     title: 'Kidney Function',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'ADH levels and Osmoregulation.',
     icon: 'Droplet',
@@ -1064,6 +1120,7 @@ If water intake increases, then the urine volume will increase because the pitui
   {
     id: 'limiting-factors',
     title: 'Limiting Factors',
+    subject: 'Biology',
     category: 'Physiology',
     description: 'CO2 concentration vs Photosynthesis rate.',
     icon: 'Cloud',
@@ -1104,6 +1161,7 @@ If the CO₂ concentration increases, then the photosynthetic rate will increase
   {
     id: 'microbial-growth',
     title: 'Microbial Growth',
+    subject: 'Biology',
     category: 'Cell Biology',
     description: 'Bacterial colony growth on agar vs time.',
     icon: 'CircleDot',
@@ -1148,6 +1206,7 @@ If the temperature increases towards the optimum, then the number of colonies wi
   {
     id: 'water-potential',
     title: 'Water Potential',
+    subject: 'Biology',
     category: 'Cell Biology',
     description: 'Turgor pressure and Plasmolysis in plant cells.',
     icon: 'Maximize',
@@ -1188,6 +1247,7 @@ If the solution potential becomes more negative (hypertonic), then the turgor pr
   {
     id: 'biomolecule-testing',
     title: 'Biomolecule Testing',
+    subject: 'Biology',
     category: 'Biochemistry',
     description: 'Virtual Benedict’s, Biuret, and Iodine tests.',
     icon: 'TestTube',
@@ -1231,6 +1291,7 @@ If a sample contains reducing sugars, then it will turn brick-red when heated wi
   {
     id: 'lactose-breakdown',
     title: 'Lactose Breakdown',
+    subject: 'Biology',
     category: 'Biochemistry',
     description: 'Investigate the breakdown of lactose in milk using the enzyme lactase.',
     icon: 'Milk',
@@ -1297,6 +1358,7 @@ If the lactase concentration increases, then the glucose concentration produced 
   {
     id: 'food-calorimetry',
     title: 'Food Calorimetry',
+    subject: 'Biology',
     category: 'Biochemistry',
     description: 'Measuring the energy content of different food samples (Carbs, Lipids, Proteins).',
     icon: 'Flame',
@@ -1433,5 +1495,147 @@ If a food sample has a higher lipid (fat) content (like a peanut or potato chip)
         explanation: 'A bomb calorimeter is a specialized piece of equipment that ensures complete combustion and minimal heat loss.'
       }
     ]
+  },
+  {
+    id: 'acid-base-titration',
+    title: 'Acid-Base Titration',
+    subject: 'Chemistry',
+    category: 'Physical Chemistry',
+    description: 'Determine the concentration of an unknown acid using a standard base and indicator.',
+    icon: 'FlaskConical',
+    color: 'blue',
+    theory: `### Acid-Base Titration
+Titration is a quantitative chemical analysis technique used to determine the unknown concentration of an identified analyte.
+
+**The Reaction:**
+$$HCl (aq) + NaOH (aq) \\rightarrow NaCl (aq) + H_2O (l)$$
+
+**Key Concepts:**
+*   **Equivalence Point:** The point at which the amount of titrant added is just enough to completely neutralize the analyte solution.
+*   **End Point:** The point at which the indicator changes color, signaling the end of the titration.
+*   **Molarity Formula:** $M_1V_1 = M_2V_2$ (for 1:1 reactions).`,
+    method: `### 1. Research Question
+What is the exact molarity of the unknown Hydrochloric Acid (HCl) solution?
+
+### 2. Procedure
+1. Fill the burette with 0.1M Sodium Hydroxide (NaOH).
+2. Pipette 25ml of unknown HCl into a conical flask.
+3. Add 2-3 drops of Phenolphthalein indicator.
+4. Slowly add NaOH from the burette while swirling until a permanent pale pink color appears.
+5. Record the final volume and calculate the titre.`,
+    independentVariables: [
+      { id: 'drop_size', name: 'Drop Size', min: 0.01, max: 0.1, step: 0.01, defaultValue: 0.05, unit: 'ml' }
+    ],
+    dependentVariable: { name: 'volume', unit: 'ml', label: 'Volume of NaOH added' },
+    controlledVariables: ['Temperature', 'Indicator Type', 'Initial Volume of Acid'],
+    safetyOptions: [
+      { id: 'acid_safety', text: 'Wear goggles to protect from acid/base splashes', isCorrect: true },
+      { id: 'burette_fill', text: 'Fill the burette below eye level', isCorrect: true }
+    ]
+  },
+  {
+    id: 'reaction-rates-gas',
+    title: 'Rates of Reaction (Gas Syringe)',
+    subject: 'Chemistry',
+    category: 'Physical Chemistry',
+    description: 'Investigate how surface area and concentration affect the rate of gas production.',
+    icon: 'Timer',
+    color: 'emerald',
+    theory: `### Collision Theory
+For a reaction to occur, particles must collide with sufficient energy (Activation Energy) and correct orientation.
+
+**Factors Affecting Rate:**
+*   **Concentration:** More particles in the same volume leads to more frequent collisions.
+*   **Surface Area:** More exposed particles in solids leads to more frequent collisions.
+*   **Temperature:** Particles have more kinetic energy and move faster.`,
+    method: `### 1. Research Question
+How does the concentration of HCl affect the rate of reaction with Calcium Carbonate?
+
+### 2. Procedure
+1. Place marble chips in a conical flask.
+2. Add HCl of a specific concentration.
+3. Immediately connect the gas syringe and start the timer.
+4. Record the volume of $CO_2$ produced every 10 seconds.`,
+    independentVariables: [
+      { id: 'concentration', name: 'Acid Concentration', min: 0.1, max: 2.0, step: 0.1, defaultValue: 1.0, unit: 'M' },
+      { id: 'surface_area', name: 'Surface Area', min: 1, max: 3, step: 1, defaultValue: 2, unit: 'Scale' }
+    ],
+    dependentVariable: { name: 'gas_volume', unit: 'cm³', label: 'Volume of CO₂' },
+    controlledVariables: ['Mass of Marble Chips', 'Temperature', 'Volume of Acid'],
+    safetyOptions: [
+      { id: 'gas_pressure', text: 'Ensure the gas syringe moves freely to avoid pressure build-up', isCorrect: true },
+      { id: 'acid_spill', text: 'Wipe up any acid spills immediately', isCorrect: true }
+    ]
+  },
+  {
+    id: 'hookes-law',
+    title: "Hooke's Law",
+    subject: 'Physics',
+    category: 'Mechanics',
+    description: 'Investigate the relationship between force and extension for a spring.',
+    icon: 'Scale',
+    color: 'orange',
+    theory: `### Hooke's Law
+The extension of a spring is directly proportional to the force applied to it, provided the limit of proportionality is not exceeded.
+
+**The Formula:**
+$$F = k \times x$$
+*   $F$: Force (Newtons, $N$)
+*   $k$: Spring constant ($N/m$)
+*   $x$: Extension (Meters, $m$)`,
+    method: `### 1. Research Question
+What is the spring constant ($k$) of the given metal spring?
+
+### 2. Procedure
+1. Measure the natural length of the spring.
+2. Add a 100g mass ($1N$ force) to the spring.
+3. Measure the new length and calculate the extension.
+4. Repeat for masses up to 500g.
+5. Plot a graph of Force vs. Extension.`,
+    independentVariables: [
+      { id: 'mass', name: 'Added Mass', min: 0, max: 1000, step: 50, defaultValue: 0, unit: 'g' }
+    ],
+    dependentVariable: { name: 'extension', unit: 'cm', label: 'Extension' },
+    controlledVariables: ['Spring Material', 'Temperature', 'Initial Length'],
+    safetyOptions: [
+      { id: 'eye_spring', text: 'Wear goggles in case the spring snaps', isCorrect: true },
+      { id: 'feet_safety', text: 'Keep feet away from the area below the hanging masses', isCorrect: true }
+    ]
+  },
+  {
+    id: 'ohms-law',
+    title: "Ohm's Law",
+    subject: 'Physics',
+    category: 'Electricity',
+    description: 'Investigate the relationship between voltage, current, and resistance.',
+    icon: 'Zap',
+    color: 'yellow',
+    theory: `### Ohm's Law
+The current through a conductor between two points is directly proportional to the voltage across the two points.
+
+**The Formula:**
+$$V = I \times R$$
+*   $V$: Voltage (Volts, $V$)
+*   $I$: Current (Amperes, $A$)
+*   $R$: Resistance (Ohms, $\Omega$)`,
+    method: `### 1. Research Question
+How does the current change as the voltage across a fixed resistor is increased?
+
+### 2. Procedure
+1. Set up a circuit with a power supply, ammeter, voltmeter, and a fixed resistor.
+2. Adjust the power supply to $2V$.
+3. Record the current from the ammeter and voltage from the voltmeter.
+4. Increase the voltage in $2V$ steps up to $12V$.
+5. Calculate the resistance for each reading.`,
+    independentVariables: [
+      { id: 'voltage', name: 'Input Voltage', min: 0, max: 12, step: 0.5, defaultValue: 0, unit: 'V' }
+    ],
+    dependentVariable: { name: 'current', unit: 'A', label: 'Current' },
+    controlledVariables: ['Temperature', 'Resistor Value', 'Wire Length'],
+    safetyOptions: [
+      { id: 'hot_wire', text: 'Do not touch the resistor as it may get hot', isCorrect: true },
+      { id: 'short_circuit', text: 'Ensure there are no short circuits before turning on power', isCorrect: true }
+    ]
   }
 ];
+

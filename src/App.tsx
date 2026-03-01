@@ -5,16 +5,27 @@
 
 import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
+import HomePage from './components/HomePage';
 import SimulationLayout from './components/SimulationLayout';
 import VariableIdentification from './components/VariableIdentification';
 import { LABS } from './constants';
-import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation } from './components/Simulations';
+import { Subject } from './types';
+import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation, LeafChromatographySimulation, AcidBaseTitrationSimulation, ReactionRatesGasSimulation, HookesLawSimulation, OhmsLawSimulation } from './components/Simulations';
 
 export default function App() {
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
   const [isIdentifying, setIsIdentifying] = useState(false);
 
   const selectedLab = LABS.find(l => l.id === selectedLabId);
+
+  const handleSelectSubject = (subject: Subject) => {
+    setSelectedSubject(subject);
+  };
+
+  const handleBackToHome = () => {
+    setSelectedSubject(null);
+  };
 
   const handleSelectLab = (id: string) => {
     setSelectedLabId(id);
@@ -38,6 +49,11 @@ export default function App() {
     'lactose-breakdown': LactoseBreakdownSimulation,
     'transpiration': TranspirationSimulation,
     'food-calorimetry': FoodCalorimetrySimulation,
+    'leaf-chromatography': LeafChromatographySimulation,
+    'acid-base-titration': AcidBaseTitrationSimulation,
+    'reaction-rates-gas': ReactionRatesGasSimulation,
+    'hookes-law': HookesLawSimulation,
+    'ohms-law': OhmsLawSimulation,
   };
 
   // 2. Register your mathematical models here
@@ -85,6 +101,27 @@ export default function App() {
       const tempRise = energyCaptured / (waterVolume * 4.18);
       return tempRise;
     },
+    'leaf-chromatography': (vars) => {
+      const { leafType } = vars;
+      // Return a base value for the graph, though chromatography is more about Rf values
+      return leafType * 0.5;
+    },
+    'acid-base-titration': (vars) => {
+      const { drop_size } = vars;
+      return drop_size * 100;
+    },
+    'reaction-rates-gas': (vars) => {
+      const { concentration, surface_area } = vars;
+      return concentration * surface_area * 10;
+    },
+    'hookes-law': (vars) => {
+      const { mass } = vars;
+      return mass * 0.1;
+    },
+    'ohms-law': (vars) => {
+      const { voltage } = vars;
+      return voltage / 10;
+    },
   };
 
   const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean) => {
@@ -108,8 +145,18 @@ export default function App() {
     return firstVar * 1.5 + (Math.random() * 2);
   };
 
+  if (!selectedSubject) {
+    return <HomePage onSelectSubject={handleSelectSubject} />;
+  }
+
   if (!selectedLab) {
-    return <Dashboard onSelectLab={handleSelectLab} />;
+    return (
+      <Dashboard 
+        onSelectLab={handleSelectLab} 
+        selectedSubject={selectedSubject}
+        onBack={handleBackToHome}
+      />
+    );
   }
 
   if (isIdentifying) {

@@ -230,7 +230,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
           isSidebarCollapsed ? "lg:col-span-12" : "lg:col-span-9"
         )}>
           {/* Panel 3: Simulation */}
-          <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[1050px]">
+          <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[750px]">
             <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
               <Activity className={cn("w-4 h-4 text-emerald-400", isTimerRunning && "animate-pulse")} />
               <span className="text-xs font-mono text-white/80 uppercase tracking-widest">

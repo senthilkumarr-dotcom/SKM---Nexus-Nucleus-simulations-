@@ -1,6 +1,11 @@
 import { LucideIcon } from 'lucide-react';
 
-export type LabCategory = 'Biochemistry' | 'Cell Biology' | 'Physiology' | 'Genetics' | 'Ecology';
+export type Subject = 'Biology' | 'Chemistry' | 'Physics';
+
+export type LabCategory = 
+  | 'Biochemistry' | 'Cell Biology' | 'Physiology' | 'Genetics' | 'Ecology'
+  | 'Physical Chemistry' | 'Inorganic Chemistry' | 'Organic Chemistry'
+  | 'Mechanics' | 'Electricity' | 'Thermal Physics' | 'Waves';
 
 export interface SafetyOption {
   id: string;
@@ -19,6 +24,7 @@ export interface QuizQuestion {
 export interface Lab {
   id: string;
   title: string;
+  subject: Subject;
   category: LabCategory;
   description: string;
   icon: string; // Lucide icon name
