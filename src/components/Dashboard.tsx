@@ -115,7 +115,7 @@ export default function Dashboard({ onSelectLab, selectedSubject, onBack }: Prop
               >
                 <div className="mb-4 flex justify-between items-start">
                   <div className="p-3 bg-white/80 rounded-xl group-hover:bg-blue-50 transition-colors">
-                    <Icon className="w-6 h-6 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                    <Icon className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-white/80 text-slate-500 rounded border border-slate-100">
                     {lab.category}

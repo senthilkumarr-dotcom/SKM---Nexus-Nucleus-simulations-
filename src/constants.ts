@@ -1636,6 +1636,202 @@ How does the current change as the voltage across a fixed resistor is increased?
       { id: 'hot_wire', text: 'Do not touch the resistor as it may get hot', isCorrect: true },
       { id: 'short_circuit', text: 'Ensure there are no short circuits before turning on power', isCorrect: true }
     ]
+  },
+  {
+    id: 'refraction-snells-law',
+    title: "Refraction & Snell's Law",
+    subject: 'Physics',
+    category: 'Waves',
+    description: "Investigate the refraction of light as it passes between different media and verify Snell's Law.",
+    icon: 'Sun',
+    color: 'amber',
+    theory: `### Refraction & Snell's Law
+Refraction is the change in direction of a wave passing from one medium to another caused by its change in speed. For light, this is described by **Snell's Law**.
+
+**Snell's Law Equation:**
+$$n_1 \\sin(\\theta_1) = n_2 \\sin(\\theta_2)$$
+
+Where:
+*   $n_1, n_2$: Refractive indices of the two media.
+*   $\\theta_1$: Angle of incidence (measured from the normal).
+*   $\\theta_2$: Angle of refraction (measured from the normal).
+
+**Key Concepts:**
+*   **Refractive Index ($n$):** A measure of how much light slows down in a medium ($n = c/v$).
+*   **Total Internal Reflection (TIR):** Occurs when light travels from a denser to a less dense medium at an angle greater than the **critical angle** ($\\theta_c = \\arcsin(n_2/n_1)$).
+*   **Dispersion:** The separation of white light into its component colors due to different refractive indices for different wavelengths.`,
+    method: `### 1. Research Question
+How does the **Angle of Incidence** affect the **Angle of Refraction** when light passes from air into a transparent medium?
+
+### 2. Hypothesis
+If the angle of incidence increases, then the angle of refraction will also increase, but at a slower rate (if $n_2 > n_1$), following the relationship $n_1 \\sin(\\theta_1) = n_2 \\sin(\\theta_2)$.
+
+### 3. Procedure
+1.  **Setup:** Select the **Medium** (e.g., Glass, Water, Diamond) and set the **Angle of Incidence** using the slider.
+2.  **Observe:** Watch the light ray as it hits the boundary. Note the reflected and refracted rays.
+3.  **Measurement:** 
+    *   Use the on-screen protractor to measure the **Angle of Refraction** ($\\theta_2$).
+    *   Record the values of $\\theta_1$ and $\\theta_2$.
+4.  **Analysis:** Plot $\\sin(\\theta_1)$ vs $\\sin(\\theta_2)$. The gradient of the line will give the relative refractive index.
+
+### 4. Safety Precautions
+*   **Laser Safety:** In a real lab, never look directly into a laser beam or point it at others.
+*   **Glassware:** Handle glass blocks carefully to avoid chipping or breaking.`,
+    independentVariables: [
+      { id: 'angle_inc', name: 'Angle of Incidence', min: 0, max: 90, step: 1, defaultValue: 30, unit: '°' },
+      { id: 'ref_index', name: 'Refractive Index (n₂)', min: 1.0, max: 2.5, step: 0.01, defaultValue: 1.5, unit: '' }
+    ],
+    dependentVariable: { name: 'angle_ref', unit: '°', label: 'Angle of Refraction' },
+    controlledVariables: ['Wavelength of Light', 'Refractive Index of Medium 1 (Air)', 'Temperature'],
+    safetyOptions: [
+      { id: 'laser', text: 'Never look directly into the laser beam', isCorrect: true },
+      { id: 'blocks', text: 'Handle glass blocks with care to avoid breakage', isCorrect: true },
+      { id: 'dark', text: 'Work in complete darkness to see the beam better', isCorrect: false },
+      { id: 'tongs', text: 'Use tongs to hold the glass block', isCorrect: false }
+    ],
+    quiz: [
+      {
+        id: 'opt-q1',
+        question: "What happens to light when it enters a more optically dense medium (higher n)?",
+        options: ['It speeds up and bends away from the normal', 'It slows down and bends towards the normal', 'It speeds up and bends towards the normal', 'It stays at the same speed'],
+        correctAnswer: 1,
+        explanation: 'Light slows down in denser media, causing it to bend towards the normal line.'
+      },
+      {
+        id: 'opt-q2',
+        question: "What is the refractive index of a vacuum (and approximately air)?",
+        options: ['0', '0.5', '1.0', '1.5'],
+        correctAnswer: 2,
+        explanation: 'The refractive index of a vacuum is defined as exactly 1.0. Air is very close at 1.0003.'
+      }
+    ],
+  },
+  {
+    id: 'newtons-second-law',
+    title: "Newton's Second Law",
+    subject: 'Physics',
+    category: 'Mechanics',
+    description: 'Investigate the relationship between force, mass, and acceleration.',
+    icon: 'Move',
+    color: 'indigo',
+    theory: `### Newton's Second Law of Motion
+The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass.
+
+**The Formula:**
+$$F = m \times a$$
+
+Where:
+*   $F$: Net Force (Newtons, $N$)
+*   $m$: Mass (Kilograms, $kg$)
+*   $a$: Acceleration (Meters per second squared, $m/s^2$)
+
+**Key Concepts:**
+*   **Inertia:** The tendency of an object to resist changes in its state of motion. Mass is a measure of inertia.
+*   **Proportionality:** If mass is constant, doubling the force doubles the acceleration. If force is constant, doubling the mass halves the acceleration.`,
+    method: `### 1. Research Question
+How does the acceleration of a trolley change when the pulling force is varied while keeping the total mass constant?
+
+### 2. Procedure
+1.  **Setup:** Place a trolley on a frictionless track. Attach a string to the trolley, passing over a pulley to a weight hanger.
+2.  **Constant Mass:** Ensure the total mass (trolley + weights on hanger) remains constant by moving weights between the trolley and the hanger.
+3.  **Vary Force:** Start with a small mass on the hanger (e.g., $100g = 1N$).
+4.  **Measure:** Release the trolley and measure its acceleration using light gates.
+5.  **Repeat:** Move a $100g$ mass from the trolley to the hanger to increase the force by $1N$ and repeat the measurement.
+6.  **Analyze:** Plot a graph of Force ($F$) against Acceleration ($a$). The gradient represents the total mass of the system.`,
+    independentVariables: [
+      { id: 'force', name: 'Applied Force', min: 0.5, max: 10, step: 0.5, defaultValue: 1, unit: 'N' },
+      { id: 'mass', name: 'Total Mass', min: 0.5, max: 5, step: 0.1, defaultValue: 1, unit: 'kg' }
+    ],
+    dependentVariable: { name: 'acceleration', unit: 'm/s²', label: 'Acceleration' },
+    controlledVariables: ['Track Friction', 'String Tension', 'Pulley Friction'],
+    safetyOptions: [
+      { id: 'falling_mass', text: 'Place a padded box under the falling weights', isCorrect: true },
+      { id: 'trolley_stop', text: 'Use a buffer or end-stop to prevent the trolley from flying off the track', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'force-q1',
+        question: "If the force acting on an object is doubled while its mass stays the same, what happens to its acceleration?",
+        options: ['It stays the same', 'It is halved', 'It is doubled', 'It is quadrupled'],
+        correctAnswer: 2,
+        explanation: 'According to F=ma, acceleration is directly proportional to force when mass is constant.'
+      }
+    ]
+  },
+  {
+    id: 'dc-circuits',
+    title: 'DC Circuit Analysis',
+    subject: 'Physics',
+    category: 'Electricity',
+    description: 'Build and analyze series and parallel circuits to investigate Kirchhoff\'s Laws.',
+    icon: 'Zap',
+    color: 'yellow',
+    theory: `### DC Circuits & Kirchhoff's Laws
+Direct Current (DC) circuits involve the flow of electric charge in a single direction. Understanding these circuits requires **Ohm's Law** and **Kirchhoff's Laws**.
+
+**Ohm's Law:**
+$$V = I \\times R$$
+
+**Kirchhoff's First Law (Current Law):**
+The sum of currents entering a junction equals the sum of currents leaving it (Conservation of Charge).
+$$\\sum I_{in} = \\sum I_{out}$$
+
+**Kirchhoff's Second Law (Voltage Law):**
+The sum of the electromotive forces (EMF) in any closed loop is equal to the sum of the potential differences (Conservation of Energy).
+$$\\sum \\epsilon = \\sum V$$
+
+**Resistors in Series:**
+$$R_{total} = R_1 + R_2 + ...$$
+
+**Resistors in Parallel:**
+$$\\frac{1}{R_{total}} = \\frac{1}{R_1} + \\frac{1}{R_2} + ...$$`,
+    method: `### 1. Research Question
+How does adding resistors in **Series** vs **Parallel** affect the total current in a circuit?
+
+### 2. Hypothesis
+Adding resistors in series will increase the total resistance and decrease the total current. Adding resistors in parallel will decrease the total resistance and increase the total current.
+
+### 3. Procedure
+1.  **Setup:** Set the **Battery Voltage** and choose the **Circuit Type** (Series or Parallel).
+2.  **Manipulation:** Adjust the resistance of **Resistor 1** and **Resistor 2**.
+3.  **Measurement:** 
+    *   Read the **Ammeter** to find the total current ($I$).
+    *   Use the **Voltmeter** to measure the potential difference across each component.
+4.  **Analysis:** Calculate the total resistance ($R = V/I$) and compare it with the theoretical values.
+
+### 4. Safety Precautions
+*   **Short Circuits:** Avoid connecting the battery terminals directly with a low-resistance wire.
+*   **Overheating:** High currents can cause resistors to become hot. Turn off the power when not taking readings.`,
+    independentVariables: [
+      { id: 'voltage', name: 'Battery Voltage', min: 0, max: 24, step: 0.5, defaultValue: 12, unit: 'V' },
+      { id: 'r1', name: 'Resistor 1', min: 1, max: 100, step: 1, defaultValue: 10, unit: 'Ω' },
+      { id: 'r2', name: 'Resistor 2', min: 1, max: 100, step: 1, defaultValue: 10, unit: 'Ω' },
+      { id: 'type', name: 'Circuit Type (0:Series, 1:Parallel)', min: 0, max: 1, step: 1, defaultValue: 0, unit: '' }
+    ],
+    dependentVariable: { name: 'current', unit: 'A', label: 'Total Current' },
+    controlledVariables: ['Temperature of Wires', 'Internal Resistance of Battery', 'Accuracy of Meters'],
+    safetyOptions: [
+      { id: 'short', text: 'Avoid short circuits to prevent battery damage', isCorrect: true },
+      { id: 'heat', text: 'Do not touch resistors that have been under high current', isCorrect: true },
+      { id: 'water', text: 'Keep liquids away from electrical components', isCorrect: true },
+      { id: 'fuse', text: 'Always use a fuse in high-power circuits', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'elec-q1',
+        question: "In a series circuit, what happens to the total resistance as more resistors are added?",
+        options: ['It decreases', 'It stays the same', 'It increases', 'It becomes zero'],
+        correctAnswer: 2,
+        explanation: 'In series, resistances add up: R_total = R1 + R2 + ...'
+      },
+      {
+        id: 'elec-q2',
+        question: "If two 10Ω resistors are connected in parallel, what is the total resistance?",
+        options: ['20Ω', '10Ω', '5Ω', '2.5Ω'],
+        correctAnswer: 2,
+        explanation: 'For parallel: 1/R_total = 1/10 + 1/10 = 2/10. So R_total = 10/2 = 5Ω.'
+      }
+    ],
   }
 ];
 

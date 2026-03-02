@@ -2595,16 +2595,471 @@ export const HookesLawSimulation: React.FC<{ variables: Record<string, number>, 
   );
 };
 
-export const OhmsLawSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = () => {
+export const OhmsLawSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = ({ variables }) => {
+  const { voltage } = variables;
+  const resistance = 10; // Fixed for this simple demo
+  const current = voltage / resistance;
+
   return (
-    <div className="w-full h-full flex items-center justify-center bg-slate-900 rounded-3xl p-8">
-      <div className="text-center space-y-4">
-        <Zap className="w-16 h-16 text-yellow-400 mx-auto animate-pulse" />
-        <h3 className="text-xl font-bold text-white uppercase tracking-widest">Physics Lab Foundation</h3>
-        <p className="text-slate-400 max-w-md mx-auto">
-          The Ohm's Law circuit simulator is in the wiring phase. 
-          Build virtual circuits to explore the fundamental relationships of electricity.
-        </p>
+    <div className="w-full h-full flex flex-col items-center justify-center bg-[#0a0a0a] rounded-3xl p-8 overflow-hidden relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(234,179,8,0.05)_0%,transparent_70%)]" />
+      
+      <div className="relative z-10 flex flex-col items-center gap-6 lg:gap-12">
+        {/* Circuit Diagram */}
+        <div className="relative w-full max-w-xs md:max-w-md h-48 md:h-64 border-4 border-slate-700 rounded-xl flex items-center justify-center">
+          {/* Battery */}
+          <div className="absolute -left-1 w-12 h-16 bg-slate-900 border-2 border-slate-700 flex flex-col items-center justify-center gap-1">
+            <div className="w-8 h-1 bg-slate-500" />
+            <div className="w-4 h-1 bg-slate-500" />
+            <div className="w-8 h-1 bg-slate-500" />
+            <div className="w-4 h-1 bg-slate-500" />
+          </div>
+          
+          {/* Resistor */}
+          <div className="absolute -right-6 w-12 h-24 bg-slate-800 border-2 border-slate-600 rounded flex flex-col justify-around py-2 px-1">
+            <div className="h-2 bg-red-500 rounded-sm" />
+            <div className="h-2 bg-black rounded-sm" />
+            <div className="h-2 bg-brown-500 rounded-sm" />
+            <div className="h-2 bg-gold-500 rounded-sm" />
+          </div>
+
+          {/* Electrons Animation */}
+          <div className="absolute inset-0 pointer-events-none">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  pathOffset: [0, 1],
+                  x: [0, 320, 320, 0, 0],
+                  y: [0, 0, 256, 256, 0]
+                }}
+                transition={{
+                  duration: current > 0 ? 5 / current : 0,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: i * 0.5
+                }}
+                className="absolute w-2 h-2 bg-yellow-400 rounded-full shadow-[0_0_8px_rgba(234,179,8,0.8)]"
+                style={{ left: -4, top: -4 }}
+              />
+            ))}
+          </div>
+
+          <div className="text-white/20 font-black uppercase tracking-widest text-4xl">Circuit</div>
+        </div>
+
+        {/* Meters */}
+        <div className="flex gap-8">
+          <div className="bg-slate-900 border border-slate-700 p-6 rounded-2xl shadow-2xl flex flex-col items-center min-w-[160px]">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Ammeter</div>
+            <div className="text-4xl font-mono font-bold text-yellow-400">
+              {current.toFixed(2)} <span className="text-sm">A</span>
+            </div>
+          </div>
+          <div className="bg-slate-900 border border-slate-700 p-6 rounded-2xl shadow-2xl flex flex-col items-center min-w-[160px]">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Voltmeter</div>
+            <div className="text-4xl font-mono font-bold text-blue-400">
+              {voltage.toFixed(1)} <span className="text-sm">V</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const RefractionSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = ({ variables }) => {
+  const { angle_inc, ref_index } = variables;
+  const [isOn, setIsOn] = React.useState(true);
+  
+  const n1 = 1.0; // Air
+  const n2 = ref_index;
+  
+  const theta1_rad = (angle_inc * Math.PI) / 180;
+  const sin_theta2 = (n1 * Math.sin(theta1_rad)) / n2;
+  const theta2_rad = Math.asin(sin_theta2);
+  const angle_ref = (theta2_rad * 180) / Math.PI;
+
+  const rayLength = 300;
+  
+  // Incident ray start (top left-ish)
+  const x0 = 400 - Math.sin(theta1_rad) * rayLength;
+  const y0 = 300 - Math.cos(theta1_rad) * rayLength;
+  
+  // Refracted ray end (bottom right-ish)
+  const x2 = 400 + Math.sin(theta2_rad) * rayLength;
+  const y2 = 300 + Math.cos(theta2_rad) * rayLength;
+
+  return (
+    <div className="w-full h-full bg-[#050505] rounded-3xl overflow-hidden relative flex items-center justify-center">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,191,36,0.05)_0%,transparent_70%)]" />
+      
+      {/* Controls Overlay */}
+      <div className="absolute top-4 left-4 lg:top-8 lg:left-8 z-20 flex flex-col gap-4">
+        <button 
+          onClick={() => setIsOn(!isOn)}
+          className={cn(
+            "px-4 py-2 lg:px-6 lg:py-3 rounded-2xl border font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-lg",
+            isOn 
+              ? "bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30" 
+              : "bg-emerald-500/20 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/30"
+          )}
+        >
+          {isOn ? "Turn Off Laser" : "Turn On Laser"}
+        </button>
+
+        <div className="bg-black/40 backdrop-blur-md p-3 lg:p-4 rounded-2xl border border-white/10 shadow-2xl max-w-[200px] lg:max-w-[240px]">
+          <div className="text-[8px] text-white/40 uppercase font-black mb-2 tracking-widest">Lab Guidance</div>
+          <p className="text-[10px] text-white/70 leading-relaxed">
+            <span className="text-amber-400 font-bold">Measurement:</span> Measure the angle between the <span className="text-white font-bold underline decoration-white/30">Normal Line</span> (dashed) and the ray.
+          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
+            <span className="text-[9px] text-amber-400/80 font-bold uppercase">Snell's Law: n₁sinθ₁ = n₂sinθ₂</span>
+          </div>
+        </div>
+      </div>
+
+      <svg viewBox="0 0 800 600" className="w-full h-full max-w-4xl max-h-[500px] relative z-10">
+        {/* Media Boundary */}
+        <rect x="0" y="300" width="800" height="300" fill="rgba(59, 130, 246, 0.05)" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="1" />
+        <line x1="0" y1="300" x2="800" y2="300" stroke="white" strokeWidth="2" strokeOpacity="0.3" />
+        
+        {/* Normal Line */}
+        <line x1="400" y1="50" x2="400" y2="550" stroke="white" strokeWidth="1" strokeDasharray="8,8" strokeOpacity="0.2" />
+        
+        {/* Protractor Visual */}
+        <g opacity="0.15">
+          <path d="M 250 300 A 150 150 0 0 1 550 300" fill="none" stroke="white" strokeWidth="1" />
+          <path d="M 250 300 A 150 150 0 0 0 550 300" fill="none" stroke="white" strokeWidth="1" />
+          {Array.from({ length: 19 }).map((_, i) => {
+            const angle = (i * 10) * Math.PI / 180;
+            const x1 = 400 + Math.cos(angle) * 140;
+            const y1 = 300 + Math.sin(angle) * 140;
+            const x2 = 400 + Math.cos(angle) * 150;
+            const y2 = 300 + Math.sin(angle) * 150;
+            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="white" strokeWidth="1" />;
+          })}
+        </g>
+
+        {/* Labels */}
+        <text x="40" y="280" fill="white" fillOpacity="0.3" className="text-[9px] font-black uppercase tracking-[0.2em]">Medium 1: Air (n=1.0)</text>
+        <text x="40" y="330" fill="white" fillOpacity="0.3" className="text-[9px] font-black uppercase tracking-[0.2em]">Medium 2: n={n2.toFixed(2)}</text>
+
+        <AnimatePresence>
+          {isOn && (
+            <g>
+              {/* Incident Ray */}
+              <motion.line
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1, x1: x0, y1: y0, x2: 400, y2: 300 }}
+                exit={{ opacity: 0 }}
+                stroke="#fbbf24" strokeWidth="3"
+                className="drop-shadow-[0_0_12px_rgba(251,191,36,0.9)]"
+              />
+              
+              {/* Refracted Ray */}
+              <motion.line
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1, x1: 400, y1: 300, x2: x2, y2: y2 }}
+                exit={{ opacity: 0 }}
+                stroke="#fbbf24" strokeWidth="3"
+                className="drop-shadow-[0_0_12px_rgba(251,191,36,0.9)]"
+              />
+
+              {/* Angle Arcs */}
+              <path 
+                d={`M 400 ${300 - 60} A 60 60 0 0 0 ${400 - Math.sin(theta1_rad) * 60} ${300 - Math.cos(theta1_rad) * 60}`} 
+                fill="none" stroke="#fbbf24" strokeWidth="1" strokeOpacity="0.5" 
+              />
+              <path 
+                d={`M 400 ${300 + 60} A 60 60 0 0 1 ${400 + Math.sin(theta2_rad) * 60} ${300 + Math.cos(theta2_rad) * 60}`} 
+                fill="none" stroke="#fbbf24" strokeWidth="1" strokeOpacity="0.5" 
+              />
+            </g>
+          )}
+        </AnimatePresence>
+
+        {/* Laser Source Box */}
+        <motion.g
+          animate={{ rotate: angle_inc, x: x0, y: y0 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+        >
+          <rect x="-15" y="-35" width="30" height="45" fill="#1e293b" rx="6" stroke="white" strokeWidth="1" strokeOpacity="0.2" />
+          <rect x="-8" y="10" width="16" height="8" fill="#334155" rx="2" />
+          {isOn && (
+            <motion.circle 
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              cx="0" cy="18" r="3" fill="#ef4444" 
+            />
+          )}
+          <text x="0" y="-15" fill="white" fillOpacity="0.4" textAnchor="middle" className="text-[6px] font-bold uppercase">Laser</text>
+        </motion.g>
+        
+        {/* Point of Incidence */}
+        <circle cx="400" cy="300" r="4" fill="white" className="drop-shadow-[0_0_8px_white]" />
+      </svg>
+
+      {/* Digital Readout Overlay */}
+      <div className="absolute bottom-4 right-4 lg:bottom-8 lg:right-8 flex gap-4">
+        <div className="bg-black/60 backdrop-blur-md p-4 lg:p-6 rounded-3xl border border-white/10 shadow-2xl min-w-[160px] lg:min-w-[200px]">
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-[8px] text-white/40 uppercase font-black tracking-widest">Digital Analyzer</div>
+            <div className={cn("w-2 h-2 rounded-full", isOn ? "bg-emerald-500 animate-pulse" : "bg-red-500")} />
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-slate-400 font-bold uppercase">Incidence (θ₁)</span>
+              <span className="text-lg font-mono font-bold text-amber-400">{angle_inc}°</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-slate-400 font-bold uppercase">Refraction (θ₂)</span>
+              <span className="text-lg font-mono font-bold text-blue-400">{isOn ? angle_ref.toFixed(1) : "---"}°</span>
+            </div>
+            <div className="h-px bg-white/10 my-2" />
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-tighter">Refractive Index (n₂)</span>
+              <span className="text-lg font-mono font-bold text-emerald-400">{n2.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const DCCircuitSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = ({ variables }) => {
+  const { voltage, r1, r2, type } = variables;
+  const isParallel = type === 1;
+  
+  const totalResistance = isParallel 
+    ? 1 / (1/r1 + 1/r2)
+    : r1 + r2;
+    
+  const totalCurrent = voltage / totalResistance;
+  
+  return (
+    <div className="w-full h-full bg-[#0a0a0a] rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05)_0%,transparent_70%)]" />
+      
+      <div className="relative z-10 w-full max-w-4xl flex flex-col items-center gap-6 lg:gap-12">
+        <div className="text-center">
+          <h3 className="text-xl lg:text-2xl font-black text-white tracking-tighter uppercase mb-2">
+            {isParallel ? 'Parallel' : 'Series'} Circuit Analysis
+          </h3>
+          <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Kirchhoff's Laws in Action</div>
+        </div>
+
+        {/* Circuit Schematic Area */}
+        <div className="relative w-full h-64 lg:h-80 bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center overflow-hidden">
+          {/* Schematic SVG */}
+          <svg viewBox="0 0 600 300" className="w-full h-full max-w-[600px] overflow-visible">
+            {/* Main Loop */}
+            <rect x="100" y="50" width="400" height="200" fill="none" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+            
+            {/* Battery Symbol */}
+            <g transform="translate(100, 150) rotate(90)">
+              <line x1="-15" y1="0" x2="15" y2="0" stroke="white" strokeWidth="4" />
+              <line x1="-8" y1="5" x2="8" y2="5" stroke="white" strokeWidth="2" />
+              <line x1="-15" y1="10" x2="15" y2="10" stroke="white" strokeWidth="4" />
+              <line x1="-8" y1="15" x2="8" y2="15" stroke="white" strokeWidth="2" />
+            </g>
+            <text x="60" y="155" fill="white" className="text-[10px] font-bold">{voltage}V</text>
+
+            {/* Resistors */}
+            {isParallel ? (
+              <>
+                {/* Parallel Branch 1 */}
+                <rect x="300" y="80" width="60" height="30" fill="#1e293b" stroke="white" strokeWidth="2" />
+                <text x="315" y="100" fill="white" className="text-[10px] font-bold">{r1}Ω</text>
+                <line x1="300" y1="95" x2="250" y2="95" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+                <line x1="360" y1="95" x2="410" y2="95" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+                
+                {/* Parallel Branch 2 */}
+                <rect x="300" y="190" width="60" height="30" fill="#1e293b" stroke="white" strokeWidth="2" />
+                <text x="315" y="210" fill="white" className="text-[10px] font-bold">{r2}Ω</text>
+                <line x1="300" y1="205" x2="250" y2="205" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+                <line x1="360" y1="205" x2="410" y2="205" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+                
+                {/* Junctions */}
+                <line x1="250" y1="95" x2="250" y2="205" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+                <line x1="410" y1="95" x2="410" y2="205" stroke="white" strokeWidth="2" strokeOpacity="0.2" />
+                <circle cx="250" cy="150" r="3" fill="white" />
+                <circle cx="410" cy="150" r="3" fill="white" />
+              </>
+            ) : (
+              <>
+                {/* Series Resistor 1 */}
+                <rect x="200" y="35" width="60" height="30" fill="#1e293b" stroke="white" strokeWidth="2" />
+                <text x="215" y="55" fill="white" className="text-[10px] font-bold">{r1}Ω</text>
+                
+                {/* Series Resistor 2 */}
+                <rect x="340" y="35" width="60" height="30" fill="#1e293b" stroke="white" strokeWidth="2" />
+                <text x="355" y="55" fill="white" className="text-[10px] font-bold">{r2}Ω</text>
+              </>
+            )}
+
+            {/* Ammeter Symbol */}
+            <circle cx="500" cy="150" r="15" fill="#0f172a" stroke="white" strokeWidth="2" />
+            <text x="495" y="155" fill="white" className="text-xs font-bold">A</text>
+
+            {/* Electron Flow Animation */}
+            <g>
+              {Array.from({ length: 20 }).map((_, i) => (
+                <motion.circle
+                  key={i}
+                  r="2"
+                  fill="#fbbf24"
+                  animate={{
+                    cx: [100, 500, 500, 100, 100],
+                    cy: [50, 50, 250, 250, 50]
+                  }}
+                  transition={{
+                    duration: totalCurrent > 0 ? 10 / totalCurrent : 0,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: i * 0.5
+                  }}
+                />
+              ))}
+            </g>
+          </svg>
+        </div>
+
+        {/* Data Readout */}
+        <div className="grid grid-cols-3 gap-6 w-full">
+          <div className="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-xl">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Total Resistance</div>
+            <div className="text-3xl font-mono font-bold text-white">
+              {totalResistance.toFixed(2)} <span className="text-sm text-slate-500">Ω</span>
+            </div>
+          </div>
+          <div className="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-xl">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Total Current</div>
+            <div className="text-3xl font-mono font-bold text-yellow-400">
+              {totalCurrent.toFixed(3)} <span className="text-sm text-yellow-600">A</span>
+            </div>
+          </div>
+          <div className="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-xl">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Power Dissipated</div>
+            <div className="text-3xl font-mono font-bold text-blue-400">
+              {(voltage * totalCurrent).toFixed(2)} <span className="text-sm text-blue-600">W</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const NewtonSecondLawSimulation: React.FC<{ variables: Record<string, number>, isPaused?: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean }> = ({ variables, isPaused }) => {
+  const { force, mass } = variables;
+  const acceleration = force / mass;
+  
+  const [position, setPosition] = React.useState(0);
+  const [velocity, setVelocity] = React.useState(0);
+  const requestRef = React.useRef<number | undefined>(undefined);
+  const lastTimeRef = React.useRef<number | undefined>(undefined);
+
+  const animate = (time: number) => {
+    if (lastTimeRef.current !== undefined && !isPaused) {
+      const deltaTime = (time - lastTimeRef.current) / 1000; // seconds
+      
+      setVelocity(prev => {
+        const newVel = prev + acceleration * deltaTime;
+        setPosition(p => {
+          const newPos = p + newVel * deltaTime * 100; // Scale for pixels
+          return newPos > 600 ? 0 : newPos; // Reset if off track
+        });
+        return position > 600 ? 0 : newVel;
+      });
+    }
+    lastTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  React.useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [acceleration, isPaused]);
+
+  // Reset simulation when variables change significantly
+  React.useEffect(() => {
+    setPosition(0);
+    setVelocity(0);
+  }, [force, mass]);
+
+  return (
+    <div className="w-full h-full bg-[#0a0a0a] rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.05)_0%,transparent_70%)]" />
+      
+      <div className="relative z-10 w-full max-w-4xl flex flex-col items-center gap-6 lg:gap-12">
+        <div className="text-center">
+          <h3 className="text-xl lg:text-2xl font-black text-white tracking-tighter uppercase mb-2">
+            Newton's Second Law
+          </h3>
+          <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">F = m × a</div>
+        </div>
+
+        {/* Track Area */}
+        <div className="relative w-full h-48 md:h-64 bg-white/5 rounded-3xl border border-white/10 flex items-center overflow-hidden">
+          {/* Track Lines */}
+          <div className="absolute inset-x-0 top-1/2 h-1 bg-white/10 -translate-y-1/2" />
+          
+          {/* Trolley */}
+          <motion.div 
+            style={{ x: position }}
+            className="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col items-center"
+          >
+            {/* Mass Label */}
+            <div className="mb-2 px-2 py-1 bg-indigo-500/20 border border-indigo-500/50 rounded text-[10px] font-bold text-indigo-300">
+              {mass}kg
+            </div>
+            {/* Trolley Body */}
+            <div className="w-24 h-12 bg-slate-800 border-2 border-slate-600 rounded-lg relative">
+              <div className="absolute -bottom-2 left-2 w-4 h-4 bg-slate-700 rounded-full border border-slate-500" />
+              <div className="absolute -bottom-2 right-2 w-4 h-4 bg-slate-700 rounded-full border border-slate-500" />
+            </div>
+            {/* Pulling String */}
+            <div className="absolute left-full top-1/2 w-[800px] h-0.5 bg-white/20 -translate-y-1/2" />
+          </motion.div>
+
+          {/* Force Vector Arrow */}
+          <motion.div
+            style={{ x: position + 100 }}
+            className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center"
+          >
+            <div className="h-1 bg-emerald-500" style={{ width: force * 20 }} />
+            <div className="w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-[8px] border-l-emerald-500" />
+            <div className="ml-2 text-[10px] font-bold text-emerald-400 uppercase">Force: {force}N</div>
+          </motion.div>
+        </div>
+
+        {/* Data Readout */}
+        <div className="grid grid-cols-3 gap-6 w-full">
+          <div className="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-xl">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Acceleration</div>
+            <div className="text-3xl font-mono font-bold text-white">
+              {acceleration.toFixed(2)} <span className="text-sm text-slate-500">m/s²</span>
+            </div>
+          </div>
+          <div className="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-xl">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Velocity</div>
+            <div className="text-3xl font-mono font-bold text-indigo-400">
+              {velocity.toFixed(2)} <span className="text-sm text-indigo-600">m/s</span>
+            </div>
+          </div>
+          <div className="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-xl">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Position</div>
+            <div className="text-3xl font-mono font-bold text-emerald-400">
+              {(position/100).toFixed(2)} <span className="text-sm text-emerald-600">m</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

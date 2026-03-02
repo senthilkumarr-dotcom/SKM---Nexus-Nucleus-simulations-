@@ -10,7 +10,7 @@ import SimulationLayout from './components/SimulationLayout';
 import VariableIdentification from './components/VariableIdentification';
 import { LABS } from './constants';
 import { Subject } from './types';
-import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation, LeafChromatographySimulation, AcidBaseTitrationSimulation, ReactionRatesGasSimulation, HookesLawSimulation, OhmsLawSimulation } from './components/Simulations';
+import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation, LeafChromatographySimulation, AcidBaseTitrationSimulation, ReactionRatesGasSimulation, HookesLawSimulation, OhmsLawSimulation, RefractionSimulation, DCCircuitSimulation, NewtonSecondLawSimulation } from './components/Simulations';
 
 export default function App() {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
@@ -54,6 +54,9 @@ export default function App() {
     'reaction-rates-gas': ReactionRatesGasSimulation,
     'hookes-law': HookesLawSimulation,
     'ohms-law': OhmsLawSimulation,
+    'refraction-snells-law': RefractionSimulation,
+    'dc-circuits': DCCircuitSimulation,
+    'newtons-second-law': NewtonSecondLawSimulation,
   };
 
   // 2. Register your mathematical models here
@@ -121,6 +124,25 @@ export default function App() {
     'ohms-law': (vars) => {
       const { voltage } = vars;
       return voltage / 10;
+    },
+    'refraction-snells-law': (vars) => {
+      const { angle_inc, ref_index } = vars;
+      const n1 = 1.0;
+      const n2 = ref_index;
+      const theta1_rad = (angle_inc * Math.PI) / 180;
+      const sin_theta2 = (n1 * Math.sin(theta1_rad)) / n2;
+      const theta2_rad = Math.asin(sin_theta2);
+      return (theta2_rad * 180) / Math.PI;
+    },
+    'dc-circuits': (vars) => {
+      const { voltage, r1, r2, type } = vars;
+      const isParallel = type === 1;
+      const totalResistance = isParallel ? 1 / (1/r1 + 1/r2) : r1 + r2;
+      return voltage / totalResistance;
+    },
+    'newtons-second-law': (vars) => {
+      const { force, mass } = vars;
+      return force / mass;
     },
   };
 
