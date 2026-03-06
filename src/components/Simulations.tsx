@@ -4519,6 +4519,13 @@ export const PedigreeAnalysisSimulation: React.FC<{ variables: Record<string, nu
   
   // Pedigree Challenge State
   const [showAnswers, setShowAnswers] = React.useState(false);
+  const [guesses, setGuesses] = React.useState<Record<string, string>>({});
+
+  // Reset challenge when type changes
+  React.useEffect(() => {
+    setGuesses({});
+    setShowAnswers(false);
+  }, [pedigree_type]);
 
   // Offspring Predictor State
   const [parent1Genotype, setParent1Genotype] = React.useState<string>('');
@@ -4668,8 +4675,30 @@ export const PedigreeAnalysisSimulation: React.FC<{ variables: Record<string, nu
         if (id === 'II-2') return 'X^A X^A/a';
         if (id === 'II-3') return 'X^a Y';
         return 'X^A X^A/a';
+      case 'Y':
+        if (id === 'I-1') return 'X Y^A';
+        if (id === 'I-2') return 'X X';
+        if (id === 'II-1') return 'X Y^A';
+        if (id === 'II-2') return 'X X';
+        if (id === 'II-3') return 'X Y^A';
+        return 'X X';
+      case 'Mito':
+        if (id === 'I-1') return 'm';
+        if (id === 'I-2') return 'M';
+        if (id === 'II-1') return 'M';
+        if (id === 'II-2') return 'M';
+        if (id === 'II-3') return 'M';
+        return 'M';
       default: return 'Unknown';
     }
+  };
+
+  const isGuessCorrect = (id: string, guess: string) => {
+    const answer = getPedigreeGenotype(id, currentPedigree.key);
+    if (answer.includes('/')) {
+      return answer.split('/').some(a => a.trim() === guess);
+    }
+    return guess === answer;
   };
 
   return (
@@ -4734,19 +4763,43 @@ export const PedigreeAnalysisSimulation: React.FC<{ variables: Record<string, nu
             <div className="flex flex-col items-center gap-16 pt-12">
               {/* Generation 1 */}
               <div className="flex gap-32 relative">
-                <PedigreeNode 
-                  type="male" 
-                  affected={pedigree_type === 0 || pedigree_type === 4} 
-                  label="1" 
-                  genotype={showAnswers ? getPedigreeGenotype('I-1', currentPedigree.key) : undefined}
-                />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-white/20" />
-                <PedigreeNode 
-                  type="female" 
-                  affected={pedigree_type === 5} 
-                  label="2" 
-                  genotype={showAnswers ? getPedigreeGenotype('I-2', currentPedigree.key) : undefined}
-                />
+                <div className="flex flex-col items-center gap-4">
+                  <PedigreeNode 
+                    type="male" 
+                    affected={pedigree_type === 0 || pedigree_type === 4} 
+                    label="1" 
+                    genotype={showAnswers ? getPedigreeGenotype('I-1', currentPedigree.key) : undefined}
+                  />
+                  {!showAnswers && (
+                    <select 
+                      value={guesses['I-1'] || ''}
+                      onChange={(e) => setGuesses(prev => ({ ...prev, 'I-1': e.target.value }))}
+                      className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-[9px] text-white font-bold outline-none focus:border-purple-500 transition-all w-20"
+                    >
+                      <option value="" className="bg-slate-900">?</option>
+                      {getGenotypeOptions(true).map(g => <option key={g} value={g} className="bg-slate-900">{g}</option>)}
+                    </select>
+                  )}
+                </div>
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-white/20" />
+                <div className="flex flex-col items-center gap-4">
+                  <PedigreeNode 
+                    type="female" 
+                    affected={pedigree_type === 5} 
+                    label="2" 
+                    genotype={showAnswers ? getPedigreeGenotype('I-2', currentPedigree.key) : undefined}
+                  />
+                  {!showAnswers && (
+                    <select 
+                      value={guesses['I-2'] || ''}
+                      onChange={(e) => setGuesses(prev => ({ ...prev, 'I-2': e.target.value }))}
+                      className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-[9px] text-white font-bold outline-none focus:border-purple-500 transition-all w-20"
+                    >
+                      <option value="" className="bg-slate-900">?</option>
+                      {getGenotypeOptions(false).map(g => <option key={g} value={g} className="bg-slate-900">{g}</option>)}
+                    </select>
+                  )}
+                </div>
               </div>
 
               {/* Connector */}
@@ -4760,10 +4813,20 @@ export const PedigreeAnalysisSimulation: React.FC<{ variables: Record<string, nu
                   <div className="w-0.5 h-8 bg-white/20" />
                   <PedigreeNode 
                     type="male" 
-                    affected={pedigree_type === 0 || pedigree_type === 4 || (pedigree_type === 5)} 
+                    affected={pedigree_type === 0 || pedigree_type === 4 || pedigree_type === 5} 
                     label="3" 
                     genotype={showAnswers ? getPedigreeGenotype('II-1', currentPedigree.key) : undefined}
                   />
+                  {!showAnswers && (
+                    <select 
+                      value={guesses['II-1'] || ''}
+                      onChange={(e) => setGuesses(prev => ({ ...prev, 'II-1': e.target.value }))}
+                      className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-[9px] text-white font-bold outline-none focus:border-purple-500 transition-all w-20"
+                    >
+                      <option value="" className="bg-slate-900">?</option>
+                      {getGenotypeOptions(true).map(g => <option key={g} value={g} className="bg-slate-900">{g}</option>)}
+                    </select>
+                  )}
                 </div>
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-0.5 h-8 bg-white/20" />
@@ -4773,35 +4836,78 @@ export const PedigreeAnalysisSimulation: React.FC<{ variables: Record<string, nu
                     label="4" 
                     genotype={showAnswers ? getPedigreeGenotype('II-2', currentPedigree.key) : undefined}
                   />
+                  {!showAnswers && (
+                    <select 
+                      value={guesses['II-2'] || ''}
+                      onChange={(e) => setGuesses(prev => ({ ...prev, 'II-2': e.target.value }))}
+                      className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-[9px] text-white font-bold outline-none focus:border-purple-500 transition-all w-20"
+                    >
+                      <option value="" className="bg-slate-900">?</option>
+                      {getGenotypeOptions(false).map(g => <option key={g} value={g} className="bg-slate-900">{g}</option>)}
+                    </select>
+                  )}
                 </div>
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-0.5 h-8 bg-white/20" />
                   <PedigreeNode 
                     type="male" 
-                    affected={pedigree_type === 1 || pedigree_type === 3} 
+                    affected={pedigree_type === 1 || pedigree_type === 3 || pedigree_type === 4 || pedigree_type === 5} 
                     label="5" 
                     genotype={showAnswers ? getPedigreeGenotype('II-3', currentPedigree.key) : undefined}
                   />
+                  {!showAnswers && (
+                    <select 
+                      value={guesses['II-3'] || ''}
+                      onChange={(e) => setGuesses(prev => ({ ...prev, 'II-3': e.target.value }))}
+                      className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-[9px] text-white font-bold outline-none focus:border-purple-500 transition-all w-20"
+                    >
+                      <option value="" className="bg-slate-900">?</option>
+                      {getGenotypeOptions(true).map(g => <option key={g} value={g} className="bg-slate-900">{g}</option>)}
+                    </select>
+                  )}
                 </div>
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-0.5 h-8 bg-white/20" />
                   <PedigreeNode 
                     type="female" 
-                    affected={pedigree_type === 1} 
+                    affected={pedigree_type === 1 || pedigree_type === 5} 
                     label="6" 
                     genotype={showAnswers ? getPedigreeGenotype('II-4', currentPedigree.key) : undefined}
                   />
+                  {!showAnswers && (
+                    <select 
+                      value={guesses['II-4'] || ''}
+                      onChange={(e) => setGuesses(prev => ({ ...prev, 'II-4': e.target.value }))}
+                      className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-[9px] text-white font-bold outline-none focus:border-purple-500 transition-all w-20"
+                    >
+                      <option value="" className="bg-slate-900">?</option>
+                      {getGenotypeOptions(false).map(g => <option key={g} value={g} className="bg-slate-900">{g}</option>)}
+                    </select>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-6">
-              <button 
-                onClick={() => setShowAnswers(!showAnswers)}
-                className="px-10 py-4 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-purple-600/20 active:scale-95"
-              >
-                {showAnswers ? 'Hide Genotypes' : 'Identify Genotypes'}
-              </button>
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex gap-6">
+                <button 
+                  onClick={() => setShowAnswers(!showAnswers)}
+                  className="px-10 py-4 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-purple-600/20 active:scale-95"
+                >
+                  {showAnswers ? 'Hide Answers' : 'Check Answers'}
+                </button>
+              </div>
+              
+              {showAnswers && (
+                <div className="flex gap-4 items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full" />
+                    <span className="text-[10px] text-white/60 font-bold uppercase tracking-widest">
+                      {Object.keys(guesses).filter(id => isGuessCorrect(id, guesses[id])).length} / 6 Correct
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Legend */}
@@ -4916,37 +5022,59 @@ export const BiomoleculeTestingSimulation: React.FC<{ variables: Record<string, 
   const { sample, test } = variables;
   const [isHeating, setIsHeating] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [isSampleAdded, setIsSampleAdded] = React.useState(sample !== 0);
+  const [isReagentAdded, setIsReagentAdded] = React.useState(test !== 0);
 
   const samples = [
-    { id: 1, name: 'Glucose Solution', contents: { sugar: true } },
-    { id: 2, name: 'Starch Solution', contents: { starch: true } },
-    { id: 3, name: 'Albumin (Protein)', contents: { protein: true } },
-    { id: 4, name: 'Vegetable Oil', contents: { lipid: true } },
-    { id: 5, name: 'Vitamin C Solution', contents: { vitC: true } },
-    { id: 6, name: 'Milk', contents: { sugar: true, protein: true, lipid: true } },
-    { id: 7, name: 'Apple Juice', contents: { sugar: true, vitC: true } },
-    { id: 8, name: 'Distilled Water', contents: {} }
+    { id: 1, name: 'Glucose Solution', contents: { sugar: true }, color: 'rgba(255,255,255,0.2)', icon: '🧪' },
+    { id: 2, name: 'Starch Solution', contents: { starch: true }, color: 'rgba(255,255,255,0.3)', icon: '🧪' },
+    { id: 3, name: 'Albumin (Protein)', contents: { protein: true }, color: 'rgba(255,255,255,0.4)', icon: '🧪' },
+    { id: 4, name: 'Vegetable Oil', contents: { lipid: true }, color: 'rgba(254,240,138,0.4)', icon: '🫙' },
+    { id: 5, name: 'Vitamin C Solution', contents: { vitC: true }, color: 'rgba(255,255,255,0.2)', icon: '🧪' },
+    { id: 6, name: 'Milk', contents: { sugar: true, protein: true, lipid: true }, color: 'rgba(255,255,255,0.9)', icon: '🥛' },
+    { id: 7, name: 'Apple Juice', contents: { sugar: true, vitC: true }, color: 'rgba(253,230,138,0.6)', icon: '🧃' },
+    { id: 8, name: 'Distilled Water', contents: {}, color: 'rgba(255,255,255,0.1)', icon: '💧' }
   ];
 
   const tests = [
-    { id: 1, name: "Benedict's", reagent: "Benedict's Reagent", color: '#3b82f6', needsHeat: true },
-    { id: 2, name: "Iodine", reagent: "Iodine Solution", color: '#92400e', needsHeat: false },
-    { id: 3, name: "Biuret", reagent: "Biuret Reagent", color: '#6366f1', needsHeat: false },
-    { id: 4, name: "Ethanol Emulsion", reagent: "Ethanol", color: '#f8fafc', needsHeat: false },
-    { id: 5, name: "DCPIP", reagent: "DCPIP Solution", color: '#1d4ed8', needsHeat: false }
+    { id: 1, name: "Benedict's", reagent: "Benedict's Reagent", color: '#3b82f6', needsHeat: true, icon: '🔵' },
+    { id: 2, name: "Iodine", reagent: "Iodine Solution", color: '#92400e', needsHeat: false, icon: '🟤' },
+    { id: 3, name: "Biuret", reagent: "Biuret Reagent", color: '#3b82f6', needsHeat: false, icon: '🔵' },
+    { id: 4, name: "Ethanol Emulsion", reagent: "Ethanol", color: '#f8fafc', needsHeat: false, icon: '⚪' },
+    { id: 5, name: "DCPIP", reagent: "DCPIP Solution", color: '#2563eb', needsHeat: false, icon: '🔵' }
   ];
 
-  const currentSample = samples.find(s => s.id === sample) || samples[0];
-  const currentTest = tests.find(t => t.id === test) || tests[0];
+  const currentSample = samples.find(s => s.id === sample);
+  const currentTest = tests.find(t => t.id === test);
 
   React.useEffect(() => {
-    setProgress(0);
-    setIsHeating(false);
-  }, [sample, test]);
+    if (sample === 0) {
+      setIsSampleAdded(false);
+      setProgress(0);
+    } else {
+      setIsSampleAdded(true);
+    }
+  }, [sample]);
 
-  const handleStart = () => {
-    if (currentTest.needsHeat) {
+  React.useEffect(() => {
+    if (test === 0) {
+      setIsReagentAdded(false);
+      setProgress(0);
+    } else {
+      setIsReagentAdded(true);
+      if (isSampleAdded) {
+        handleStartTest(test);
+      }
+    }
+  }, [test, isSampleAdded]);
+
+  const handleStartTest = (testId: number) => {
+    const t = tests.find(x => x.id === testId);
+    if (!t) return;
+
+    if (t.needsHeat) {
       setIsHeating(true);
+      setProgress(1); 
       const interval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
@@ -4954,134 +5082,137 @@ export const BiomoleculeTestingSimulation: React.FC<{ variables: Record<string, 
             setIsHeating(false);
             return 100;
           }
-          return prev + 2;
+          return prev + 1;
         });
-      }, 50);
+      }, 100);
     } else {
       setProgress(100);
     }
   };
 
   const getResultColor = () => {
-    if (progress < 100) return currentTest.color;
-
+    if (!currentSample || !currentTest) return 'transparent';
     const { sugar, starch, protein, lipid, vitC } = currentSample.contents;
 
+    if (currentTest.id === 1 && sugar && progress > 0) {
+      if (progress < 20) return '#3b82f6';
+      if (progress < 40) return '#22c55e';
+      if (progress < 60) return '#eab308';
+      if (progress < 80) return '#f97316';
+      if (progress < 95) return '#ef4444';
+      return '#991b1b';
+    }
+
+    if (progress < 100) return currentTest.color;
+
     switch (currentTest.id) {
-      case 1: // Benedict's
-        return sugar ? '#ef4444' : '#3b82f6'; // Red if sugar, else Blue
-      case 2: // Iodine
-        return starch ? '#1e1b4b' : '#92400e'; // Blue-black if starch, else Orange
-      case 3: // Biuret
-        return protein ? '#a855f7' : '#6366f1'; // Purple if protein, else Blue
-      case 4: // Ethanol
-        return lipid ? '#f1f5f9' : '#ffffff00'; // Cloudy if lipid, else Clear
-      case 5: // DCPIP
-        return vitC ? '#ffffff00' : '#1d4ed8'; // Colorless if vitC, else Blue
-      default:
-        return currentTest.color;
+      case 1: return '#3b82f6'; 
+      case 2: return starch ? '#1e1b4b' : '#92400e';
+      case 3: return protein ? '#a855f7' : '#3b82f6'; 
+      case 4: return lipid ? '#f1f5f9' : 'rgba(255,255,255,0.1)';
+      case 5: return vitC ? 'rgba(255,255,255,0.1)' : '#2563eb';
+      default: return currentTest.color;
     }
   };
 
+  const handleReset = () => {
+    setVariables?.({ sample: 0, test: 0 });
+    setIsHeating(false);
+    setProgress(0);
+    setIsSampleAdded(false);
+    setIsReagentAdded(false);
+  };
+
   return (
-    <div className="w-full h-full bg-slate-950 rounded-3xl p-8 flex flex-col items-center justify-center gap-12 relative overflow-hidden">
+    <div className="w-full h-full bg-slate-950 rounded-3xl p-4 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(249,115,22,0.1)_0%,transparent_70%)] pointer-events-none" />
       
-      <div className="flex flex-col items-center gap-4 text-center z-10">
-        <h2 className="text-2xl font-black text-orange-500 uppercase tracking-widest">Biomolecule Testing</h2>
-        <p className="text-white/40 text-xs font-medium max-w-md">Test various food samples for the presence of sugars, starch, proteins, lipids, and Vitamin C.</p>
+      <div className="flex flex-col items-center gap-1 text-center z-10 mb-2">
+        <h2 className="text-xl font-black text-orange-500 uppercase tracking-widest">Biomolecule Testing Lab</h2>
+        <p className="text-white/40 text-[8px] font-black uppercase tracking-widest">Select food samples and reagents to begin</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-16 w-full max-w-4xl z-10">
-        {/* Controls */}
-        <div className="flex flex-col gap-6 w-72">
-          <div className="space-y-4">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">1. Select Sample</label>
-            <div className="grid grid-cols-1 gap-2">
+      <div className="flex flex-row items-center justify-center w-full max-w-5xl z-10 flex-1 gap-6 overflow-hidden">
+        {/* Left: Samples Scrollable Column */}
+        <div className="flex flex-col gap-2 w-80 h-[400px] bg-white/5 p-4 rounded-[1.5rem] border border-white/10 overflow-hidden relative">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[9px] font-black text-orange-400 uppercase tracking-[0.2em]">Food Samples</span>
+          </div>
+          <div className="relative flex-1 overflow-y-auto custom-scrollbar pr-1">
+            <div className="grid grid-cols-2 gap-2 py-2">
               {samples.map(s => (
                 <button
                   key={s.id}
                   onClick={() => setVariables?.(prev => ({ ...prev, sample: s.id }))}
                   className={cn(
-                    "px-4 py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all text-left border",
-                    sample === s.id 
-                      ? "bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-900/20" 
-                      : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                    "p-2 rounded-xl flex flex-col items-center gap-2 transition-all border text-center w-full group",
+                    sample === s.id ? "bg-orange-500/20 border-orange-500/50 shadow-[0_0_15px_rgba(249,115,22,0.1)]" : "bg-white/5 border-white/10 hover:bg-white/10"
                   )}
                 >
-                  {s.name}
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-lg shadow-inner group-hover:scale-110 transition-transform">
+                    {s.icon}
+                  </div>
+                  <span className="text-[8px] font-black text-white uppercase tracking-wider leading-tight">{s.name}</span>
                 </button>
               ))}
             </div>
           </div>
-
-          <div className="space-y-4">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">2. Select Test</label>
-            <div className="grid grid-cols-1 gap-2">
-              {tests.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setVariables?.(prev => ({ ...prev, test: t.id }))}
-                  className={cn(
-                    "px-4 py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all text-left border",
-                    test === t.id 
-                      ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/20" 
-                      : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
-                  )}
-                >
-                  {t.name}
-                </button>
-              ))}
-            </div>
+          <div className="mt-2 text-center">
+            <span className="text-[7px] font-bold text-white/20 uppercase tracking-widest">Scroll to explore</span>
           </div>
         </div>
 
-        {/* Visual Simulation */}
-        <div className="flex-1 flex flex-col items-center gap-12">
-          <div className="relative">
+        {/* Center: Test Tube Area */}
+        <div className="flex-1 flex flex-col items-center justify-center gap-6 relative h-full min-w-[300px]">
+          <div className="relative scale-90">
             {/* Test Tube Rack */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-48 h-8 bg-slate-800 rounded-full blur-xl opacity-50" />
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-40 h-10 bg-slate-800/80 rounded-full blur-2xl opacity-50" />
             
             {/* Test Tube */}
-            <div className="relative w-20 h-64 bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-b-full overflow-hidden shadow-2xl">
-              {/* Liquid */}
-              <motion.div 
-                initial={false}
-                animate={{ 
-                  height: progress > 0 ? '60%' : '30%',
-                  backgroundColor: progress > 0 ? getResultColor() : '#ffffff20'
-                }}
-                transition={{ duration: 1 }}
-                className="absolute bottom-0 left-0 right-0 transition-colors duration-1000"
-              >
-                {/* Bubbles if heating */}
-                {isHeating && (
-                  <div className="absolute inset-0 overflow-hidden">
-                    {[...Array(10)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ y: 100, opacity: 0 }}
-                        animate={{ y: -20, opacity: [0, 1, 0] }}
-                        transition={{ 
-                          duration: 1 + Math.random(), 
-                          repeat: Infinity, 
-                          delay: Math.random() 
-                        }}
-                        className="absolute w-1 h-1 bg-white/40 rounded-full"
-                        style={{ left: `${Math.random() * 100}%` }}
-                      />
-                    ))}
-                  </div>
-                )}
-                
-                {/* Emulsion effect */}
-                {currentTest.id === 4 && progress === 100 && currentSample.contents.lipid && (
-                  <div className="absolute inset-0 bg-white/40 backdrop-blur-sm animate-pulse" />
-                )}
-              </motion.div>
+            <div className="relative w-20 h-72 bg-white/5 backdrop-blur-xl border-2 border-white/20 rounded-b-full overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+              {/* Sample Liquid */}
+              {isSampleAdded && (
+                <motion.div 
+                  initial={{ height: 0 }}
+                  animate={{ height: '40%' }}
+                  className="absolute bottom-0 left-0 right-0"
+                  style={{ backgroundColor: currentSample?.color }}
+                />
+              )}
+
+              {/* Reagent/Result Liquid */}
+              {isReagentAdded && (
+                <motion.div 
+                  initial={{ height: 0 }}
+                  animate={{ height: '70%' }}
+                  className="absolute bottom-0 left-0 right-0 z-10"
+                  style={{ backgroundColor: getResultColor() }}
+                >
+                  {/* Bubbles if heating */}
+                  {isHeating && (
+                    <div className="absolute inset-0 overflow-hidden">
+                      {[...Array(12)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ y: 150, opacity: 0 }}
+                          animate={{ y: -20, opacity: [0, 1, 0] }}
+                          transition={{ duration: 1 + Math.random(), repeat: Infinity, delay: Math.random() }}
+                          className="absolute w-1 h-1 bg-white/30 rounded-full"
+                          style={{ left: `${Math.random() * 100}%` }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Emulsion effect */}
+                  {currentTest?.id === 4 && progress === 100 && currentSample?.contents.lipid && (
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md animate-pulse" />
+                  )}
+                </motion.div>
+              )}
 
               {/* Reflections */}
-              <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-0 pointer-events-none z-20">
                 <div className="absolute top-0 left-4 w-1 h-full bg-white/10" />
                 <div className="absolute top-0 right-4 w-2 h-full bg-white/5" />
               </div>
@@ -5089,101 +5220,120 @@ export const BiomoleculeTestingSimulation: React.FC<{ variables: Record<string, 
 
             {/* Dropper Animation */}
             <AnimatePresence>
-              {progress > 0 && progress < 10 && !currentTest.needsHeat && (
+              {progress > 0 && progress < 10 && !currentTest?.needsHeat && (
                 <motion.div
-                  initial={{ y: -100, opacity: 0 }}
-                  animate={{ y: -40, opacity: 1 }}
-                  exit={{ y: -100, opacity: 0 }}
-                  className="absolute -top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  initial={{ y: -150, opacity: 0 }}
+                  animate={{ y: -60, opacity: 1 }}
+                  exit={{ y: -150, opacity: 0 }}
+                  className="absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center z-30"
                 >
-                  <div className="w-4 h-16 bg-slate-300 rounded-t-full border border-slate-400" />
+                  <div className="w-5 h-20 bg-slate-200 rounded-t-full border border-slate-300 shadow-xl" />
                   <motion.div 
-                    animate={{ scaleY: [1, 1.5, 1], y: [0, 10, 0] }}
-                    transition={{ duration: 0.5, repeat: 3 }}
-                    className="w-1 h-8 bg-blue-400/60 rounded-full"
+                    animate={{ scaleY: [1, 2, 1], y: [0, 20, 0] }}
+                    transition={{ duration: 0.4, repeat: 4 }}
+                    className="w-1 h-10 bg-blue-400/80 rounded-full"
                   />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Bunsen Burner (if heating) */}
+            {/* Bunsen Burner */}
             <AnimatePresence>
               {isHeating && (
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.5, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, y: 20 }}
-                  className="absolute -bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 50 }}
+                  className="absolute -bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center z-0"
                 >
-                  <div className="w-4 h-12 bg-slate-700 rounded-t-lg" />
-                  <div className="relative">
+                  <div className="w-5 h-14 bg-slate-700 rounded-t-xl border border-slate-600 shadow-2xl" />
+                  <div className="relative -top-3">
                     <motion.div 
-                      animate={{ 
-                        scale: [1, 1.2, 1],
-                        opacity: [0.6, 0.8, 0.6]
-                      }}
-                      transition={{ duration: 0.5, repeat: Infinity }}
-                      className="w-8 h-12 bg-blue-500 rounded-full blur-md"
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.7, 0.5] }}
+                      transition={{ duration: 0.4, repeat: Infinity }}
+                      className="w-10 h-16 bg-blue-500 rounded-full blur-xl"
                     />
-                    <div className="absolute inset-0 w-4 h-8 bg-blue-200 rounded-full blur-sm left-1/2 -translate-x-1/2 top-2" />
+                    <div className="absolute inset-0 w-5 h-10 bg-blue-200 rounded-full blur-md left-1/2 -translate-x-1/2 top-3" />
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="flex flex-col items-center gap-6">
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Current Setup</span>
-              <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3">
-                <span className="text-xs font-bold text-white">{currentSample.name}</span>
-                <div className="w-1 h-1 bg-white/20 rounded-full" />
-                <span className="text-xs font-bold text-blue-400">{currentTest.name} Test</span>
-              </div>
+          <div className="flex flex-col items-center gap-3 mt-2">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md">
+              <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">Status:</span>
+              <span className="text-[10px] font-black text-white uppercase tracking-widest">
+                {!isSampleAdded ? "Select a sample" : !isReagentAdded ? "Select a reagent" : isHeating ? "Heating..." : "Test Complete"}
+              </span>
             </div>
+            <button
+              onClick={handleReset}
+              className="px-6 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all active:scale-95"
+            >
+              Clean Station
+            </button>
+          </div>
+        </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={handleStart}
-                disabled={progress > 0}
-                className={cn(
-                  "px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3",
-                  progress > 0 
-                    ? "bg-white/5 text-white/20 cursor-not-allowed" 
-                    : "bg-orange-600 hover:bg-orange-500 text-white shadow-xl shadow-orange-900/20 active:scale-95"
-                )}
-              >
-                {currentTest.needsHeat ? 'Heat Sample' : 'Add Reagent'}
-                {progress > 0 && progress < 100 && (
-                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                )}
-              </button>
-
-              <button
-                onClick={() => { setProgress(0); setIsHeating(false); }}
-                className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white/60 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all"
-              >
-                Reset
-              </button>
+        {/* Right: Reagents Scrollable Column */}
+        <div className="flex flex-col gap-2 w-80 h-[400px] bg-white/5 p-4 rounded-[1.5rem] border border-white/10 overflow-hidden relative">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">Reagents</span>
+          </div>
+          <div className="relative flex-1 overflow-y-auto custom-scrollbar pr-1">
+            <div className="grid grid-cols-2 gap-2 py-2">
+              {tests.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    if (!isSampleAdded) {
+                      alert("Select a food sample first!");
+                      return;
+                    }
+                    setVariables?.(prev => ({ ...prev, test: t.id }));
+                  }}
+                  className={cn(
+                    "p-2 rounded-xl flex flex-col items-center gap-2 transition-all border text-center w-full group",
+                    test === t.id ? "bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)]" : "bg-white/5 border-white/10 hover:bg-white/10"
+                  )}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-lg shadow-inner group-hover:scale-110 transition-transform">
+                    {t.icon}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-white uppercase tracking-wider leading-tight">{t.name}</span>
+                    <span className="text-[6px] font-bold text-white/30 uppercase tracking-widest">{t.needsHeat ? "Heat" : "Cold"}</span>
+                  </div>
+                </button>
+              ))}
             </div>
+          </div>
+          <div className="mt-2 text-center">
+            <span className="text-[7px] font-bold text-white/20 uppercase tracking-widest">Scroll to explore</span>
           </div>
         </div>
       </div>
 
-      {/* Legend / Info */}
-      <div className="absolute bottom-8 left-8 flex flex-col gap-2 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-orange-500 rounded-full" />
-          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Positive Result</span>
+      {/* Legend */}
+      <div className="w-full max-w-2xl flex justify-center gap-8 pt-2 border-t border-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+          <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em]">Positive</span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-blue-500 rounded-full" />
-          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Negative Result</span>
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+          <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em]">Negative</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 bg-white/40 rounded-full" />
+          <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em]">Initial</span>
         </div>
       </div>
     </div>
   );
 };
+
 const PedigreeNode = ({ type, affected, label, genotype }: { type: 'male' | 'female', affected: boolean, label: string, genotype?: string }) => (
   <div className="flex flex-col items-center gap-4">
     <div className="relative">
