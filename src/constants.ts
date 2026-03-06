@@ -15,51 +15,44 @@ Enzymes are biological catalysts that speed up chemical reactions without being 
 **The Lock and Key Hypothesis:**
 The substrate fits into the complementary active site of the enzyme, forming an enzyme-substrate complex.
 
-**Curriculum-Specific Experiments:**
-*   **IBMYP / IGCSE / GCSE:**
-    *   **Catalase Activity:** Using potato or liver discs in Hydrogen Peroxide ($H_2O_2$) to measure oxygen bubble production.
-    *   **Amylase & Starch:** Investigating the effect of pH on the time taken for amylase to break down starch (using Iodine test).
-    *   **Protease & Milk:** Measuring the time taken for protease (like trypsin) to clear a cloudy milk suspension.
-*   **IBDP / A-Level / AP Biology:**
-    *   **Vmax and Km:** Investigating substrate concentration effects on the rate of reaction.
-    *   **Inhibition:** Effect of competitive and non-competitive inhibitors on enzyme kinetics.
-    *   **Immobilized Enzymes:** Using yeast beads in alginate to investigate lactose breakdown.
-    *   **Activation Energy:** Using data to calculate $Q_{10}$ temperature coefficients.
-
 **The Reaction in this Lab:**
-$$2H_2O_2 \\xrightarrow{\\text{Catalase}} 2H_2O + O_2 (\\text{bubbles})$$`,
-    method: `### 1. Research Question
-How does changing the **pH** or **Temperature** affect the rate of catalase activity?
+$$2H_2O_2 \\xrightarrow{\\text{Catalase}} 2H_2O + O_2 (\\text{bubbles})$$
 
-### 2. Hypothesis
+**Factors Affecting Enzyme Activity:**
+*   **Temperature:** Increases kinetic energy, leading to more frequent and successful collisions. However, extreme heat causes the enzyme's active site to **denature** (change shape).
+*   **pH:** Each enzyme has an optimum pH. Extreme pH levels can also cause denaturation.`,
+    method: `### 1. Research Question
+How does changing the **pH** or **Temperature** affect the rate of catalase activity, measured by the volume of oxygen produced per minute?
+
+### 2. Variables
+*   **Independent Variable:** Temperature (°C) or pH level.
+*   **Dependent Variable:** Rate of oxygen production ($\mathrm{cm^3/min}$), measured by counting bubbles or using a gas syringe.
+*   **Controlled Variables:** Enzyme concentration, substrate ($H_2O_2$) concentration, volume of solution, reaction time.
+
+### 3. Hypothesis
 If the temperature increases towards the optimum (37°C), then the rate of oxygen production will increase because the kinetic energy of the molecules increases, leading to more frequent and successful collisions between the enzyme's active site and the substrate.
 
-### 3. Procedure
-1. **Setup:** Adjust the **Temperature** and **pH** using the sliders.
-2. **Observe:** Watch the enzyme and substrate interactions. Notice how high temperatures cause the active site to denature (change shape).
-3. **Manual Count:** 
-    *   Start the **Timer** (set for 1 minute).
-    *   Count the number of oxygen bubbles produced in the reaction vessel.
-    *   Enter your count into the **Manual Record** field.
-4. **Analysis:** Click **'Record Manually'** to add your observation to the graph.
+### 4. Materials
+*   Catalase source (e.g., potato or liver extract)
+*   Hydrogen peroxide ($H_2O_2$) solution
+*   Water bath and thermometer
+*   Buffer solutions of different pH
+*   Test tubes and test tube rack
+*   Gas syringe or delivery tube and beaker of water
+*   Stopwatch
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Change the Temperature or pH systematically (e.g., every 10°C or 1 pH unit).
-*   **Controlled Variables (CV):** Ensure enzyme concentration, substrate volume, and reaction time remain constant for every trial.
+### 5. Procedure
+1.  **Setup:** Set up the reaction vessel and delivery tube.
+2.  **Preparation:** Add a fixed volume of catalase extract and buffer solution to the test tube.
+3.  **Equilibration:** Place the test tube in a water bath at the desired temperature for 5 minutes.
+4.  **Reaction:** Add a fixed volume of $H_2O_2$ and quickly seal the tube with a stopper connected to the gas syringe.
+5.  **Measurement:** Start the timer and record the volume of oxygen produced in 1 minute.
+6.  **Repeat:** Repeat the experiment for different temperatures or pH levels, ensuring at least three trials for each condition to calculate a mean.
 
-### 3. Reliability & Accuracy
-*   **Multiple Trials:** Repeat each condition at least **three times**.
-*   **Mean Calculation:** Calculate the average rate for each condition.
-*   **Anomalies:** Identify any results that deviate significantly from the trend and exclude them from the mean calculation.
-
-### 4. Safety Precautions
-*   **Hydrogen Peroxide:** $H_2O_2$ is corrosive; wear safety goggles and gloves.
-*   **Glassware:** Handle beakers and syringes carefully to avoid breakage.
-*   **Heat:** Use tongs when handling hot water baths.
-
-### 5. Suggested Improvements
-*   **Digital Measurement:** Use a gas pressure sensor or a digital gas syringe for more precise volume readings than manual bubble counting.
-*   **Thermostatic Water Bath:** Use an electronic water bath to maintain a more precise and stable temperature throughout the experiment.`,
+### 6. Safety Precautions
+*   **Hydrogen Peroxide:** $H_2O_2$ is corrosive and an irritant; wear safety goggles and gloves.
+*   **Glassware:** Handle beakers and test tubes carefully to avoid breakage.
+*   **Heat:** Use tongs or heat-resistant gloves when handling hot water baths.`,
     independentVariables: [
       { id: 'temp', name: 'Temperature', min: 0, max: 100, step: 1, defaultValue: 37, unit: '°C' },
       { id: 'ph', name: 'pH', min: 1, max: 14, step: 0.5, defaultValue: 7, unit: '' }
@@ -162,41 +155,38 @@ Osmosis is the net movement of water molecules from a region of higher water pot
 *   **Plasmolysis:** In concentrated solutions, water leaves the cell, the vacuole shrinks, and the cytoplasm pulls away from the cell wall.
 
 **The Percentage Change Formula:**
-$$\% \text{ Change in Mass} = \frac{\text{Final Mass} - \text{Initial Mass}}{\text{Initial Mass}} \times 100$$
-
-**Curriculum-Specific Experiments:**
-*   **IBMYP / IGCSE:** Measuring the change in mass of potato cylinders in different sucrose concentrations.
-*   **IBDP / A-Level:** Determining the **Isotonic Point** (where there is no net change in mass).`,
+$$\% \text{ Change in Mass} = \frac{\text{Final Mass} - \text{Initial Mass}}{\text{Initial Mass}} \times 100$$`,
     method: `### 1. Research Question
 How does the concentration of sucrose solution affect the percentage change in mass of potato cylinders?
 
-### 2. Hypothesis
+### 2. Variables
+*   **Independent Variable:** Concentration of sucrose solution ($\mathrm{M}$ or $\mathrm{mol/dm^3}$).
+*   **Dependent Variable:** Percentage change in mass of the potato cylinders ($\%$).
+*   **Controlled Variables:** Initial mass and length of potato cylinders, surface area of potato, type/age of potato, temperature of the solution, volume of solution, duration of immersion.
+
+### 3. Hypothesis
 If the sucrose concentration increases, then the percentage change in mass will decrease (become more negative) because water moves out of the potato cells by osmosis from a region of higher water potential to a region of lower water potential through a partially permeable membrane.
 
-### 3. Procedure
-1. **Initial Mass:** Click **'Measure Initial Mass'** to place a fresh potato cylinder on the electronic balance and record its starting weight ($m_i$).
-2. **Submerge:** Click **'Submerge in Solution'** to place the potato into the beaker containing the selected sucrose concentration.
-3. **Timer:** Start the **Timer** (set for 1 minute or more).
-4. **Dry:** Click **'Remove from Solution'**, then click **'Dry with Cloth'** to remove excess surface water. This ensures you are only measuring the change in internal mass.
-5. **Final Mass:** Click **'Measure Final Mass'** to move the dried potato back to the balance and record its final weight ($m_f$).
-6. **Calculate:** Use the formula to calculate the percentage change in mass.
+### 4. Materials
+*   Fresh potato
+*   Cork borer and scalpel
+*   Electronic balance (accurate to 0.01g)
+*   Sucrose solutions of different concentrations (0.0M to 1.0M)
+*   Beakers or boiling tubes
+*   Paper towels
+*   Stopwatch
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Change the Sucrose Concentration (e.g., 0.0M, 0.2M, 0.4M, etc.).
-*   **Controlled Variables (CV):** Use potato cylinders from the same potato (same age/type), ensure they are cut to the same length/diameter, and submerge them for the same duration.
+### 5. Procedure
+1.  **Preparation:** Use a cork borer to cut several potato cylinders. Use a scalpel to trim them to the same length (e.g., 3cm).
+2.  **Initial Mass:** Blot each cylinder with a paper towel to remove excess surface water, then weigh each one and record the initial mass ($m_i$).
+3.  **Immersion:** Place each cylinder into a separate beaker containing a fixed volume of a specific sucrose concentration.
+4.  **Duration:** Leave the cylinders in the solution for at least 30 minutes.
+5.  **Final Mass:** Remove the cylinders, blot them dry again, and record the final mass ($m_f$).
+6.  **Analysis:** Calculate the percentage change in mass for each cylinder and plot a graph of concentration vs. % change.
 
-### 3. Reliability & Accuracy
-*   **Multiple Trials:** Use at least **three potato cylinders** for each concentration.
-*   **Mean Calculation:** Calculate the average % change for each concentration to improve reliability.
-*   **Anomalies:** Discard any cylinder that shows a mass change significantly different from the others in the same group.
-
-### 4. Safety Precautions
-*   **Cutting Tools:** Use a cork borer and scalpel carefully on a cutting mat to avoid injury.
-*   **Glassware:** Handle beakers with care; clean up spills immediately to prevent slipping.
-
-### 5. Suggested Improvements
-*   **Digital Balance:** Use a balance with higher precision (e.g., 3 decimal places) for more accurate mass readings.
-*   **Temperature Control:** Perform the experiment in a temperature-controlled room or water bath, as temperature affects the rate of osmosis.`,
+### 6. Safety Precautions
+*   **Cutting Tools:** Use a cork borer and scalpel carefully on a cutting mat; always cut away from your body.
+*   **Glassware:** Handle beakers with care; clean up any spills immediately to prevent slipping.`,
     independentVariables: [
       { id: 'molarity', name: 'Sucrose Concentration', min: 0, max: 1, step: 0.1, defaultValue: 0, unit: 'M' }
     ],
@@ -290,55 +280,46 @@ If the sucrose concentration increases, then the percentage change in mass will 
     icon: 'Sun',
     color: 'emerald',
     theory: `### Photosynthesis
-Photosynthesis is the process by which plants synthesize glucose from $CO_2$ and water using light energy. Chlorophyll in the chloroplasts absorbs light energy.
+Photosynthesis is the process by which plants synthesize glucose from $\mathrm{CO_2}$ and water using light energy. Chlorophyll in the chloroplasts absorbs light energy.
 
 **The Equation:**
-$$6CO_2 + 6H_2O \\xrightarrow{\\text{Light}} C_6H_{12}O_6 + 6O_2$$
+$$6\mathrm{CO_2} + 6\mathrm{H_2O} \\xrightarrow{\\text{Light}} \mathrm{C_6H_{12}O_6} + 6\mathrm{O_2}$$
 
 **Factors Affecting Rate:**
 *   **Light Intensity:** Provides energy for the light-dependent reaction.
-*   **$CO_2$ Concentration:** A substrate for the light-independent reaction.
-*   **Temperature:** Affects the enzymes involved (e.g., Rubisco).
-
-**Curriculum-Specific Experiments:**
-*   **IBMYP / IGCSE:** 
-    *   Investigating the effect of light intensity on the rate of photosynthesis by counting bubbles from pondweed (Elodea).
-    *   Testing leaves for starch to prove photosynthesis occurred.
-*   **IBDP / A-Level:**
-    *   **Action and Absorption Spectra:** Using different colored filters to see which wavelengths are most effective.
-    *   **Limiting Factors:** Identifying which factor is limiting the rate at different points on a graph.
-    *   **Chromatography:** Separating photosynthetic pigments ($Rf$ values).`,
+*   **$\mathrm{CO_2}$ Concentration:** A substrate for the light-independent reaction.
+*   **Temperature:** Affects the enzymes involved (e.g., Rubisco).`,
     method: `### 1. Research Question
-How does light intensity affect the rate of photosynthesis in pondweed (Elodea)?
+How does light intensity affect the rate of photosynthesis in pondweed (Elodea), measured by the number of oxygen bubbles produced per minute?
 
-### 2. Hypothesis
-If the light intensity increases, then the number of oxygen bubbles produced per minute will increase because light provides the energy required for the light-dependent stage of photosynthesis, increasing the overall rate of reaction.
+### 2. Variables
+*   **Independent Variable:** Light intensity (varied by changing the distance of the lamp from the plant).
+*   **Dependent Variable:** Rate of photosynthesis, measured as the number of oxygen bubbles produced per minute.
+*   **Controlled Variables:** Temperature of the water bath, concentration of $\mathrm{CO_2}$ (using sodium hydrogen carbonate), type and size of pondweed, wavelength of light.
 
-### 3. Procedure
-1. **Setup:** Adjust the **Light Intensity**, **Temperature**, and **CO₂ Concentration** using the sliders.
-2. **Observe:** Watch the pondweed in the water bath. Notice the oxygen bubbles being released from the cut stem and rising into the test tube.
-3. **Manual Count:** 
-    *   Start the **Timer** (set for 1 minute).
-    *   Count the number of bubbles produced using the **Tally** button.
-4. **Analysis:** Observe how the rate changes when you modify different limiting factors.
+### 3. Hypothesis
+If the light intensity increases, then the number of oxygen bubbles produced per minute will increase because light provides the energy required for the light-dependent stage of photosynthesis, increasing the overall rate of reaction until another factor (like $\mathrm{CO_2}$ or temperature) becomes limiting.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Change one factor (e.g., Light Intensity) while keeping others (Temperature, CO₂ Concentration) constant.
-*   **Controlled Variables (CV):** Use the same piece of pondweed, the same volume of water, and the same wavelength of light.
+### 4. Materials
+*   Fresh pondweed (e.g., Elodea or Cabomba)
+*   Beaker or water bath
+*   Test tube and funnel
+*   Lamp with a ruler
+*   Sodium hydrogen carbonate ($\mathrm{NaHCO_3}$)
+*   Stopwatch
+*   Thermometer
 
-### 3. Reliability & Accuracy
-*   **Multiple Trials:** Repeat the bubble count at each light intensity at least **three times**.
-*   **Mean Calculation:** Calculate the average bubbles per minute for each condition.
-*   **Equilibration:** Allow the pondweed to adjust to new conditions for 5 minutes before starting the count.
+### 5. Procedure
+1.  **Setup:** Place a piece of pondweed into a test tube filled with water and $\mathrm{NaHCO_3}$. Place the test tube in a water bath to maintain a constant temperature.
+2.  **Equilibration:** Place the lamp at a specific distance (e.g., 10cm) and allow the plant to adjust for 5 minutes.
+3.  **Measurement:** Start the stopwatch and count the number of bubbles released from the cut stem in 1 minute.
+4.  **Varying Distance:** Move the lamp to a new distance (e.g., 20cm, 30cm) and repeat the equilibration and measurement steps.
+5.  **Repeat:** Conduct at least three trials for each distance to calculate a mean rate.
 
-### 4. Safety Precautions
-*   **Electrical Safety:** Keep the lamp and electrical cords away from the water bath to prevent shocks.
-*   **Heat:** Be careful as the lamp can become very hot during the experiment.
-*   **Glassware:** Handle the water bath and test tubes carefully.
-
-### 5. Suggested Improvements
-*   **Gas Collection:** Use a gas syringe or a capillary tube with a ruler to measure the actual volume of oxygen produced, which is more accurate than bubble counting.
-*   **LED Lamp:** Use an LED lamp to minimize heat transfer to the water bath, ensuring temperature remains a controlled variable.`,
+### 6. Safety Precautions
+*   **Electrical Safety:** Keep the lamp and electrical cords away from the water to prevent electric shocks.
+*   **Heat:** Be careful as the lamp can become very hot; do not touch the bulb.
+*   **Glassware:** Handle beakers and test tubes carefully to avoid breakage.`,
     independentVariables: [
       { id: 'light', name: 'Light Intensity', min: 0, max: 100, step: 5, defaultValue: 50, unit: '%' },
       { id: 'temp', name: 'Temperature', min: 10, max: 50, step: 1, defaultValue: 25, unit: '°C' },
@@ -433,32 +414,46 @@ If the light intensity increases, then the number of oxygen bubbles produced per
     description: 'Respirometer measuring O2 consumption in germinating seeds.',
     icon: 'Wind',
     color: 'amber',
-    theory: `### Respiration
-Respiration is the chemical process that releases energy from glucose. Aerobic respiration uses oxygen.`,
+    theory: `### Cellular Respiration
+Cellular respiration is the chemical process that releases energy from glucose. Aerobic respiration requires oxygen and produces carbon dioxide and water as byproducts.
+
+**The Equation:**
+$$\mathrm{C_6H_{12}O_6} + 6\mathrm{O_2} \rightarrow 6\mathrm{CO_2} + 6\mathrm{H_2O} + \text{Energy (ATP)}$$
+
+**Measuring Respiration:**
+A **respirometer** is used to measure the rate of respiration by measuring the consumption of oxygen. Potassium hydroxide ($\mathrm{KOH}$) or soda lime is used to absorb the $\mathrm{CO_2}$ produced, so any change in gas volume is due solely to oxygen uptake.`,
     method: `### 1. Research Question
 How does temperature affect the rate of oxygen consumption in germinating seeds?
 
-### 2. Hypothesis
-If the temperature increases, then the rate of oxygen uptake will increase because respiratory enzymes work faster at higher temperatures (due to increased kinetic energy) until they reach their optimum temperature.
+### 2. Variables
+*   **Independent Variable:** Temperature of the water bath (°C).
+*   **Dependent Variable:** Rate of oxygen consumption ($\mathrm{mm^3/min}$), measured by the movement of fluid in a manometer.
+*   **Controlled Variables:** Mass of germinating seeds, volume and concentration of $\mathrm{KOH}$, time interval for measurement, type of seeds.
 
-### 3. Procedure
-1. Set the temperature of the water bath.
-2. Observe the movement of the manometer fluid.
-3. Calculate the rate of oxygen uptake.
+### 3. Hypothesis
+If the temperature increases, then the rate of oxygen uptake will increase because respiratory enzymes work faster at higher temperatures (due to increased kinetic energy) until they reach their optimum temperature, after which the rate will decrease due to enzyme denaturation.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Temperature.
-*   **Controlled Variables (CV):** Mass of seeds, volume of KOH.
+### 4. Materials
+*   Respirometer (two connected tubes)
+*   Germinating seeds (e.g., peas or beans)
+*   Glass beads (for the control tube)
+*   Potassium hydroxide ($\mathrm{KOH}$) solution or pellets
+*   Manometer with colored fluid
+*   Water bath and thermometer
+*   Stopwatch
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Procedure
+1.  **Setup:** Place a fixed mass of germinating seeds in one tube and an equal volume of glass beads in the control tube.
+2.  **Absorbent:** Place a small amount of $\mathrm{KOH}$ in both tubes (ensuring it doesn't touch the seeds).
+3.  **Equilibration:** Place both tubes in a water bath at a specific temperature and allow them to equilibrate for 10 minutes with the taps open.
+4.  **Measurement:** Close the taps and record the initial position of the manometer fluid. Start the stopwatch.
+5.  **Recording:** After a fixed time (e.g., 5 minutes), record the final position of the fluid.
+6.  **Repeat:** Repeat for different temperatures, ensuring multiple trials for each to calculate a mean.
 
-### 4. Safety Precautions
-*   **KOH:** Potassium Hydroxide is corrosive; wear goggles and gloves.
-*   **Living Organisms:** Handle seeds with care.
-
-### 5. Suggested Improvements
-*   Use a digital respirometer for more precise volume changes.`,
+### 6. Safety Precautions
+*   **KOH:** Potassium Hydroxide is highly corrosive; wear safety goggles and gloves at all times.
+*   **Glassware:** Handle the delicate glass manometer and tubes with care.
+*   **Living Organisms:** Handle the germinating seeds gently to avoid damage.`,
     independentVariables: [
       { id: 'temp', name: 'Temperature', min: 5, max: 45, step: 1, defaultValue: 25, unit: '°C' }
     ],
@@ -479,53 +474,50 @@ If the temperature increases, then the rate of oxygen uptake will increase becau
     icon: 'Leaf',
     color: 'teal',
     theory: `### Transpiration and the Potometer
-Transpiration is the process of water movement through a plant and its evaporation from aerial parts, such as leaves, stems, and flowers. It is a vital part of the water cycle and is essential for nutrient transport and cooling the plant.
+Transpiration is the process of water movement through a plant and its evaporation from aerial parts, such as leaves, stems, and flowers.
 
-#### 1. The Transpiration Stream
-Water is absorbed by the roots via osmosis and travels up the **xylem** vessels. This movement is driven by the **transpiration pull**, created by the evaporation of water from the spongy mesophyll cells into the air spaces within the leaf. Due to the **cohesion** of water molecules (hydrogen bonding) and **adhesion** to xylem walls, a continuous column of water is pulled upwards.
+**The Transpiration Stream:**
+Water is absorbed by the roots via osmosis and travels up the **xylem** vessels. This movement is driven by the **transpiration pull**, created by the evaporation of water from the spongy mesophyll cells into the air spaces within the leaf. Due to the **cohesion** of water molecules and **adhesion** to xylem walls, a continuous column of water is pulled upwards.
 
-#### 2. Factors Affecting Rate
-*   **Light Intensity:** Increases the rate as stomata open wider to allow for gas exchange during photosynthesis, providing more pathways for water vapor to escape.
-*   **Temperature:** Higher temperatures increase the kinetic energy of water molecules, accelerating evaporation from the mesophyll cells.
-*   **Wind Speed:** Wind removes the "boundary layer" of humid air surrounding the leaf, maintaining a steep concentration gradient between the inside of the leaf and the outside air.
-*   **Humidity:** High humidity decreases the rate because it reduces the concentration gradient, making it harder for water vapor to diffuse out of the stomata.
-
-#### 3. Measuring with a Potometer
-A potometer measures the **rate of water uptake**, which is a close proxy for the rate of transpiration (though a small amount of water is used for photosynthesis and turgidity).`,
+**Factors Affecting Rate:**
+*   **Light Intensity:** Increases the rate as stomata open wider for gas exchange.
+*   **Temperature:** Increases the kinetic energy of water molecules, accelerating evaporation.
+*   **Wind Speed:** Removes the humid boundary layer, maintaining a steep concentration gradient.
+*   **Humidity:** Decreases the rate by reducing the water potential gradient.`,
     method: `### 1. Research Question
-How do varying environmental conditions (wind, humidity, light, and temperature) influence the rate of transpiration in a leafy shoot?
+How do varying environmental conditions (wind speed, humidity, light intensity, and temperature) influence the rate of transpiration in a leafy shoot?
 
-### 2. Hypothesis
+### 2. Variables
+*   **Independent Variable:** Environmental factor being tested (e.g., Wind Speed in $\mathrm{m/s}$).
+*   **Dependent Variable:** Rate of water uptake ($\mathrm{mm/min}$), measured by the distance an air bubble moves in a capillary tube.
+*   **Controlled Variables:** Leaf surface area (same shoot), total water volume, duration of measurement, type of plant.
+
+### 3. Hypothesis
 *   **Wind:** Increasing wind speed will increase the transpiration rate by removing the saturated boundary layer.
 *   **Humidity:** Increasing humidity will decrease the transpiration rate by reducing the water potential gradient.
 *   **Light:** Increasing light intensity will increase the rate as stomata open for photosynthesis.
 
-### 3. Procedure
-1.  **Assembly:** Ensure the potometer is assembled underwater to prevent air bubbles from entering the xylem, which would break the transpiration stream.
-2.  **Seal:** Check that all joints (especially where the shoot meets the tube) are airtight using petroleum jelly if necessary.
-3.  **Equilibration:** Allow the plant to acclimate to the laboratory conditions for 5-10 minutes before taking readings.
-4.  **Introduction of Bubble:** Use the reservoir tap to introduce a single air bubble into the capillary tube.
-5.  **Baseline:** Record the starting position of the bubble on the millimeter scale.
-6.  **Variable Adjustment:** Set your independent variable (e.g., Wind Speed to 5 m/s).
-7.  **Measurement:** Start the timer and record the distance moved by the bubble over a fixed period (e.g., 5 minutes).
-8.  **Reset:** Open the reservoir tap to push the bubble back to the start for the next trial.
+### 4. Materials
+*   Leafy shoot (cut underwater)
+*   Potometer (capillary tube, reservoir, and scale)
+*   Rubber tubing and petroleum jelly (for sealing)
+*   Fan (for wind), lamp (for light intensity), clear bag (for humidity)
+*   Stopwatch
+*   Beaker of water
 
-### 4. Variable Manipulation
-*   **Independent Variable (IV):** Environmental factor (Wind, Humidity, Light, or Temp).
-*   **Dependent Variable (DV):** Distance moved by the bubble (mm) per unit time (min).
-*   **Controlled Variables (CV):** Leaf surface area (use the same shoot), total water volume, and time interval.
-
-### 5. Reliability & Accuracy
-*   **Repeatability:** Perform three trials for each condition and calculate the mean rate.
-*   **Precision:** Use the digital readout to confirm the exact distance moved.
-*   **Anomalies:** If a bubble stops moving, check for leaks or blockages in the xylem.
+### 5. Procedure
+1.  **Assembly:** Assemble the potometer underwater to prevent air bubbles from entering the xylem.
+2.  **Sealing:** Use petroleum jelly to ensure all joints are airtight.
+3.  **Equilibration:** Allow the plant to acclimate to the conditions for 10 minutes.
+4.  **Bubble Introduction:** Introduce a single air bubble into the capillary tube using the reservoir.
+5.  **Measurement:** Record the starting position of the bubble. Start the stopwatch and record the distance moved in 5 minutes.
+6.  **Varying Conditions:** Change the independent variable (e.g., turn on the fan) and repeat the measurement.
+7.  **Repeat:** Conduct multiple trials for each condition to ensure reliability.
 
 ### 6. Safety Precautions
-*   **Glassware:** Potometers are fragile; handle with care.
-*   **Water:** Clean up spills to prevent slipping.
-
-### 7. Suggested Improvements
-*   Use a digital potometer for more precise water uptake readings.`,
+*   **Glassware:** Potometers are fragile; handle with care to avoid cuts from broken glass.
+*   **Water:** Wipe up any spills immediately to prevent slipping.
+*   **Electricals:** Keep fans and lamps away from water sources.`,
     independentVariables: [
       { id: 'wind', name: 'Wind Speed', min: 0, max: 10, step: 1, defaultValue: 0, unit: 'm/s' },
       { id: 'humidity', name: 'Humidity', min: 20, max: 100, step: 5, defaultValue: 50, unit: '%' },
@@ -620,31 +612,48 @@ How do varying environmental conditions (wind, humidity, light, and temperature)
     description: 'Effect of temperature on beetroot pigment leakage.',
     icon: 'Layers',
     color: 'violet',
-    theory: `### Cell Membranes
-Cell membranes are composed of a phospholipid bilayer with embedded proteins. High temperatures can damage these structures.`,
+    theory: `### Cell Membrane Permeability
+Cell membranes are composed of a phospholipid bilayer with embedded proteins. This structure is selectively permeable, controlling the movement of substances into and out of the cell.
+
+**Factors Affecting Permeability:**
+*   **Temperature:** High temperatures increase the kinetic energy of phospholipids, making the membrane more fluid. Beyond a certain point, membrane proteins denature and the bilayer is disrupted, causing the membrane to become leaky.
+*   **Solvents:** Organic solvents like ethanol can dissolve the phospholipids, destroying the membrane structure.
+
+**Beetroot Experiment:**
+Beetroot cells contain a red pigment called **betalain** stored within the large central vacuole. When the membrane permeability increases, betalain leaks out into the surrounding water, which can be measured using a colorimeter.`,
     method: `### 1. Research Question
-How does temperature affect the permeability of beetroot cell membranes?
+How does temperature affect the permeability of beetroot cell membranes, measured by the absorbance of leaked betalain pigment?
 
-### 2. Hypothesis
-If the temperature increases, then the absorbance of the solution will increase because high temperatures damage the phospholipid bilayer and denature membrane proteins, allowing more pigment (betalain) to leak out of the vacuole.
+### 2. Variables
+*   **Independent Variable:** Temperature of the water bath (°C).
+*   **Dependent Variable:** Absorbance of the solution (Arbitrary Units, $\mathrm{AU}$), measured using a colorimeter.
+*   **Controlled Variables:** Size and surface area of beetroot discs, volume of distilled water, duration of immersion, wavelength of light used in the colorimeter (e.g., 525nm).
 
-### 3. Procedure
-1. Place beetroot discs in water at different temperatures.
-2. Use a colorimeter to measure the intensity of the leaked pigment (betalain).
+### 3. Hypothesis
+If the temperature increases, then the absorbance of the solution will increase because high temperatures provide more kinetic energy to the phospholipids and eventually denature the membrane proteins, leading to a loss of membrane integrity and increased leakage of betalain pigment.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Temperature.
-*   **Controlled Variables (CV):** Size of beetroot discs, volume of water.
+### 4. Materials
+*   Fresh beetroot
+*   Cork borer and scalpel
+*   Water baths at different temperatures (20°C to 80°C)
+*   Test tubes and test tube rack
+*   Distilled water
+*   Colorimeter and cuvettes
+*   Stopwatch
+*   Forceps
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Procedure
+1.  **Preparation:** Use a cork borer to cut beetroot cylinders and a scalpel to slice them into uniform discs (e.g., 2mm thick).
+2.  **Washing:** Rinse the discs thoroughly in distilled water to remove any pigment released during cutting.
+3.  **Immersion:** Place a fixed number of discs into test tubes containing 10ml of distilled water.
+4.  **Incubation:** Place the test tubes into water baths at different temperatures for 15 minutes.
+5.  **Measurement:** Remove the discs and pour the remaining liquid into a cuvette. Use a colorimeter to measure the absorbance of the solution.
+6.  **Repeat:** Conduct multiple trials for each temperature to calculate a mean absorbance.
 
-### 4. Safety Precautions
-*   **Heat:** Use tongs for hot water baths.
-*   **Cutting:** Use a cutting mat for beetroot discs.
-
-### 5. Suggested Improvements
-*   Use a digital colorimeter for more precise absorbance readings.`,
+### 6. Safety Precautions
+*   **Heat:** Use tongs or heat-resistant gloves when handling test tubes in hot water baths.
+*   **Cutting:** Use a cutting mat and always cut away from your body when using the scalpel.
+*   **Staining:** Beetroot pigment stains clothing; wear a lab coat and handle with care.`,
     independentVariables: [
       { id: 'temp', name: 'Temperature', min: 20, max: 80, step: 5, defaultValue: 20, unit: '°C' }
     ],
@@ -664,31 +673,50 @@ If the temperature increases, then the absorbance of the solution will increase 
     description: 'Calculate the ratio of cells in mitosis in a root tip squash.',
     icon: 'Microscope',
     color: 'cyan',
-    theory: `### Mitosis
-Mitosis is the process of cell division that results in two genetically identical daughter cells.`,
+    theory: `### Mitosis and the Cell Cycle
+Mitosis is the part of the cell cycle where a single cell divides into two genetically identical daughter cells. It is essential for growth, tissue repair, and asexual reproduction.
+
+**Stages of Mitosis:**
+1.  **Prophase:** Chromosomes condense and the nuclear envelope breaks down.
+2.  **Metaphase:** Chromosomes line up at the cell equator.
+3.  **Anaphase:** Sister chromatids are pulled to opposite poles.
+4.  **Telophase:** New nuclear envelopes form around the separated chromosomes.
+
+**Mitotic Index:**
+The Mitotic Index is a measure of the proliferation rate of a tissue.
+$$\text{Mitotic Index} = \frac{\text{Number of cells in mitosis}}{\text{Total number of cells}} \times 100$$`,
     method: `### 1. Research Question
-How does the field of view (distance from the root tip) affect the mitotic index in garlic roots?
+How does the distance from the root tip (meristematic region) affect the mitotic index in garlic root cells?
 
-### 2. Hypothesis
-If the observation is made closer to the root tip (meristematic region), then the mitotic index will be higher because this is the primary region of active cell division and growth in the plant.
+### 2. Variables
+*   **Independent Variable:** Field of view (distance from the root tip).
+*   **Dependent Variable:** Mitotic Index ($\%$).
+*   **Controlled Variables:** Staining technique (e.g., acetic orcein), magnification, type of plant tissue, duration of staining.
 
-### 3. Procedure
-1. Scan the virtual slide of the garlic root tip.
-2. Count the number of cells in each stage of mitosis vs. interphase.
+### 3. Hypothesis
+If the observation is made closer to the root tip (meristematic region), then the mitotic index will be higher because this region contains the apical meristem, where cells are actively dividing to promote primary growth.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Field of View.
-*   **Controlled Variables (CV):** Staining technique, magnification.
+### 4. Materials
+*   Garlic or onion root tips
+*   Hydrochloric acid (1M)
+*   Acetic orcein or Feulgen stain
+*   Microscope slides and coverslips
+*   Light microscope
+*   Water bath (60°C)
+*   Forceps and mounted needle
 
-### 3. Reliability & Accuracy
-*   Count at least 100 cells to ensure a representative sample.
+### 5. Procedure
+1.  **Hydrolysis:** Place the root tips in 1M HCl at 60°C for 5 minutes to soften the cell walls.
+2.  **Staining:** Rinse the tips and place them in acetic orcein stain for 10 minutes.
+3.  **Squash:** Place a root tip on a slide, add a drop of stain, and use a mounted needle to break it up. Place a coverslip on top and press down firmly (the "squash" technique) to create a single layer of cells.
+4.  **Observation:** Use a light microscope to identify cells in different stages of the cell cycle.
+5.  **Counting:** Count the total number of cells and the number of cells in mitosis in several fields of view at different distances from the tip.
+6.  **Calculation:** Calculate the mitotic index for each field of view.
 
-### 4. Safety Precautions
-*   **Stains:** Acetic orcein is corrosive; wear goggles and gloves.
-*   **Glassware:** Handle slides and coverslips carefully.
-
-### 5. Suggested Improvements
-*   Use high-resolution digital imaging for more accurate cell identification.`,
+### 6. Safety Precautions
+*   **Stains:** Acetic orcein is corrosive and can stain skin/clothing; wear safety goggles, gloves, and a lab coat.
+*   **Acids:** Hydrochloric acid is corrosive; handle with care.
+*   **Glassware:** Handle sharp glass slides and coverslips carefully to avoid cuts.`,
     independentVariables: [
       { id: 'field', name: 'Field of View', min: 1, max: 5, step: 1, defaultValue: 1, unit: '#' }
     ],
@@ -709,30 +737,42 @@ If the observation is made closer to the root tip (meristematic region), then th
     icon: 'Dna',
     color: 'orange',
     theory: `### Natural Selection
-Natural selection is the process where organisms better adapted to their environment tend to survive and produce more offspring.`,
+Natural selection is the mechanism of evolution where individuals with heritable traits better suited to their environment are more likely to survive and reproduce.
+
+**Key Principles:**
+*   **Variation:** Individuals in a population show genetic variation.
+*   **Selection Pressure:** Environmental factors (e.g., predation, disease) act as selection pressures.
+*   **Differential Survival:** Those with advantageous traits (e.g., better camouflage) survive longer.
+*   **Inheritance:** Advantageous alleles are passed on to the next generation, increasing their frequency in the population over time.
+
+**The Peppered Moth Case:**
+The peppered moth (*Biston betularia*) is a classic example of natural selection. During the Industrial Revolution, soot darkened tree trunks, giving a selective advantage to dark-colored (melanic) moths over light-colored ones.`,
     method: `### 1. Research Question
-How does environmental pollution affect the frequency of dark-colored moths in a population over time?
+How does environmental pollution (affecting tree bark color) influence the frequency of dark-colored moths in a population over several generations?
 
-### 2. Hypothesis
-If the pollution level increases (darkening the trees), then the frequency of dark moths will increase because they are better camouflaged from predators, giving them a selective advantage and a higher survival rate.
+### 2. Variables
+*   **Independent Variable:** Pollution level ($\%$, affecting the darkness of the background).
+*   **Dependent Variable:** Frequency of the dark (melanic) morph in the population ($\%$).
+*   **Controlled Variables:** Initial population size, predation pressure (number of birds), duration of the simulation (number of generations).
 
-### 3. Procedure
-1. Select the background color (Light/Dark).
-2. Release a mixed population of moths.
-3. Observe the survival rates over generations.
+### 3. Hypothesis
+If the pollution level increases (darkening the tree bark), then the frequency of dark moths will increase over generations because they will be better camouflaged from avian predators, leading to higher survival and reproductive rates compared to light-colored moths.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Pollution level.
-*   **Controlled Variables (CV):** Initial population size.
+### 4. Materials
+*   Natural Selection simulation software
+*   Computer or tablet
+*   Data recording sheet or spreadsheet
 
-### 3. Reliability & Accuracy
-*   Repeat the simulation multiple times to account for random variation.
+### 5. Procedure
+1.  **Baseline:** Set the pollution level to 0% (light background).
+2.  **Initial Population:** Start with a mixed population of light and dark moths.
+3.  **Simulation:** Run the simulation for a fixed number of generations (e.g., 10 generations).
+4.  **Recording:** Record the final percentage of dark moths in the population.
+5.  **Varying Pollution:** Increase the pollution level in increments (e.g., 20%, 40%, 60%, 80%, 100%) and repeat the simulation.
+6.  **Repeat:** Conduct multiple runs for each pollution level to account for random variation and calculate a mean frequency.
 
-### 4. Safety Precautions
-*   **Computer Safety:** Take breaks from the screen to avoid eye strain.
-
-### 5. Suggested Improvements
-*   Include more environmental variables like temperature or predator types.`,
+### 6. Safety Precautions
+*   **Ergonomics:** Maintain good posture and take regular breaks from the screen to avoid eye strain and repetitive strain injury.`,
     independentVariables: [
       { id: 'pollution', name: 'Pollution Level', min: 0, max: 100, step: 10, defaultValue: 0, unit: '%' }
     ],
@@ -751,30 +791,42 @@ If the pollution level increases (darkening the trees), then the frequency of da
     description: 'Trophic level pyramids and the 10% rule.',
     icon: 'Zap',
     color: 'yellow',
-    theory: `### Trophic Levels
-Energy flows through an ecosystem from producers to consumers. Only about 10% of energy is transferred to the next level.`,
+    theory: `### Energy Flow in Ecosystems
+Energy enters most ecosystems as sunlight, which is captured by producers (autotrophs) through photosynthesis. This energy is then transferred through trophic levels via feeding relationships.
+
+**Trophic Levels:**
+1.  **Producers:** Plants and algae.
+2.  **Primary Consumers:** Herbivores.
+3.  **Secondary Consumers:** Carnivores that eat herbivores.
+4.  **Tertiary Consumers:** Top predators.
+
+**The 10% Rule:**
+On average, only about 10% of the energy available at one trophic level is transferred to the next. The remaining 90% is lost as heat during respiration, through incomplete ingestion, or as waste (egestion/excretion). This inefficiency limits the number of trophic levels in a food chain.`,
     method: `### 1. Research Question
-How does the primary productivity of an ecosystem affect the energy available at higher trophic levels?
+How does the primary productivity of an ecosystem affect the total energy available to tertiary consumers?
 
-### 2. Hypothesis
-If the primary production increases, then the energy at the tertiary level will increase because there is more total energy entering the food chain to be transferred, even though approximately 90% is lost at each level.
+### 2. Variables
+*   **Independent Variable:** Primary production (Energy entering the ecosystem in $\mathrm{kJ}$).
+*   **Dependent Variable:** Energy available at the tertiary consumer level ($\mathrm{kJ}$).
+*   **Controlled Variables:** Energy transfer efficiency between trophic levels (assumed constant at 10%), number of trophic levels.
 
-### 3. Procedure
-1. Input the primary productivity.
-2. Calculate the energy available at each subsequent trophic level.
+### 3. Hypothesis
+If the primary production increases, then the energy available at the tertiary level will increase linearly, because although 90% of energy is lost at each transfer, the total amount of energy entering the system determines the absolute amount available at the top of the pyramid.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Primary production.
-*   **Controlled Variables (CV):** Transfer efficiency.
+### 4. Materials
+*   Energy Flow simulation or modeling software
+*   Calculator
+*   Spreadsheet for data analysis
 
-### 3. Reliability & Accuracy
-*   Use precise mathematical models for energy transfer.
+### 5. Procedure
+1.  **Input:** Set the initial primary production value (e.g., 1000 kJ).
+2.  **Calculation:** Calculate the energy available at the primary consumer, secondary consumer, and tertiary consumer levels using the 10% rule.
+3.  **Recording:** Record the energy value for the tertiary level.
+4.  **Varying Input:** Increase the primary production in fixed increments (e.g., 2000 kJ, 3000 kJ, etc.) and repeat the calculations.
+5.  **Analysis:** Plot a graph of Primary Production vs. Tertiary Level Energy.
 
-### 4. Safety Precautions
-*   **Data Accuracy:** Ensure all calculations are double-checked.
-
-### 5. Suggested Improvements
-*   Model more complex food webs instead of simple chains.`,
+### 6. Safety Precautions
+*   **Data Accuracy:** Double-check all mathematical calculations to ensure the model accurately reflects the 10% rule.`,
     independentVariables: [
       { id: 'input', name: 'Primary Production', min: 1000, max: 10000, step: 500, defaultValue: 5000, unit: 'kJ' }
     ],
@@ -793,46 +845,53 @@ If the primary production increases, then the energy at the tertiary level will 
     icon: 'Palette',
     color: 'emerald',
     theory: `### Paper Chromatography
-Chromatography is a technique used to separate the components of a mixture based on their different solubilities in a solvent and their different attractions to the stationary phase (the paper).
+Chromatography is a technique used to separate the components of a mixture based on their different solubilities in a mobile phase (solvent) and their different attractions to the stationary phase (paper).
 
 **Key Concepts:**
 *   **Stationary Phase:** The chromatography paper (cellulose).
 *   **Mobile Phase:** The solvent (e.g., propanone or ethanol).
-*   **Pigments:** Leaves contain several pigments:
-    *   **Carotene:** Yellow-orange (travels furthest).
+*   **Pigments:** Leaves contain several photosynthetic pigments:
+    *   **Carotene:** Yellow-orange (most soluble, travels furthest).
     *   **Xanthophyll:** Yellow.
     *   **Chlorophyll a:** Blue-green.
-    *   **Chlorophyll b:** Yellow-green (travels least).
+    *   **Chlorophyll b:** Yellow-green (least soluble, travels least).
 
 **The $R_f$ Value Formula:**
 The Retention Factor ($R_f$) is a ratio used to identify substances.
-$$R_f = \frac{\text{Distance traveled by pigment}}{\text{Distance traveled by solvent front}}$$
-
-**Curriculum-Specific Experiments:**
-*   **IBMYP / IGCSE:** Separating pigments from spinach or grass to see different colors.
-*   **IBDP / A-Level:** Calculating $R_f$ values and identifying pigments by comparing to standard values.`,
+$$R_f = \frac{\text{Distance traveled by pigment}}{\text{Distance traveled by solvent front}}$$`,
     method: `### 1. Research Question
 How do the $R_f$ values of different photosynthetic pigments compare when using propanone as a solvent?
 
-### 2. Hypothesis
-If the pigments are separated, then Carotene will have the highest $R_f$ value because it is the most soluble in the solvent and has the least affinity for the paper.
+### 2. Variables
+*   **Independent Variable:** Type of photosynthetic pigment (e.g., Chlorophyll a, Carotene).
+*   **Dependent Variable:** $R_f$ value of each pigment.
+*   **Controlled Variables:** Type of chromatography paper, type of solvent (propanone), temperature, volume of solvent.
 
-### 3. Procedure
-1.  **Extraction:** Select a leaf type (e.g., Spinach).
-2.  **Preparation:** Click **'Crush Leaf'** to extract the concentrated pigment.
-3.  **Spotting:** Click **'Apply Spot'** to place a small, concentrated drop of pigment on the pencil line of the chromatography paper. Repeat to ensure the spot is dark.
-4.  **Development:** Click **'Place in Solvent'**. Ensure the solvent level is *below* the pigment spot.
-5.  **Observation:** Watch as the solvent front rises, carrying the pigments at different speeds.
-6.  **Measurement:** Click **'Mark Solvent Front'** once it near the top.
-7.  **Calculation:** Measure the distance from the origin to the solvent front and to the center of each pigment spot. Calculate $R_f$ values.
+### 3. Hypothesis
+If the pigments are separated using paper chromatography, then Carotene will have the highest $R_f$ value because it is the most soluble in the propanone solvent and has the weakest affinity for the cellulose paper.
 
-### 4. Variable Manipulation
-*   **Independent Variable (IV):** Leaf type or Solvent type.
-*   **Dependent Variable (DV):** $R_f$ values of pigments.
+### 4. Materials
+*   Fresh leaves (e.g., spinach or grass)
+*   Mortar and pestle
+*   Propanone (solvent)
+*   Chromatography paper
+*   Capillary tube or pipette
+*   Glass jar with a lid
+*   Pencil and ruler
 
-### 5. Safety Precautions
-*   **Solvents:** Propanone and ethanol are highly flammable; keep away from open flames.
-*   **Ventilation:** Use solvents in a well-ventilated area or fume cupboard.`,
+### 5. Procedure
+1.  **Extraction:** Crush the leaves with a small amount of propanone to extract the pigments.
+2.  **Origin:** Draw a pencil line (the origin) 2cm from the bottom of the chromatography paper.
+3.  **Spotting:** Use a capillary tube to apply a small, concentrated spot of pigment extract onto the center of the pencil line. Allow it to dry and repeat several times.
+4.  **Development:** Place the paper into a jar containing 1cm of propanone. Ensure the solvent level is below the pigment spot.
+5.  **Running:** Close the lid and allow the solvent to rise until it is near the top of the paper.
+6.  **Marking:** Remove the paper and immediately mark the solvent front with a pencil.
+7.  **Calculation:** Measure the distance from the origin to the solvent front and to the center of each colored spot. Calculate the $R_f$ values.
+
+### 6. Safety Precautions
+*   **Solvents:** Propanone is highly flammable; keep away from Bunsen burners and open flames.
+*   **Ventilation:** Use propanone in a well-ventilated area or a fume cupboard to avoid inhaling vapors.
+*   **Eye Protection:** Wear safety goggles to protect against solvent splashes.`,
     independentVariables: [
       { id: 'leafType', name: 'Leaf Type', min: 1, max: 3, step: 1, defaultValue: 1, unit: '' },
       { id: 'solvent', name: 'Solvent', min: 1, max: 2, step: 1, defaultValue: 1, unit: '' }
@@ -876,31 +935,45 @@ If the pigments are separated, then Carotene will have the highest $R_f$ value b
     description: 'Breathing rate and tidal volume at rest vs exercise.',
     icon: 'Activity',
     color: 'red',
-    theory: `### Ventilation
-Ventilation is the movement of air into and out of the lungs. Exercise increases the demand for oxygen.`,
+    theory: `### Ventilation and Gas Exchange
+Ventilation is the process of moving air into and out of the lungs to facilitate gas exchange. During exercise, the body's demand for oxygen increases to support aerobic respiration in the muscles.
+
+**Key Concepts:**
+*   **Breathing Rate:** The number of breaths taken per minute.
+*   **Tidal Volume:** The volume of air breathed in or out during a single normal breath.
+*   **Ventilation Rate:** The total volume of air moved into the lungs per minute.
+    $$\text{Ventilation Rate} = \text{Breathing Rate} \times \text{Tidal Volume}$$
+*   **Homeostasis:** The body adjusts ventilation to maintain stable levels of $\mathrm{O_2}$ and $\mathrm{CO_2}$ in the blood.`,
     method: `### 1. Research Question
 How does exercise intensity affect the ventilation rate in humans?
 
-### 2. Hypothesis
-If the exercise intensity increases, then the ventilation rate will increase because the body needs to supply more oxygen to muscles for aerobic respiration and remove the excess carbon dioxide produced.
+### 2. Variables
+*   **Independent Variable:** Exercise intensity ($\%$, varied by the speed/resistance of a treadmill or cycle ergometer).
+*   **Dependent Variable:** Ventilation rate ($\mathrm{L/min}$), calculated from breathing rate and tidal volume.
+*   **Controlled Variables:** Age, gender, fitness level of the subject, ambient temperature, duration of exercise before measurement.
 
-### 3. Procedure
-1. Set the exercise intensity.
-2. Measure the breathing rate (breaths/min) and tidal volume.
+### 3. Hypothesis
+If the exercise intensity increases, then the ventilation rate will increase linearly because the muscles require more oxygen for aerobic respiration and produce more carbon dioxide, which must be removed to prevent a drop in blood pH.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Exercise intensity.
-*   **Controlled Variables (CV):** Age, fitness level.
+### 4. Materials
+*   Spirometer or peak flow meter
+*   Treadmill or stationary bike
+*   Stopwatch
+*   Nose clip
+*   Data recording software
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Procedure
+1.  **Resting State:** Measure the subject's breathing rate and tidal volume while at rest for 5 minutes.
+2.  **Exercise:** Set the exercise intensity to a specific level (e.g., 20%).
+3.  **Equilibration:** Have the subject exercise for 3 minutes to reach a steady state.
+4.  **Measurement:** Use the spirometer to record the tidal volume and count the number of breaths in 1 minute.
+5.  **Varying Intensity:** Increase the exercise intensity in increments (e.g., 40%, 60%, 80%) and repeat the measurements.
+6.  **Recovery:** Allow the subject to rest between trials until their heart rate and breathing return to normal.
 
-### 4. Safety Precautions
-*   **Physical Strain:** Do not overexert yourself during physical tests.
-*   **Hygiene:** Use clean mouthpieces for spirometers.
-
-### 5. Suggested Improvements
-*   Use a digital spirometer for more accurate tidal volume readings.`,
+### 6. Safety Precautions
+*   **Physical Overexertion:** Monitor the subject closely; stop the experiment if they feel dizzy, faint, or experience chest pain.
+*   **Hygiene:** Use a clean, sterile mouthpiece for each subject to prevent the spread of infection.
+*   **Medical History:** Ensure subjects do not have underlying respiratory or cardiovascular conditions (e.g., asthma).`,
     independentVariables: [
       { id: 'intensity', name: 'Exercise Intensity', min: 0, max: 100, step: 10, defaultValue: 0, unit: '%' }
     ],
@@ -920,30 +993,40 @@ If the exercise intensity increases, then the ventilation rate will increase bec
     description: 'Oscilloscope traces of Action Potentials.',
     icon: 'Zap',
     color: 'indigo',
-    theory: `### Action Potentials
-An action potential is a rapid rise and subsequent fall in voltage or membrane potential across a cellular membrane.`,
+    theory: `### Nerve Impulses and Action Potentials
+Nerve impulses are electrical signals that travel along the axon of a neuron. These signals, called action potentials, are caused by the movement of ions across the cell membrane.
+
+**Key Concepts:**
+*   **Resting Potential:** The voltage across the membrane when the neuron is at rest (typically -70mV).
+*   **Depolarization:** When a stimulus causes $\mathrm{Na^+}$ channels to open, $\mathrm{Na^+}$ ions rush in, making the inside of the cell more positive.
+*   **Threshold Potential:** The minimum voltage (e.g., -55mV) required to trigger an action potential.
+*   **All-or-Nothing Principle:** If the threshold is reached, a full action potential fires; if not, no impulse is sent. The strength of the impulse does not change with stimulus intensity.`,
     method: `### 1. Research Question
-How does stimulus strength affect the peak membrane potential of a neuron?
+How does the strength of a stimulus affect the peak membrane potential and the firing of an action potential in a neuron?
 
-### 2. Hypothesis
-If the stimulus strength reaches the threshold, then an action potential will fire; however, increasing stimulus beyond threshold does not increase peak potential because action potentials follow the 'all-or-nothing' principle.
+### 2. Variables
+*   **Independent Variable:** Stimulus strength ($\mathrm{mV}$).
+*   **Dependent Variable:** Peak membrane potential ($\mathrm{mV}$) and whether an action potential is triggered.
+*   **Controlled Variables:** Type of neuron, initial resting potential, external ion concentrations ($\mathrm{Na^+, K^+}$), temperature.
 
-### 3. Procedure
-1. Apply a stimulus of varying voltage.
-2. Observe if the threshold is reached and an action potential is fired.
+### 3. Hypothesis
+If the stimulus strength is below the threshold, no action potential will fire. Once the threshold is reached, an action potential will fire at a constant peak voltage, regardless of further increases in stimulus strength, due to the all-or-nothing principle.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Stimulus strength.
-*   **Controlled Variables (CV):** Ion concentrations, temperature.
+### 4. Materials
+*   Nerve Impulse simulator or oscilloscope setup
+*   Microelectrodes
+*   Stimulator (voltage source)
+*   Isolated neuron (e.g., giant squid axon) or digital model
 
-### 3. Reliability & Accuracy
-*   Repeat multiple times to find the exact threshold voltage.
+### 5. Procedure
+1.  **Baseline:** Record the resting membrane potential of the neuron.
+2.  **Stimulation:** Apply a very low voltage stimulus (e.g., 5mV) and record the resulting change in membrane potential on the oscilloscope.
+3.  **Varying Strength:** Gradually increase the stimulus voltage in small increments (e.g., 5mV steps).
+4.  **Observation:** Note the exact voltage at which a rapid depolarization (action potential) occurs.
+5.  **Post-Threshold:** Continue increasing the stimulus voltage beyond the threshold and record the peak potential of the resulting action potentials.
 
-### 4. Safety Precautions
-*   **Electrical Safety:** Use low voltages to avoid tissue damage in real experiments.
-
-### 5. Suggested Improvements
-*   Model the effect of myelination on conduction speed.`,
+### 6. Safety Precautions
+*   **Electrical Safety:** In real lab settings, ensure all electrical equipment is properly grounded and use only low-voltage stimulators to avoid damaging biological tissue or equipment.`,
     independentVariables: [
       { id: 'stimulus', name: 'Stimulus Strength', min: 0, max: 100, step: 5, defaultValue: 0, unit: 'mV' }
     ],
@@ -954,45 +1037,90 @@ If the stimulus strength reaches the threshold, then an action potential will fi
     ]
   },
   {
-    id: 'genetics',
-    title: 'Genetics Simulator',
+    id: 'genetic-diagram',
+    title: 'Genetic Diagram',
     subject: 'Biology',
     category: 'Genetics',
-    description: 'Monohybrid and Dihybrid Punnett Square simulator.',
+    description: 'Step-by-step monohybrid cross flow from genotypes to ratios.',
     icon: 'Dna',
     color: 'purple',
-    theory: `### Mendelian Genetics
-Inheritance of traits follows specific patterns based on dominant and recessive alleles.`,
-    method: `### 1. Research Question
-How do parental genotypes affect the phenotypic ratios of offspring in a monohybrid cross?
+    theory: `### Genetic Diagrams
+A genetic diagram is a structured way to show how alleles are passed from parents to offspring.
 
-### 2. Hypothesis
-If both parents are heterozygous (Aa), then the phenotypic ratio of the offspring will be 3:1 (dominant:recessive) because of the random segregation of alleles during meiosis.
-
-### 3. Procedure
-1. Select the genotypes of the parents.
-2. Generate the offspring and observe the phenotypic ratios.
-
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Parental genotypes.
-*   **Controlled Variables (CV):** Sample size.
-
-### 3. Reliability & Accuracy
-*   Use a large sample size (e.g., 1000 offspring) to match theoretical ratios.
-
-### 4. Safety Precautions
-*   **Data Integrity:** Ensure all crosses are recorded accurately.
-
-### 5. Suggested Improvements
-*   Include sex-linked traits and gene linkage in the simulation.`,
-    independentVariables: [
-      { id: 'cross', name: 'Cross Type', min: 1, max: 2, step: 1, defaultValue: 1, unit: 'Type' }
-    ],
-    dependentVariable: { name: 'ratio', unit: '', label: 'Dominant Phenotype %' },
-    controlledVariables: ['Sample Size'],
+**The Flow:**
+1.  **Parental Genotypes:** The allele combinations of the parents.
+2.  **Parental Phenotypes:** The physical traits expressed by the parents.
+3.  **Gametes:** The single alleles produced during meiosis.
+4.  **Punnett Square:** A grid showing all possible offspring combinations.
+5.  **Ratios:** The statistical probability of each genotype and phenotype.`,
+    method: `### Procedure
+1.  Enter the **Parental Genotypes** (e.g., Aa, aa).
+2.  Observe the automatically generated **Phenotypes**.
+3.  Review the **Gametes** produced by each parent.
+4.  Analyze the **Punnett Square** for offspring combinations.
+5.  Record the resulting **Genotypic and Phenotypic Ratios**.`,
+    independentVariables: [],
+    dependentVariable: { name: 'none', unit: '', label: 'Interactive Tool' },
+    controlledVariables: [],
     safetyOptions: [
-      { id: 'large_sample', text: 'Use a large sample size for reliable ratios', isCorrect: true }
-    ]
+      { id: 'data', text: 'Ensure accurate allele entry for valid results', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'gd-q1',
+        question: "If both parents are heterozygous (Aa), what percentage of offspring will be recessive (aa)?",
+        options: ['0%', '25%', '50%', '75%'],
+        correctAnswer: 1,
+        explanation: 'A cross of Aa x Aa results in 25% AA, 50% Aa, and 25% aa.'
+      }
+    ],
+    hideTimer: true
+  },
+  {
+    id: 'pedigree-analysis',
+    title: 'Pedigree Analysis',
+    subject: 'Biology',
+    category: 'Genetics',
+    description: 'Interactive challenge to identify genotypes in a family tree.',
+    icon: 'Activity',
+    color: 'indigo',
+    theory: `### Pedigree Charts
+A pedigree is a diagram that shows the occurrence and appearance of phenotypes of a particular gene or organism and its ancestors from one generation to the next.
+
+**Symbols:**
+*   **Square:** Male
+*   **Circle:** Female
+*   **Filled:** Affected individual
+*   **Unfilled:** Unaffected individual
+
+**Inheritance Patterns:**
+*   **Autosomal Dominant:** Appears in every generation.
+*   **Autosomal Recessive:** Can skip generations.
+*   **X-linked:** Shows different frequencies in males and females.`,
+    method: `### Procedure
+1.  Select an **Inheritance Pattern** to study.
+2.  Examine the **Pedigree Chart** and the affected individuals.
+3.  Use logic to deduce the **Genotypes** of the numbered individuals.
+4.  Click **Identify Genotypes** to check your answers.`,
+    independentVariables: [
+      { id: 'pedigree_type', name: 'Inheritance Pattern', min: 0, max: 5, step: 1, defaultValue: 0, unit: '' },
+      { id: 'view_mode', name: 'View Mode', min: 0, max: 1, step: 1, defaultValue: 0, unit: '' }
+    ],
+    dependentVariable: { name: 'none', unit: '', label: 'Interactive Tool' },
+    controlledVariables: [],
+    safetyOptions: [
+      { id: 'logic', text: 'Use logical deduction based on inheritance rules', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'pa-q1',
+        question: "In an Autosomal Dominant pedigree, can two unaffected parents have an affected child?",
+        options: ['Yes', 'No'],
+        correctAnswer: 1,
+        explanation: 'No, because if the trait is dominant, at least one parent must carry and express the allele for the child to inherit it.'
+      }
+    ],
+    hideTimer: true
   },
   {
     id: 'speciation',
@@ -1002,30 +1130,40 @@ If both parents are heterozygous (Aa), then the phenotypic ratio of the offsprin
     description: 'Reproductive isolation in island populations.',
     icon: 'Globe',
     color: 'lime',
-    theory: `### Speciation
-Speciation occurs when populations of the same species become isolated and evolve independently.`,
+    theory: `### Speciation and Evolution
+Speciation is the evolutionary process by which populations evolve to become distinct species. This often occurs when populations of the same species become reproductively isolated.
+
+**Key Concepts:**
+*   **Geographic Isolation:** Physical barriers (e.g., mountains, oceans) prevent gene flow between populations.
+*   **Genetic Divergence:** Over time, isolated populations accumulate different mutations and are subject to different selection pressures.
+*   **Reproductive Isolation:** Eventually, the populations become so different that they can no longer interbreed to produce fertile offspring.
+*   **Adaptive Radiation:** The rapid evolution of diversely adapted species from a common ancestor (e.g., Darwin's Finches).`,
     method: `### 1. Research Question
-How does the duration of geographic isolation affect the genetic divergence between two populations?
+How does the duration of geographic isolation affect the degree of genetic divergence and the likelihood of speciation between two island populations?
 
-### 2. Hypothesis
-If the isolation time increases, then the genetic divergence will increase because mutations and natural selection act independently on each population without gene flow to homogenize the gene pool.
+### 2. Variables
+*   **Independent Variable:** Duration of isolation (number of generations).
+*   **Dependent Variable:** Genetic divergence ($\%$) and reproductive compatibility.
+*   **Controlled Variables:** Initial population size, mutation rate, selection pressure (environmental conditions), initial gene pool.
 
-### 3. Procedure
-1. Set the degree of geographic isolation.
-2. Observe the divergence in traits over time.
+### 3. Hypothesis
+If the duration of geographic isolation increases, then the genetic divergence between the two populations will increase because mutations and natural selection will act independently on each population without the homogenizing effect of gene flow.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Isolation time.
-*   **Controlled Variables (CV):** Mutation rate.
+### 4. Materials
+*   Speciation simulation software
+*   Computer or tablet
+*   Data recording spreadsheet
 
-### 3. Reliability & Accuracy
-*   Repeat multiple times to observe different evolutionary paths.
+### 5. Procedure
+1.  **Isolation:** Set up two identical populations on separate virtual islands.
+2.  **Simulation:** Run the simulation for a fixed number of generations (e.g., 100).
+3.  **Measurement:** Record the percentage genetic divergence between the two populations.
+4.  **Compatibility Test:** Attempt a virtual cross-breeding between individuals from both islands and record the success rate.
+5.  **Varying Time:** Repeat the simulation for increasing durations (e.g., 200, 500, 1000 generations).
+6.  **Repeat:** Conduct multiple runs for each duration to observe different evolutionary trajectories.
 
-### 4. Safety Precautions
-*   **Scientific Ethics:** Consider the implications of genetic manipulation.
-
-### 5. Suggested Improvements
-*   Model the effect of bottleneck events and genetic drift.`,
+### 6. Safety Precautions
+*   **Scientific Ethics:** Consider the ethical implications of studying and potentially manipulating the genetic makeup of populations in real-world conservation efforts.`,
     independentVariables: [
       { id: 'isolation', name: 'Isolation Time', min: 0, max: 1000, step: 50, defaultValue: 0, unit: 'Gen' }
     ],
@@ -1043,30 +1181,39 @@ If the isolation time increases, then the genetic divergence will increase becau
     description: 'Feedback loops of Glucose and Insulin.',
     icon: 'Syringe',
     color: 'fuchsia',
-    theory: `### Homeostasis
-Homeostasis is the maintenance of a constant internal environment. Blood glucose is regulated by insulin and glucagon.`,
+    theory: `### Homeostasis and Blood Glucose Control
+Homeostasis is the maintenance of a constant internal environment despite changes in external conditions. The regulation of blood glucose is a classic example of a negative feedback loop.
+
+**Key Concepts:**
+*   **Insulin:** A hormone secreted by $\beta$-cells in the pancreas when blood glucose is high. It stimulates cells to take up glucose and the liver to convert glucose to glycogen.
+*   **Glucagon:** A hormone secreted by $\alpha$-cells in the pancreas when blood glucose is low. It stimulates the liver to break down glycogen into glucose.
+*   **Negative Feedback:** A mechanism where a change in a variable triggers a response that counteracts the initial change.`,
     method: `### 1. Research Question
-How does glucose intake affect the blood insulin concentration over time?
+How does the intake of different amounts of glucose affect the blood glucose and insulin concentrations over a three-hour period?
 
-### 2. Hypothesis
-If glucose intake increases, then the insulin concentration will increase because the pancreas detects high blood sugar and secretes insulin to stimulate glucose uptake by body cells.
+### 2. Variables
+*   **Independent Variable:** Amount of glucose ingested ($\mathrm{g}$).
+*   **Dependent Variable:** Blood glucose concentration ($\mathrm{mmol/L}$) and blood insulin concentration ($\mathrm{mU/L}$).
+*   **Controlled Variables:** Initial fasting blood glucose level, metabolic rate, physical activity level during the test, age and health status of the subject.
 
-### 3. Procedure
-1. Simulate a meal (glucose intake).
-2. Observe the response of the pancreas and the resulting blood glucose levels.
+### 3. Hypothesis
+If the amount of glucose ingested increases, then the peak blood glucose and insulin concentrations will increase because the body must secrete more insulin to facilitate the uptake of the higher glucose load and return blood sugar levels to the homeostatic set point.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Glucose intake.
-*   **Controlled Variables (CV):** Initial insulin level.
+### 4. Materials
+*   Hormone Control simulator
+*   Virtual glucose solution
+*   Blood glucose and insulin monitoring tools (digital)
+*   Stopwatch
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Procedure
+1.  **Baseline:** Record the subject's fasting blood glucose and insulin levels.
+2.  **Ingestion:** Administer a specific dose of glucose (e.g., 50g).
+3.  **Monitoring:** Record blood glucose and insulin levels every 15 minutes for 3 hours.
+4.  **Varying Dose:** Repeat the experiment with different glucose doses (e.g., 25g, 75g, 100g).
+5.  **Analysis:** Plot the results on a graph to observe the relationship between glucose intake and the hormonal response.
 
-### 4. Safety Precautions
-*   **Medical Safety:** Do not perform glucose tolerance tests without medical supervision.
-
-### 5. Suggested Improvements
-*   Model the difference between Type 1 and Type 2 Diabetes.`,
+### 6. Safety Precautions
+*   **Medical Safety:** In a real-world setting, glucose tolerance tests must be performed under medical supervision. Individuals with diabetes or other metabolic disorders should not participate without clinical approval.`,
     independentVariables: [
       { id: 'intake', name: 'Glucose Intake', min: 0, max: 100, step: 10, defaultValue: 0, unit: 'g' }
     ],
@@ -1084,30 +1231,40 @@ If glucose intake increases, then the insulin concentration will increase becaus
     description: 'ADH levels and Osmoregulation.',
     icon: 'Droplet',
     color: 'sky',
-    theory: `### Osmoregulation
-The kidneys regulate the water potential of the blood by controlling the amount of water reabsorbed in the collecting duct.`,
+    theory: `### Osmoregulation and Kidney Function
+The kidneys play a crucial role in homeostasis by regulating the water potential of the blood and removing nitrogenous waste (urea).
+
+**Key Concepts:**
+*   **Nephron:** The functional unit of the kidney where filtration and reabsorption occur.
+*   **ADH (Antidiuretic Hormone):** Secreted by the posterior pituitary gland when blood water potential is low. It increases the permeability of the collecting ducts to water.
+*   **Negative Feedback:** If the blood is too concentrated, more ADH is released, more water is reabsorbed, and a small volume of concentrated urine is produced.`,
     method: `### 1. Research Question
-How does water intake affect the volume and concentration of urine produced?
+How does the volume of water ingested affect the concentration of ADH in the blood and the resulting volume of urine produced?
 
-### 2. Hypothesis
-If water intake increases, then the urine volume will increase because the pituitary gland secretes less ADH, making the collecting ducts of the kidney less permeable to water reabsorption.
+### 2. Variables
+*   **Independent Variable:** Volume of water ingested ($\mathrm{ml}$).
+*   **Dependent Variable:** Blood ADH concentration and total urine volume produced over a fixed period.
+*   **Controlled Variables:** Initial hydration state, salt intake, ambient temperature, physical activity level.
 
-### 3. Procedure
-1. Adjust the water intake.
-2. Observe the change in ADH concentration and urine volume.
+### 3. Hypothesis
+If the volume of water ingested increases, then the blood ADH concentration will decrease because the hypothalamus detects a rise in blood water potential, leading to less water reabsorption in the kidneys and the production of a larger volume of dilute urine.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Water intake.
-*   **Controlled Variables (CV):** Salt intake.
+### 4. Materials
+*   Kidney Function simulator
+*   Virtual water supply
+*   Urine collection and measurement tools
+*   Hormone assay simulator (for ADH)
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Procedure
+1.  **Baseline:** Record the subject's initial ADH level and urine output.
+2.  **Ingestion:** Have the subject ingest a specific volume of water (e.g., 250ml).
+3.  **Collection:** Collect and measure all urine produced over the next 2 hours.
+4.  **Measurement:** Record the average blood ADH concentration during this period.
+5.  **Varying Volume:** Repeat the experiment with different water volumes (e.g., 500ml, 1000ml, 1500ml).
+6.  **Analysis:** Plot the relationship between water intake, ADH levels, and urine volume.
 
-### 4. Safety Precautions
-*   **Water Intoxication:** Do not consume excessive amounts of water in a short period.
-
-### 5. Suggested Improvements
-*   Model the effect of caffeine or alcohol on ADH production.`,
+### 6. Safety Precautions
+*   **Water Intoxication:** In real experiments, avoid consuming excessive amounts of water (hyponatremia) in a short period, as this can be dangerous.`,
     independentVariables: [
       { id: 'water', name: 'Water Intake', min: 0, max: 2000, step: 100, defaultValue: 500, unit: 'ml' }
     ],
@@ -1125,30 +1282,42 @@ If water intake increases, then the urine volume will increase because the pitui
     description: 'CO2 concentration vs Photosynthesis rate.',
     icon: 'Cloud',
     color: 'slate',
-    theory: `### Limiting Factors
-The rate of photosynthesis is limited by the factor that is at its least favorable level.`,
+    theory: `### Limiting Factors in Photosynthesis
+The rate of photosynthesis is determined by several environmental factors. According to the Law of Limiting Factors, the rate is limited by the factor that is at its least favorable level.
+
+**Key Factors:**
+*   **Light Intensity:** Provides energy for the light-dependent reactions.
+*   **$\mathrm{CO_2}$ Concentration:** A substrate for the Calvin cycle (light-independent reactions).
+*   **Temperature:** Affects the kinetic energy of molecules and the activity of enzymes like Rubisco.
+
+**Graph Analysis:**
+When a graph of a factor vs. rate levels off, that factor is no longer limiting the reaction; another factor has become the limiting one.`,
     method: `### 1. Research Question
-How does CO₂ concentration limit the rate of photosynthesis at high light intensities?
+How does the concentration of carbon dioxide ($\mathrm{CO_2}$) limit the rate of photosynthesis when light intensity and temperature are held constant?
 
-### 2. Hypothesis
-If the CO₂ concentration increases, then the photosynthetic rate will increase until another factor (like temperature) becomes limiting, because CO₂ is a required substrate for the Calvin cycle.
+### 2. Variables
+*   **Independent Variable:** Concentration of $\mathrm{CO_2}$ ($\%$).
+*   **Dependent Variable:** Rate of photosynthesis (measured in relative units or bubbles per minute).
+*   **Controlled Variables:** Light intensity, temperature, type of plant, wavelength of light.
 
-### 3. Procedure
-1. Set the CO₂ concentration.
-2. Measure the rate of photosynthesis while keeping light and temp constant.
+### 3. Hypothesis
+If the $\mathrm{CO_2}$ concentration increases, then the rate of photosynthesis will increase linearly until the active sites of the enzymes involved (like Rubisco) are saturated or another factor (like light intensity) becomes limiting.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** CO₂ concentration.
-*   **Controlled Variables (CV):** Light intensity, temperature.
+### 4. Materials
+*   Photosynthesis simulator
+*   Virtual $\mathrm{CO_2}$ source (e.g., $\mathrm{NaHCO_3}$ solutions)
+*   Light source and water bath
+*   Stopwatch
 
-### 3. Reliability & Accuracy
-*   Repeat 3 times and calculate mean. Exclude anomalies.
+### 5. Procedure
+1.  **Setup:** Set the light intensity and temperature to high, constant levels.
+2.  **Baseline:** Measure the photosynthetic rate at a low $\mathrm{CO_2}$ concentration (e.g., 0.01%).
+3.  **Varying substrate:** Increase the $\mathrm{CO_2}$ concentration in steps (e.g., 0.02%, 0.04%, 0.06%, 0.08%, 0.10%).
+4.  **Measurement:** Record the rate of photosynthesis at each concentration.
+5.  **Analysis:** Plot a graph of $\mathrm{CO_2}$ concentration vs. rate and identify the point where $\mathrm{CO_2}$ is no longer the limiting factor.
 
-### 4. Safety Precautions
-*   **CO2 Safety:** Ensure good ventilation when using CO₂ gas.
-
-### 5. Suggested Improvements
-*   Use a carbon dioxide probe for more accurate concentration measurements.`,
+### 6. Safety Precautions
+*   **Ventilation:** In a real lab, ensure proper ventilation when using $\mathrm{CO_2}$ gas or concentrated carbonate solutions.`,
     independentVariables: [
       { id: 'co2', name: 'CO₂ Concentration', min: 0, max: 0.1, step: 0.01, defaultValue: 0.04, unit: '%' }
     ],
@@ -1166,32 +1335,49 @@ If the CO₂ concentration increases, then the photosynthetic rate will increase
     description: 'Bacterial colony growth on agar vs time.',
     icon: 'CircleDot',
     color: 'green',
-    theory: `### Bacterial Growth
-Bacteria reproduce by binary fission, leading to exponential growth under ideal conditions.`,
+    theory: `### Microbial Growth and Binary Fission
+Bacteria reproduce asexually through a process called binary fission, where a single cell divides into two identical daughter cells. Under optimal conditions, this can lead to exponential population growth.
+
+**Factors Affecting Growth:**
+*   **Temperature:** Affects the activity of bacterial enzymes. Most human pathogens have an optimum temperature of 37°C.
+*   **Nutrients:** Availability of carbon, nitrogen, and minerals in the agar medium.
+*   **pH and Oxygen:** Different bacteria have specific requirements for acidity and oxygen levels.
+
+**Growth Phases:**
+1.  **Lag Phase:** Cells adjust to the environment.
+2.  **Log (Exponential) Phase:** Rapid division.
+3.  **Stationary Phase:** Growth rate equals death rate due to nutrient depletion.
+4.  **Death Phase:** Population declines.`,
     method: `### 1. Research Question
-How does incubation temperature affect the growth rate of bacterial colonies?
+How does the incubation temperature affect the growth rate of bacterial colonies on nutrient agar over a 48-hour period?
 
-### 2. Hypothesis
-If the temperature increases towards the optimum, then the number of colonies will increase because bacterial enzymes catalyze metabolic reactions faster, leading to quicker binary fission.
+### 2. Variables
+*   **Independent Variable:** Incubation temperature (°C).
+*   **Dependent Variable:** Number of bacterial colonies counted after 48 hours.
+*   **Controlled Variables:** Type of bacteria, type and volume of nutrient agar, initial number of bacteria (inoculum), humidity, duration of incubation.
 
-### 3. Procedure
-1. Set the incubation temperature.
-2. Count the number of colonies over a 48-hour period.
+### 3. Hypothesis
+If the incubation temperature increases towards the optimum (37°C), then the number of colonies will increase because bacterial enzymes will function more efficiently, leading to faster metabolic processes and more rapid binary fission.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Incubation temperature.
-*   **Controlled Variables (CV):** Nutrient availability.
+### 4. Materials
+*   Agar plates (nutrient agar)
+*   Bacterial culture (e.g., *E. coli* or *B. subtilis*)
+*   Inoculating loops and Bunsen burner
+*   Incubators set at different temperatures (4°C, 20°C, 37°C, 60°C)
+*   Disinfectant and paper towels
 
-### 3. Reliability & Accuracy
-*   Use multiple agar plates for each temperature.
+### 5. Procedure
+1.  **Aseptic Technique:** Work near a Bunsen burner to maintain a sterile field.
+2.  **Inoculation:** Use a sterile loop to streak a fixed volume of bacterial culture onto several agar plates.
+3.  **Incubation:** Place the plates in incubators set at different temperatures.
+4.  **Observation:** After 48 hours, remove the plates and count the number of visible colonies on each.
+5.  **Repeat:** Use at least three plates for each temperature to calculate a mean colony count.
 
-### 4. Safety Precautions
-*   **Aseptic Technique:** Use a Bunsen burner to create a sterile field.
-*   **Pathogens:** Treat all bacterial cultures as potentially pathogenic.
-*   **Disposal:** Autoclave all materials after use.
-
-### 5. Suggested Improvements
-*   Use a digital colony counter for more accurate and faster results.`,
+### 6. Safety Precautions
+*   **Aseptic Technique:** Always use a Bunsen burner to sterilize loops and prevent contamination.
+*   **Pathogens:** Treat all bacterial cultures as potentially harmful; never open plates once they have been incubated.
+*   **Disposal:** All contaminated materials must be autoclaved at 121°C before disposal.
+*   **Personal Safety:** Wear safety goggles, gloves, and a lab coat at all times.`,
     independentVariables: [
       { id: 'temp', name: 'Incubation Temp', min: 4, max: 60, step: 2, defaultValue: 37, unit: '°C' }
     ],
@@ -1211,30 +1397,51 @@ If the temperature increases towards the optimum, then the number of colonies wi
     description: 'Turgor pressure and Plasmolysis in plant cells.',
     icon: 'Maximize',
     color: 'blue',
-    theory: `### Water Potential
-Water potential (Ψ) is a measure of the tendency of water to move from one area to another.`,
+    theory: `### Water Potential & Plant Cells
+Water potential ($\Psi$) is a measure of the tendency of water to move from one area to another due to osmosis, gravity, mechanical pressure, or matrix effects such as capillary action.
+
+**Key Concepts:**
+*   **Water Potential ($\Psi$):** Pure water has the highest potential (0 kPa). Adding solutes lowers the water potential (makes it more negative).
+*   **Turgor Pressure ($P$):** The pressure exerted by the cell contents against the cell wall.
+*   **Plasmolysis:** The process in which cells lose water in a hypertonic solution, causing the protoplast to shrink away from the cell wall.
+*   **Incipient Plasmolysis:** The point at which the protoplast just begins to pull away from the cell wall ($\Psi_{cell} = \Psi_{solution}$).
+
+**The Equation:**
+$$\Psi = \Psi_s + \Psi_p$$
+Where:
+*   $\Psi_s$: Solute potential (always negative).
+*   $\Psi_p$: Pressure potential (usually positive in plant cells).`,
     method: `### 1. Research Question
-How does the water potential of the surrounding solution affect the turgor pressure of plant cells?
+How does the water potential of the surrounding solution affect the turgor pressure and state of plasmolysis in plant cells?
 
-### 2. Hypothesis
-If the solution potential becomes more negative (hypertonic), then the turgor pressure will decrease because water leaves the cell by osmosis, causing the protoplast to shrink and pull away from the cell wall.
+### 2. Variables
+*   **Independent Variable:** Water potential of the surrounding solution ($\mathrm{kPa}$), varied by changing the solute concentration.
+*   **Dependent Variable:** Turgor pressure ($\mathrm{kPa}$) and the percentage of cells showing plasmolysis.
+*   **Controlled Variables:** Type of plant tissue (e.g., red onion epidermis), temperature, duration of immersion.
 
-### 3. Procedure
-1. Place plant cells in solutions of different water potentials.
-2. Observe the state of the cell (Turgid, Flaccid, Plasmolyzed).
+### 3. Hypothesis
+If the water potential of the surrounding solution becomes more negative (hypertonic), then the turgor pressure will decrease and the percentage of plasmolysis will increase, because water moves out of the cell by osmosis down a water potential gradient.
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Solution potential.
-*   **Controlled Variables (CV):** Cell type, temperature.
+### 4. Materials
+*   Plant tissue (e.g., red onion)
+*   Sucrose solutions of known water potentials (0 to -2000 kPa)
+*   Microscope slides and coverslips
+*   Light microscope
+*   Forceps and scalpel
+*   Distilled water
 
-### 3. Reliability & Accuracy
-*   Observe at least 50 cells to calculate the percentage of plasmolysis.
+### 5. Procedure
+1.  **Preparation:** Peel a small piece of epidermis from the plant tissue.
+2.  **Mounting:** Place the tissue on a microscope slide and add a few drops of the chosen sucrose solution.
+3.  **Equilibration:** Leave the slide for 5-10 minutes to allow osmosis to reach equilibrium.
+4.  **Observation:** Place a coverslip and observe the cells under the microscope.
+5.  **Counting:** Count the total number of cells in the field of view and the number of cells showing plasmolysis.
+6.  **Measurement:** Record the estimated turgor pressure based on the degree of plasmolysis observed.
+7.  **Repeat:** Repeat for all solutions of different water potentials.
 
-### 4. Safety Precautions
-*   **Glassware:** Handle microscope slides and coverslips carefully.
-
-### 5. Suggested Improvements
-*   Use an ocular micrometer to measure the change in cell volume.`,
+### 6. Safety Precautions
+*   **Glassware:** Handle microscope slides and coverslips carefully to avoid cuts.
+*   **Sharp Tools:** Use forceps and scalpels with care; always cut away from your body.`,
     independentVariables: [
       { id: 'psi', name: 'Solution Potential', min: -2000, max: 0, step: 100, defaultValue: -500, unit: 'kPa' }
     ],
@@ -1249,36 +1456,52 @@ If the solution potential becomes more negative (hypertonic), then the turgor pr
     title: 'Biomolecule Testing',
     subject: 'Biology',
     category: 'Biochemistry',
-    description: 'Virtual Benedict’s, Biuret, and Iodine tests.',
+    description: 'Virtual Benedict’s, Biuret, Iodine, Ethanol Emulsion, and DCPIP tests.',
     icon: 'TestTube',
     color: 'orange',
-    theory: `### Food Tests
-Specific reagents change color in the presence of certain biological molecules.`,
+    theory: `### Biomolecule Testing (Food Tests)
+Biological molecules such as carbohydrates, proteins, and lipids can be identified using specific chemical reagents that undergo a color change in their presence.
+
+**Common Tests:**
+*   **Benedict's Test (Reducing Sugars):** Benedict's reagent (blue) contains copper(II) sulfate. When heated with reducing sugars (like glucose), the blue $Cu^{2+}$ ions are reduced to red $Cu^+$ ions, forming a brick-red precipitate of copper(I) oxide.
+*   **Iodine Test (Starch):** Iodine solution (orange/brown) reacts with the helical structure of amylose in starch to form a dark blue-black complex.
+*   **Biuret Test (Proteins):** Biuret reagent (blue) contains copper(II) sulfate and sodium hydroxide. In the presence of peptide bonds, the copper ions form a violet/purple complex.
+*   **Ethanol Emulsion Test (Lipids):** Lipids are insoluble in water but soluble in ethanol. When a lipid-ethanol solution is added to water, the lipid droplets precipitate out, forming a cloudy white emulsion.
+*   **DCPIP Test (Vitamin C):** DCPIP (blue) is an electron acceptor. Vitamin C (ascorbic acid) reduces DCPIP, causing it to lose its blue color and become colorless.`,
     method: `### 1. Research Question
-Which biological molecules are present in different food samples?
+Which biological molecules (reducing sugars, starch, proteins, lipids) are present in the given food samples?
 
-### 2. Hypothesis
-If a sample contains reducing sugars, then it will turn brick-red when heated with Benedict's solution because the copper(II) ions are reduced to copper(I) oxide.
+### 2. Variables
+*   **Independent Variable:** Type of food sample.
+*   **Dependent Variable:** Qualitative color change or formation of an emulsion.
+*   **Controlled Variables:** Volume of reagent added, temperature of the water bath (for Benedict's test), duration of heating.
 
-### 3. Procedure
-1. Select a food sample.
-2. Add the reagent and observe the color change.
+### 3. Hypothesis
+If a food sample contains a specific biomolecule, then the corresponding reagent will undergo a characteristic color change (e.g., Benedict's will turn brick-red if reducing sugars are present).
 
-### 2. Variable Manipulation
-*   **Independent Variable (IV):** Sample type.
-*   **Controlled Variables (CV):** Volume of reagent, heating time.
+### 4. Materials
+*   Food samples (e.g., Apple, Potato, Milk, Oil, Egg white)
+*   Benedict's reagent, Iodine solution, Biuret reagent, Ethanol
+*   Test tubes and test tube rack
+*   Water bath (set to 80°C)
+*   Pipettes and distilled water
 
-### 3. Reliability & Accuracy
-*   Use a control (distilled water) for each test.
+### 5. Procedure
+1.  **Preparation:** Place a small amount of each food sample into separate test tubes.
+2.  **Benedict's Test:** Add 2ml of Benedict's reagent to the sample and heat in a water bath for 5 minutes. Observe the color change.
+3.  **Iodine Test:** Add 2-3 drops of Iodine solution to the sample. Observe the color change.
+4.  **Biuret Test:** Add 2ml of Biuret reagent to the sample. Observe the color change.
+5.  **Emulsion Test:** Add 2ml of ethanol to the sample, shake, then pour the liquid into a test tube of water. Observe for a cloudy white emulsion.
+6.  **DCPIP Test:** Add DCPIP solution drop by drop to the sample. Observe if the blue color disappears.
+7.  **Control:** Repeat each test using distilled water to provide a negative control for comparison.
 
-### 4. Safety Precautions
-*   **Reagents:** Benedict's and Biuret reagents are irritants; wear goggles.
-*   **Heat:** Use a water bath for Benedict's test; do not heat directly.
-
-### 5. Suggested Improvements
-*   Use a colorimeter to quantify the color change instead of subjective observation.`,
+### 6. Safety Precautions
+*   **Reagents:** Benedict's and Biuret reagents are irritants; wear safety goggles and gloves.
+*   **Heat:** Use a water bath for heating; never heat flammable liquids (like ethanol) directly over a flame.
+*   **Chemicals:** Ethanol is highly flammable; keep it away from open flames.`,
     independentVariables: [
-      { id: 'sample', name: 'Sample Type', min: 1, max: 5, step: 1, defaultValue: 1, unit: 'ID' }
+      { id: 'sample', name: 'Sample Type', min: 1, max: 8, step: 1, defaultValue: 1, unit: 'ID' },
+      { id: 'test', name: 'Test Type', min: 1, max: 5, step: 1, defaultValue: 1, unit: 'ID' }
     ],
     dependentVariable: { name: 'intensity', unit: '%', label: 'Color Intensity' },
     controlledVariables: ['Volume of Reagent', 'Heating Time'],
@@ -1286,7 +1509,8 @@ If a sample contains reducing sugars, then it will turn brick-red when heated wi
       { id: 'reagent_eye', text: 'Wear goggles to protect eyes from reagents', isCorrect: true },
       { id: 'water_bath', text: 'Use a water bath for heating Benedict’s solution', isCorrect: true },
       { id: 'no_eat', text: 'Do not eat any food samples in the lab', isCorrect: true }
-    ]
+    ],
+    hideTimer: true
   },
   {
     id: 'lactose-breakdown',
@@ -1504,33 +1728,162 @@ If a food sample has a higher lipid (fat) content (like a peanut or potato chip)
     description: 'Determine the concentration of an unknown acid using a standard base and indicator.',
     icon: 'FlaskConical',
     color: 'blue',
+    hideTimer: true,
     theory: `### Acid-Base Titration
 Titration is a quantitative chemical analysis technique used to determine the unknown concentration of an identified analyte.
 
 **The Reaction:**
-$$HCl (aq) + NaOH (aq) \\rightarrow NaCl (aq) + H_2O (l)$$
+$$\mathrm{HCl} (aq) + \mathrm{NaOH} (aq) \rightarrow \mathrm{NaCl} (aq) + \mathrm{H}_2\mathrm{O} (l)$$
 
 **Key Concepts:**
 *   **Equivalence Point:** The point at which the amount of titrant added is just enough to completely neutralize the analyte solution.
 *   **End Point:** The point at which the indicator changes color, signaling the end of the titration.
+*   **Indicators:** Different indicators change color at different pH ranges.
+    *   **Phenolphthalein:** Colorless (Acid) $\rightarrow$ Pink (Base).
+    *   **Methyl Orange:** Red (Acid) $\rightarrow$ Orange (End Point) $\rightarrow$ Yellow (Base).
 *   **Molarity Formula:** $M_1V_1 = M_2V_2$ (for 1:1 reactions).`,
     method: `### 1. Research Question
-What is the exact molarity of the unknown Hydrochloric Acid (HCl) solution?
+How does the volume of $\mathrm{NaOH}$ required for neutralization change when the concentration of the unknown $\mathrm{HCl}$ solution is varied?
 
-### 2. Procedure
-1. Fill the burette with 0.1M Sodium Hydroxide (NaOH).
-2. Pipette 25ml of unknown HCl into a conical flask.
-3. Add 2-3 drops of Phenolphthalein indicator.
-4. Slowly add NaOH from the burette while swirling until a permanent pale pink color appears.
-5. Record the final volume and calculate the titre.`,
+### 2. Variables
+*   **Independent Variable:** Concentration of $\mathrm{HCl}$ ($\mathrm{mol/dm^3}$).
+*   **Dependent Variable:** Volume of $\mathrm{NaOH}$ required to reach the end point ($\mathrm{cm^3}$).
+*   **Controlled Variables:** Volume of $\mathrm{HCl}$ used (25ml), concentration of $\mathrm{NaOH}$ (0.1M), temperature.
+
+### 3. Hypothesis
+If the concentration of $\mathrm{HCl}$ increases, then the volume of $\mathrm{NaOH}$ required to neutralize it will increase proportionally, because a higher concentration of acid contains more moles of $\mathrm{H}^+$ ions per unit volume, requiring more moles of $\mathrm{OH}^-$ ions for complete neutralization.
+
+### 4. Materials
+*   Burette (50ml) and Conical flask (250ml)
+*   Volumetric pipette (25ml)
+*   Indicators (Phenolphthalein or Methyl Orange)
+*   Standardized $\mathrm{NaOH}$ solution (0.1M)
+*   Unknown $\mathrm{HCl}$ solution
+
+### 5. Procedure
+1.  **Setup:** Fill the burette with 0.1M $\mathrm{NaOH}$ and record the initial volume.
+2.  **Preparation:** Pipette exactly 25ml of unknown $\mathrm{HCl}$ into a clean conical flask.
+3.  **Indicator:** Select and add 2-3 drops of your chosen indicator to the flask.
+4.  **Titration:** Slowly add $\mathrm{NaOH}$ from the burette while swirling the flask.
+5.  **End Point:** As the solution begins to change color momentarily, slow down to a drop-by-drop addition.
+6.  **Recording:** Stop when a permanent color change persists for at least 30 seconds. Record the final volume.
+
+### 6. Safety Precautions
+*   Wear safety goggles and a lab coat to protect against corrosive acid and base splashes.
+*   Handle the burette carefully to avoid breakage; fill it below eye level using a funnel.`,
     independentVariables: [
-      { id: 'drop_size', name: 'Drop Size', min: 0.01, max: 0.1, step: 0.01, defaultValue: 0.05, unit: 'ml' }
+      { id: 'drop_speed', name: 'Titration Speed', min: 1, max: 20, step: 1, defaultValue: 5, unit: 'Drops/s' },
+      { id: 'concentration_base', name: 'Base Concentration', min: 0.05, max: 0.5, step: 0.01, defaultValue: 0.1, unit: 'M' }
     ],
-    dependentVariable: { name: 'volume', unit: 'ml', label: 'Volume of NaOH added' },
-    controlledVariables: ['Temperature', 'Indicator Type', 'Initial Volume of Acid'],
+    dependentVariable: { name: 'volume_added', unit: 'ml', label: 'Volume of NaOH' },
+    controlledVariables: ['Temperature', 'Indicator Type', 'Initial Volume of Acid (25ml)'],
     safetyOptions: [
       { id: 'acid_safety', text: 'Wear goggles to protect from acid/base splashes', isCorrect: true },
-      { id: 'burette_fill', text: 'Fill the burette below eye level', isCorrect: true }
+      { id: 'burette_fill', text: 'Fill the burette below eye level', isCorrect: true },
+      { id: 'spill_kit', text: 'Have a neutralization kit ready for spills', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'tit-q1',
+        question: "What is the role of an indicator in a titration?",
+        options: ['To speed up the reaction', 'To change the pH of the solution', 'To signal the end point with a color change', 'To neutralize the acid'],
+        correctAnswer: 2,
+        explanation: 'Indicators are weak acids or bases that change color at a specific pH, signaling that the neutralization is complete.'
+      },
+      {
+        id: 'tit-q2',
+        question: "Which color change is observed at the end point when using Phenolphthalein?",
+        options: ['Colorless to Pale Pink', 'Blue to Red', 'Yellow to Blue', 'Red to Yellow'],
+        correctAnswer: 0,
+        explanation: 'Phenolphthalein is colorless in acidic solutions and turns pink in basic solutions.'
+      },
+      {
+        id: 'tit-q3',
+        question: "What is the color of Methyl Orange in a basic solution?",
+        options: ['Red', 'Orange', 'Yellow', 'Colorless'],
+        correctAnswer: 2,
+        explanation: 'Methyl Orange is red in acidic solutions and turns yellow in basic solutions.'
+      }
+    ]
+  },
+  {
+    id: 'redox-reactions',
+    title: 'Redox: Metal Displacement',
+    subject: 'Chemistry',
+    category: 'Inorganic Chemistry',
+    description: 'Investigate the reactivity series of metals through displacement reactions and electron transfer.',
+    icon: 'Zap',
+    color: 'orange',
+    theory: `### Redox Reactions
+Redox (Reduction-Oxidation) reactions involve the transfer of electrons between chemical species.
+
+**OIL RIG:**
+*   **Oxidation** Is Loss of electrons.
+*   **Reduction** Is Gain of electrons.
+
+**Displacement Reaction:**
+A more reactive metal will displace a less reactive metal from its salt solution.
+Example: $$\mathrm{Zn} (s) + \mathrm{CuSO}_4 (aq) \rightarrow \mathrm{ZnSO}_4 (aq) + \mathrm{Cu} (s)$$
+
+**Ionic Equation:**
+$$\mathrm{Zn} (s) + \mathrm{Cu}^{2+} (aq) \rightarrow \mathrm{Zn}^{2+} (aq) + \mathrm{Cu} (s)$$
+*   $\mathrm{Zn}$ is oxidized ($\mathrm{Zn} \rightarrow \mathrm{Zn}^{2+} + 2e^-$)
+*   $\mathrm{Cu}^{2+}$ is reduced ($\mathrm{Cu}^{2+} + 2e^- \rightarrow \mathrm{Cu}$)`,
+    method: `### 1. Research Question
+Which metal among Magnesium, Zinc, and Iron is the most reactive when placed in a solution of Copper(II) Sulfate?
+
+### 2. Variables
+*   **Independent Variable:** Type of metal ($\mathrm{Mg}$, $\mathrm{Zn}$, $\mathrm{Fe}$).
+*   **Dependent Variable:** Temperature change ($\Delta T$) of the solution, indicating the energy released during the displacement reaction.
+*   **Controlled Variables:** Concentration of $\mathrm{CuSO}_4$ (1.0M), volume of solution (50ml), surface area of metal strips, initial temperature.
+
+### 3. Hypothesis
+Magnesium will be the most reactive, followed by Zinc and then Iron, because Magnesium is higher in the reactivity series and has a greater tendency to lose electrons to form positive ions.
+
+### 4. Materials
+*   Metal strips ($\mathrm{Mg}$, $\mathrm{Zn}$, $\mathrm{Fe}$)
+*   Copper(II) Sulfate solution ($\mathrm{CuSO}_4$)
+*   Insulated calorimeter or test tubes
+*   Digital thermometer
+*   Sandpaper (to clean metal strips)
+
+### 5. Procedure
+1.  **Preparation:** Clean the metal strips with sandpaper to remove any oxide layer.
+2.  **Setup:** Measure 50ml of 1.0M $\mathrm{CuSO}_4$ solution into an insulated cup.
+3.  **Initial Reading:** Record the initial temperature of the solution.
+4.  **Reaction:** Add the metal strip to the solution and stir gently.
+5.  **Observation:** Observe any color changes in the solution or the formation of a solid deposit on the metal.
+6.  **Final Reading:** Record the maximum temperature reached during the reaction.
+
+### 6. Safety Precautions
+*   Wear goggles to protect eyes from chemical splashes.
+*   Handle metal strips with care as edges may be sharp.
+*   Dispose of heavy metal solutions in designated waste containers.`,
+    independentVariables: [
+      { id: 'metal_type', name: 'Metal Type', min: 1, max: 3, step: 1, defaultValue: 1, unit: 'Type' },
+      { id: 'concentration', name: 'Solution Concentration', min: 0.1, max: 2.0, step: 0.1, defaultValue: 1.0, unit: 'M' }
+    ],
+    dependentVariable: { name: 'temp_change', unit: '°C', label: 'Temperature Increase' },
+    controlledVariables: ['Volume of Solution', 'Surface Area of Metal', 'Initial Temperature'],
+    safetyOptions: [
+      { id: 'metal_edges', text: 'Handle metal strips with care (sharp edges)', isCorrect: true },
+      { id: 'chemical_disposal', text: 'Dispose of heavy metal solutions in designated waste containers', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'red-q1',
+        question: "What does 'Oxidation' mean in terms of electrons?",
+        options: ['Gain of electrons', 'Loss of electrons', 'Sharing of electrons', 'No change'],
+        correctAnswer: 1,
+        explanation: 'Oxidation is the loss of electrons (OIL RIG).'
+      },
+      {
+        id: 'red-q2',
+        question: "If Magnesium displaces Copper from Copper Sulfate, which is more reactive?",
+        options: ['Copper', 'Magnesium', 'Both are equal', 'Neither'],
+        correctAnswer: 1,
+        explanation: 'A more reactive metal displaces a less reactive one from its compound.'
+      }
     ]
   },
   {
@@ -1541,21 +1894,50 @@ What is the exact molarity of the unknown Hydrochloric Acid (HCl) solution?
     description: 'Investigate how surface area and concentration affect the rate of gas production.',
     icon: 'Timer',
     color: 'emerald',
-    theory: `### Collision Theory
-For a reaction to occur, particles must collide with sufficient energy (Activation Energy) and correct orientation.
+    theory: `### Collision Theory & Reaction Rates
+For a chemical reaction to occur, reactant particles must collide with each other. However, not all collisions lead to a reaction. For a collision to be successful, particles must have:
+1.  **Sufficient Energy:** At least the **Activation Energy ($E_a$)**.
+2.  **Correct Orientation:** They must hit each other in the right way.
 
-**Factors Affecting Rate:**
-*   **Concentration:** More particles in the same volume leads to more frequent collisions.
-*   **Surface Area:** More exposed particles in solids leads to more frequent collisions.
-*   **Temperature:** Particles have more kinetic energy and move faster.`,
+**Factors Affecting the Rate of Reaction:**
+*   **Concentration:** Increasing the concentration of reactants in a solution increases the number of particles per unit volume, leading to more frequent collisions.
+*   **Surface Area:** Breaking a solid reactant into smaller pieces (increasing surface area) exposes more particles to the other reactant, increasing the frequency of collisions.
+*   **Temperature:** Increasing temperature gives particles more kinetic energy, so they move faster (more frequent collisions) and a higher proportion of collisions have energy $\ge E_a$.
+*   **Catalysts:** Provide an alternative reaction pathway with a lower activation energy.
+
+**The Reaction:**
+$$\mathrm{CaCO}_3 (s) + 2\mathrm{HCl} (aq) \rightarrow \mathrm{CaCl}_2 (aq) + \mathrm{H}_2\mathrm{O} (l) + \mathrm{CO}_2 (g)$$`,
     method: `### 1. Research Question
-How does the concentration of HCl affect the rate of reaction with Calcium Carbonate?
+How does the concentration of Hydrochloric Acid ($\mathrm{HCl}$) affect the rate of $\mathrm{CO}_2$ gas production when reacted with Calcium Carbonate ($\mathrm{CaCO}_3$)?
 
-### 2. Procedure
-1. Place marble chips in a conical flask.
-2. Add HCl of a specific concentration.
-3. Immediately connect the gas syringe and start the timer.
-4. Record the volume of $CO_2$ produced every 10 seconds.`,
+### 2. Variables
+*   **Independent Variable:** Concentration of $\mathrm{HCl}$ ($\mathrm{mol/dm^3}$).
+*   **Dependent Variable:** Volume of $\mathrm{CO}_2$ gas produced ($\mathrm{cm^3}$) over a fixed time interval.
+*   **Controlled Variables:** Mass of $\mathrm{CaCO}_3$ marble chips, surface area (size) of marble chips, volume of $\mathrm{HCl}$ (50ml), temperature.
+
+### 3. Hypothesis
+If the concentration of $\mathrm{HCl}$ increases, then the rate of gas production will increase because there are more acid particles in a given volume, leading to a higher frequency of successful collisions with the marble chips.
+
+### 4. Materials
+*   Conical flask (250ml)
+*   Gas syringe (100ml)
+*   Stopwatch
+*   Calcium Carbonate marble chips
+*   Hydrochloric Acid (various concentrations: 0.5M, 1.0M, 1.5M, 2.0M)
+*   Electronic balance
+
+### 5. Procedure
+1.  **Setup:** Measure 50ml of $\mathrm{HCl}$ of the chosen concentration and pour it into the conical flask.
+2.  **Preparation:** Weigh 5g of marble chips.
+3.  **Reaction:** Add the marble chips to the flask and immediately seal it with the stopper connected to the gas syringe.
+4.  **Timing:** Start the stopwatch immediately.
+5.  **Recording:** Record the volume of gas in the syringe every 10 seconds for 2 minutes.
+6.  **Repeat:** Clean the flask and repeat the experiment with different concentrations of $\mathrm{HCl}$.
+
+### 6. Safety Precautions
+*   Wear safety goggles to protect eyes from acid splashes.
+*   Ensure the gas syringe is secure and moves freely to prevent pressure build-up.
+*   Wipe up any acid spills immediately with a damp cloth.`,
     independentVariables: [
       { id: 'concentration', name: 'Acid Concentration', min: 0.1, max: 2.0, step: 0.1, defaultValue: 1.0, unit: 'M' },
       { id: 'surface_area', name: 'Surface Area', min: 1, max: 3, step: 1, defaultValue: 2, unit: 'Scale' }
@@ -1568,6 +1950,96 @@ How does the concentration of HCl affect the rate of reaction with Calcium Carbo
     ]
   },
   {
+    id: 'flame-test',
+    title: 'Flame Test',
+    subject: 'Chemistry',
+    category: 'Inorganic Chemistry',
+    description: 'Identify metal ions based on their characteristic flame colors.',
+    icon: 'Flame',
+    color: 'orange',
+    theory: `### Flame Tests & Atomic Emission
+Flame tests are used to identify the presence of certain metal ions in a compound. When a metal salt is heated in a Bunsen burner flame, the heat energy excites the electrons in the metal ions to higher energy levels.
+
+**How it Works:**
+1.  **Excitation:** Electrons absorb heat energy and jump to higher energy "excited" states.
+2.  **Relaxation:** These excited electrons are unstable and quickly fall back to their lower energy "ground" states.
+3.  **Emission:** As they fall back, they release the excess energy in the form of light (photons).
+4.  **Characteristic Colors:** Each element has a unique set of energy levels, so it emits light of specific wavelengths, resulting in a characteristic color.
+
+**Common Flame Colors:**
+*   **Lithium ($Li^+$):** Crimson Red
+*   **Sodium ($Na^+$):** Persistent Yellow
+*   **Potassium ($K^+$):** Lilac (Light Purple)
+*   **Calcium ($Ca^{2+}$):** Brick Red
+*   **Strontium ($Sr^{2+}$):** Crimson
+*   **Barium ($Ba^{2+}$):** Apple Green
+*   **Copper ($Cu^{2+}$):** Blue-Green
+*   **Rubidium ($Rb^+$):** Red-Violet
+*   **Cesium ($Cs^+$):** Blue-Violet`,
+    method: `### 1. Research Question
+How can characteristic flame colors be used to identify unknown metal ions in various salts?
+
+### 2. Variables
+*   **Independent Variable:** Type of metal salt (Lithium, Sodium, Potassium, Calcium, Strontium, Barium, Copper, Rubidium, Cesium).
+*   **Dependent Variable:** Observed color of the flame.
+*   **Controlled Variables:** Bunsen burner flame type (non-luminous/blue), type of wire loop (nichrome or platinum), cleaning procedure (HCl dip).
+
+### 3. Hypothesis
+Each metal ion will produce a unique and consistent flame color when heated, allowing for the identification of the metal present in an unknown sample.
+
+### 4. Materials
+*   Bunsen burner and heat-proof mat
+*   Nichrome or platinum wire loop
+*   Concentrated Hydrochloric Acid ($HCl$) for cleaning
+*   Samples of metal salts (chlorides are preferred as they are more volatile)
+*   Beakers of distilled water
+
+### 5. Procedure
+1.  **Cleaning:** Dip the wire loop into concentrated $HCl$ and then heat it in the blue Bunsen flame until it produces no color.
+2.  **Sampling:** Dip the clean loop into distilled water and then into the metal salt sample so that a small amount of salt adheres to the loop.
+3.  **Testing:** Place the loop in the hottest part of the non-luminous (blue) Bunsen flame.
+4.  **Observation:** Record the characteristic color observed immediately.
+5.  **Repeat:** Clean the loop thoroughly between each test to avoid cross-contamination.
+
+### 6. Safety Precautions
+*   **Corrosive Acid:** Concentrated $HCl$ is highly corrosive; wear safety goggles and gloves.
+*   **Heat:** The wire loop and Bunsen burner become extremely hot; handle with care.
+*   **Toxic Salts:** Some metal salts are toxic; do not ingest and wash hands after the lab.`,
+    independentVariables: [
+      { id: 'metal_type', name: 'Metal Ion', min: 0, max: 8, step: 1, defaultValue: 0, unit: 'Ion' }
+    ],
+    dependentVariable: { name: 'flame_color', unit: 'Color', label: 'Observed Flame Color' },
+    controlledVariables: ['Flame Temperature', 'Wire Material', 'Cleaning Procedure'],
+    safetyOptions: [
+      { id: 'acid_safety', text: 'Wear goggles when using concentrated HCl', isCorrect: true },
+      { id: 'hot_wire', text: 'Do not touch the hot wire loop', isCorrect: true },
+      { id: 'wash_hands', text: 'Wash hands after handling metal salts', isCorrect: true }
+    ],
+    quiz: [
+      {
+        id: 'flame-q1',
+        question: "Why do different metals produce different colors in a flame test?",
+        options: ['They burn at different temperatures', 'They have different numbers of neutrons', 'They have unique electron energy levels', 'They react with oxygen differently'],
+        correctAnswer: 2,
+        explanation: 'Each element has unique electron energy levels. The color is determined by the specific energy difference between the excited and ground states.'
+      },
+      {
+        id: 'flame-q2',
+        question: "Which metal ion produces a characteristic lilac flame?",
+        options: ['Sodium', 'Lithium', 'Potassium', 'Barium'],
+        correctAnswer: 2,
+        explanation: 'Potassium ions (K+) produce a distinctive lilac or light purple flame.'
+      },
+      {
+        id: 'flame-q3',
+        question: "Why is the wire loop dipped in Hydrochloric Acid before testing a sample?",
+        options: ['To make the salt stick better', 'To clean off any previous contaminants', 'To lower the melting point of the metal', 'To change the color of the flame'],
+        correctAnswer: 1,
+        explanation: 'Cleaning with HCl ensures that any leftover ions from previous tests are removed, preventing false results.'
+      }
+    ]
+  },
+  {
     id: 'hookes-law',
     title: "Hooke's Law",
     subject: 'Physics',
@@ -1575,23 +2047,51 @@ How does the concentration of HCl affect the rate of reaction with Calcium Carbo
     description: 'Investigate the relationship between force and extension for a spring.',
     icon: 'Scale',
     color: 'orange',
-    theory: `### Hooke's Law
-The extension of a spring is directly proportional to the force applied to it, provided the limit of proportionality is not exceeded.
+    theory: `### Hooke's Law & Elasticity
+When a force is applied to a spring, it changes length. If the spring returns to its original length when the force is removed, it is said to be **elastically deformed**.
+
+**Hooke's Law:**
+The extension of a spring is directly proportional to the force applied to it, provided the **limit of proportionality** is not exceeded.
 
 **The Formula:**
 $$F = k \times x$$
-*   $F$: Force (Newtons, $N$)
-*   $k$: Spring constant ($N/m$)
-*   $x$: Extension (Meters, $m$)`,
-    method: `### 1. Research Question
-What is the spring constant ($k$) of the given metal spring?
+Where:
+*   $F$: Force applied (Newtons, $N$).
+*   $k$: Spring constant (Newtons per meter, $N/m$). It is a measure of the stiffness of the spring.
+*   $x$: Extension (Meters, $m$). Extension = New Length - Original Length.
 
-### 2. Procedure
-1. Measure the natural length of the spring.
-2. Add a 100g mass ($1N$ force) to the spring.
-3. Measure the new length and calculate the extension.
-4. Repeat for masses up to 500g.
-5. Plot a graph of Force vs. Extension.`,
+**Elastic Limit:**
+Beyond this point, the spring will not return to its original length; it is **permanently (plastically) deformed**.`,
+    method: `### 1. Research Question
+How does the force applied to a spring affect its extension, and what is the spring constant ($k$)?
+
+### 2. Variables
+*   **Independent Variable:** Force applied to the spring ($N$), varied by adding different masses.
+*   **Dependent Variable:** Extension of the spring ($cm$ or $m$).
+*   **Controlled Variables:** The same spring, same temperature, same method of measurement.
+
+### 3. Hypothesis
+If the force applied to the spring increases, then the extension will increase linearly, because the extension is directly proportional to the force according to Hooke's Law ($F = kx$).
+
+### 4. Materials
+*   Metal spring
+*   Clamp stand, boss, and clamp
+*   Meter ruler
+*   Weight hanger and set of 100g masses (each 100g $\approx 1N$)
+*   Pointer (optional, for better accuracy)
+
+### 5. Procedure
+1.  **Setup:** Attach the spring to the clamp and hang it from the stand.
+2.  **Original Length:** Measure the natural length of the spring without any weights.
+3.  **Loading:** Add a 100g mass ($1N$) to the weight hanger.
+4.  **Measurement:** Measure the new length of the spring and calculate the extension ($x = L_{new} - L_{original}$).
+5.  **Repeat:** Continue adding 100g masses up to 500g (or until the limit of proportionality is reached), recording the extension each time.
+6.  **Unloading (Optional):** Remove the weights one by one and check if the spring returns to its original length.
+
+### 6. Safety Precautions
+*   Wear safety goggles to protect eyes in case the spring snaps or a weight falls.
+*   Do not stand directly under the hanging masses.
+*   Ensure the clamp stand is weighted or clamped to the bench to prevent it from toppling over.`,
     independentVariables: [
       { id: 'mass', name: 'Added Mass', min: 0, max: 1000, step: 50, defaultValue: 0, unit: 'g' }
     ],
@@ -1610,23 +2110,52 @@ What is the spring constant ($k$) of the given metal spring?
     description: 'Investigate the relationship between voltage, current, and resistance.',
     icon: 'Zap',
     color: 'yellow',
-    theory: `### Ohm's Law
-The current through a conductor between two points is directly proportional to the voltage across the two points.
+    theory: `### Ohm's Law & Electrical Resistance
+Ohm's Law describes the relationship between voltage, current, and resistance in an electrical circuit.
+
+**Ohm's Law:**
+The current through a conductor between two points is directly proportional to the voltage across the two points, provided the temperature remains constant.
 
 **The Formula:**
 $$V = I \times R$$
-*   $V$: Voltage (Volts, $V$)
-*   $I$: Current (Amperes, $A$)
-*   $R$: Resistance (Ohms, $\Omega$)`,
-    method: `### 1. Research Question
-How does the current change as the voltage across a fixed resistor is increased?
+Where:
+*   $V$: Potential Difference or Voltage (Volts, $V$).
+*   $I$: Current (Amperes, $A$).
+*   $R$: Resistance (Ohms, $\Omega$).
 
-### 2. Procedure
-1. Set up a circuit with a power supply, ammeter, voltmeter, and a fixed resistor.
-2. Adjust the power supply to $2V$.
-3. Record the current from the ammeter and voltage from the voltmeter.
-4. Increase the voltage in $2V$ steps up to $12V$.
-5. Calculate the resistance for each reading.`,
+**Key Concepts:**
+*   **Ohmic Conductor:** A conductor that follows Ohm's Law (e.g., a fixed resistor at constant temperature). Its $V-I$ graph is a straight line through the origin.
+*   **Non-Ohmic Conductor:** A conductor that does not follow Ohm's Law (e.g., a filament lamp). Its resistance changes as the current increases and it heats up.`,
+    method: `### 1. Research Question
+How does the current ($I$) flowing through a fixed resistor change as the potential difference ($V$) across it is varied?
+
+### 2. Variables
+*   **Independent Variable:** Potential Difference ($V$), varied using a variable power supply or rheostat.
+*   **Dependent Variable:** Current ($I$), measured using an ammeter.
+*   **Controlled Variables:** Resistance of the fixed resistor, temperature of the resistor, type of connecting wires.
+
+### 3. Hypothesis
+If the voltage across the resistor increases, then the current will increase proportionally, because for an Ohmic conductor, $V \propto I$ (Ohm's Law).
+
+### 4. Materials
+*   Variable DC power supply (0-12V)
+*   Fixed resistor (e.g., $10\Omega$)
+*   Digital Voltmeter
+*   Digital Ammeter
+*   Connecting wires and switch
+
+### 5. Procedure
+1.  **Setup:** Construct a series circuit containing the power supply, ammeter, fixed resistor, and switch. Connect the voltmeter in parallel across the resistor.
+2.  **Initial Reading:** Set the power supply to 0V and ensure the ammeter and voltmeter read zero.
+3.  **Measurement:** Close the switch and set the voltage to 2V. Record the current ($I$) and actual voltage ($V$).
+4.  **Varying Voltage:** Increase the voltage in 2V steps up to 12V, recording the current and voltage at each step.
+5.  **Cooling:** Open the switch between readings to prevent the resistor from heating up, which would change its resistance.
+6.  **Analysis:** Plot a graph of Voltage ($V$) on the y-axis and Current ($I$) on the x-axis. The gradient of the line represents the resistance ($R$).
+
+### 6. Safety Precautions
+*   Do not touch the resistor or wires during or immediately after the experiment as they may become hot.
+*   Ensure the power supply is turned off when making or changing connections.
+*   Check for short circuits before turning on the power.`,
     independentVariables: [
       { id: 'voltage', name: 'Input Voltage', min: 0, max: 12, step: 0.5, defaultValue: 0, unit: 'V' }
     ],
@@ -1661,22 +2190,36 @@ Where:
 *   **Total Internal Reflection (TIR):** Occurs when light travels from a denser to a less dense medium at an angle greater than the **critical angle** ($\\theta_c = \\arcsin(n_2/n_1)$).
 *   **Dispersion:** The separation of white light into its component colors due to different refractive indices for different wavelengths.`,
     method: `### 1. Research Question
-How does the **Angle of Incidence** affect the **Angle of Refraction** when light passes from air into a transparent medium?
+How does the **Angle of Incidence** ($\theta_1$) affect the **Angle of Refraction** ($\theta_2$) when light passes from air into a transparent medium?
 
-### 2. Hypothesis
-If the angle of incidence increases, then the angle of refraction will also increase, but at a slower rate (if $n_2 > n_1$), following the relationship $n_1 \\sin(\\theta_1) = n_2 \\sin(\\theta_2)$.
+### 2. Variables
+*   **Independent Variable:** Angle of Incidence ($\theta_1$), measured from the normal.
+*   **Dependent Variable:** Angle of Refraction ($\theta_2$), measured from the normal.
+*   **Controlled Variables:** Wavelength of light (color), refractive index of the first medium (Air, $n_1 \approx 1.0$), temperature.
 
-### 3. Procedure
-1.  **Setup:** Select the **Medium** (e.g., Glass, Water, Diamond) and set the **Angle of Incidence** using the slider.
-2.  **Observe:** Watch the light ray as it hits the boundary. Note the reflected and refracted rays.
-3.  **Measurement:** 
-    *   Use the on-screen protractor to measure the **Angle of Refraction** ($\\theta_2$).
-    *   Record the values of $\\theta_1$ and $\\theta_2$.
-4.  **Analysis:** Plot $\\sin(\\theta_1)$ vs $\\sin(\\theta_2)$. The gradient of the line will give the relative refractive index.
+### 3. Hypothesis
+If the angle of incidence increases, then the angle of refraction will also increase, but at a slower rate (since light is entering a denser medium), following the relationship $n_1 \sin(\theta_1) = n_2 \sin(\theta_2)$.
 
-### 4. Safety Precautions
-*   **Laser Safety:** In a real lab, never look directly into a laser beam or point it at others.
-*   **Glassware:** Handle glass blocks carefully to avoid chipping or breaking.`,
+### 4. Materials
+*   Ray box or laser light source
+*   Transparent blocks of different materials (Glass, Perspex, Water)
+*   Protractor
+*   White paper and pencil
+
+### 5. Procedure
+1.  **Setup:** Place the transparent block on a sheet of white paper and trace its outline.
+2.  **Normal Line:** Draw a line perpendicular to the surface of the block (the normal).
+3.  **Incidence:** Shine a thin ray of light at the point where the normal meets the block at a specific angle (e.g., 10°).
+4.  **Marking:** Mark the path of the incident ray and the ray emerging from the other side of the block.
+5.  **Refraction:** Remove the block and draw the refracted ray inside the block by connecting the entry and exit points.
+6.  **Measurement:** Use a protractor to measure the angle of refraction ($\theta_2$) between the normal and the refracted ray.
+7.  **Repeat:** Repeat the process for angles of incidence from 10° to 70° in 10° increments.
+8.  **Analysis:** Calculate $\sin(\theta_1)$ and $\sin(\theta_2)$ for each pair of angles and plot a graph of $\sin(\theta_1)$ vs $\sin(\theta_2)$.
+
+### 6. Safety Precautions
+*   **Laser Safety:** Never look directly into the laser beam or point it at others.
+*   **Glassware:** Handle glass blocks carefully to avoid chipping or breaking.
+*   **Heat:** Ray boxes can become hot; turn them off when not in use.`,
     independentVariables: [
       { id: 'angle_inc', name: 'Angle of Incidence', min: 0, max: 90, step: 1, defaultValue: 30, unit: '°' },
       { id: 'ref_index', name: 'Refractive Index (n₂)', min: 1.0, max: 2.5, step: 0.01, defaultValue: 1.5, unit: '' }
@@ -1715,29 +2258,52 @@ If the angle of incidence increases, then the angle of refraction will also incr
     icon: 'Move',
     color: 'indigo',
     theory: `### Newton's Second Law of Motion
-The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass.
+Newton's Second Law describes how the velocity of an object changes when it is subjected to an external force.
+
+**The Law:**
+The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass. The acceleration is in the same direction as the net force.
 
 **The Formula:**
 $$F = m \times a$$
-
 Where:
-*   $F$: Net Force (Newtons, $N$)
-*   $m$: Mass (Kilograms, $kg$)
-*   $a$: Acceleration (Meters per second squared, $m/s^2$)
+*   $F$: Net Force (Newtons, $N$).
+*   $m$: Mass (Kilograms, $kg$).
+*   $a$: Acceleration (Meters per second squared, $m/s^2$).
 
 **Key Concepts:**
-*   **Inertia:** The tendency of an object to resist changes in its state of motion. Mass is a measure of inertia.
-*   **Proportionality:** If mass is constant, doubling the force doubles the acceleration. If force is constant, doubling the mass halves the acceleration.`,
+*   **Inertia:** The resistance of any physical object to any change in its velocity. Mass is the quantitative measure of inertia.
+*   **Resultant Force:** The single force that has the same effect as all the individual forces acting on an object combined.`,
     method: `### 1. Research Question
-How does the acceleration of a trolley change when the pulling force is varied while keeping the total mass constant?
+How does the acceleration ($a$) of a trolley change when the resultant force ($F$) acting on it is varied, while keeping the total mass ($m$) of the system constant?
 
-### 2. Procedure
-1.  **Setup:** Place a trolley on a frictionless track. Attach a string to the trolley, passing over a pulley to a weight hanger.
-2.  **Constant Mass:** Ensure the total mass (trolley + weights on hanger) remains constant by moving weights between the trolley and the hanger.
-3.  **Vary Force:** Start with a small mass on the hanger (e.g., $100g = 1N$).
-4.  **Measure:** Release the trolley and measure its acceleration using light gates.
-5.  **Repeat:** Move a $100g$ mass from the trolley to the hanger to increase the force by $1N$ and repeat the measurement.
-6.  **Analyze:** Plot a graph of Force ($F$) against Acceleration ($a$). The gradient represents the total mass of the system.`,
+### 2. Variables
+*   **Independent Variable:** Resultant force ($F$), varied by moving masses from the trolley to the weight hanger.
+*   **Dependent Variable:** Acceleration ($a$) of the trolley, measured using light gates or a motion sensor.
+*   **Controlled Variables:** Total mass of the system (trolley + all added masses), friction of the track (compensated by tilting or using an air track), length of the string.
+
+### 3. Hypothesis
+If the resultant force acting on the trolley increases, then the acceleration will increase linearly, because acceleration is directly proportional to the net force ($a \propto F$) when mass is constant.
+
+### 4. Materials
+*   Linear motion track (or air track) and trolley
+*   Weight hanger and a set of slotted masses (e.g., $10 \times 10g$)
+*   String and pulley
+*   Two light gates and a data logger (or a motion sensor)
+*   Electronic balance
+
+### 5. Procedure
+1.  **Setup:** Set up the track and pulley. Attach the string to the trolley and pass it over the pulley to the weight hanger.
+2.  **Compensation:** Tilt the track slightly so the trolley moves at a constant speed when given a small push (compensating for friction).
+3.  **Total Mass:** Place all the slotted masses on the trolley. Weigh the entire system (trolley + masses + hanger) and record this as the constant total mass ($m$).
+4.  **Initial Force:** Move one $10g$ mass from the trolley to the hanger. The force is now the weight of the hanger plus the $10g$ mass ($F \approx 0.2N$ if hanger is $10g$).
+5.  **Measurement:** Release the trolley and record the acceleration from the data logger.
+6.  **Varying Force:** Move another $10g$ mass from the trolley to the hanger (this keeps total mass constant but increases pulling force). Record the new acceleration.
+7.  **Repeat:** Repeat until all slotted masses have been moved to the hanger.
+8.  **Analysis:** Plot a graph of Force ($F$) on the y-axis and Acceleration ($a$) on the x-axis.
+
+### 6. Safety Precautions
+*   Ensure the trolley does not hit the light gates or fall off the end of the track (use a buffer).
+*   Place a padded box under the falling weight hanger to catch it and prevent damage to the floor or toes.`,
     independentVariables: [
       { id: 'force', name: 'Applied Force', min: 0.5, max: 10, step: 0.5, defaultValue: 1, unit: 'N' },
       { id: 'mass', name: 'Total Mass', min: 0.5, max: 5, step: 0.1, defaultValue: 1, unit: 'kg' }
@@ -1767,41 +2333,51 @@ How does the acceleration of a trolley change when the pulling force is varied w
     icon: 'Zap',
     color: 'yellow',
     theory: `### DC Circuits & Kirchhoff's Laws
-Direct Current (DC) circuits involve the flow of electric charge in a single direction. Understanding these circuits requires **Ohm's Law** and **Kirchhoff's Laws**.
-
-**Ohm's Law:**
-$$V = I \\times R$$
+Direct Current (DC) circuits involve the flow of electric charge in a single direction. Analyzing these circuits requires understanding how current and voltage behave across different components.
 
 **Kirchhoff's First Law (Current Law):**
-The sum of currents entering a junction equals the sum of currents leaving it (Conservation of Charge).
-$$\\sum I_{in} = \\sum I_{out}$$
+The sum of currents entering a junction equals the sum of currents leaving it. This is a statement of the **Conservation of Charge**.
+$$\sum I_{in} = \sum I_{out}$$
 
 **Kirchhoff's Second Law (Voltage Law):**
-The sum of the electromotive forces (EMF) in any closed loop is equal to the sum of the potential differences (Conservation of Energy).
-$$\\sum \\epsilon = \\sum V$$
+The sum of the electromotive forces (EMF) in any closed loop is equal to the sum of the potential differences (Voltage drops). This is a statement of the **Conservation of Energy**.
+$$\sum \epsilon = \sum V$$
 
-**Resistors in Series:**
-$$R_{total} = R_1 + R_2 + ...$$
-
-**Resistors in Parallel:**
-$$\\frac{1}{R_{total}} = \\frac{1}{R_1} + \\frac{1}{R_2} + ...$$`,
+**Resistor Combinations:**
+*   **Series:** The total resistance is the sum of individual resistances. The current is the same through all components.
+    $$R_{total} = R_1 + R_2 + ...$$
+*   **Parallel:** The reciprocal of the total resistance is the sum of the reciprocals of individual resistances. The voltage is the same across all parallel branches.
+    $$\frac{1}{R_{total}} = \frac{1}{R_1} + \frac{1}{R_2} + ...$$`,
     method: `### 1. Research Question
-How does adding resistors in **Series** vs **Parallel** affect the total current in a circuit?
+How does the total resistance ($R_{total}$) and total current ($I_{total}$) of a circuit change when resistors are connected in **Series** compared to **Parallel**?
 
-### 2. Hypothesis
-Adding resistors in series will increase the total resistance and decrease the total current. Adding resistors in parallel will decrease the total resistance and increase the total current.
+### 2. Variables
+*   **Independent Variable:** Circuit configuration (Series or Parallel) and the values of individual resistors ($R_1, R_2$).
+*   **Dependent Variable:** Total current ($I_{total}$) and potential difference across components ($V$).
+*   **Controlled Variables:** Battery voltage ($V_{supply}$), temperature of the components, type of connecting wires.
 
-### 3. Procedure
-1.  **Setup:** Set the **Battery Voltage** and choose the **Circuit Type** (Series or Parallel).
-2.  **Manipulation:** Adjust the resistance of **Resistor 1** and **Resistor 2**.
-3.  **Measurement:** 
-    *   Read the **Ammeter** to find the total current ($I$).
-    *   Use the **Voltmeter** to measure the potential difference across each component.
-4.  **Analysis:** Calculate the total resistance ($R = V/I$) and compare it with the theoretical values.
+### 3. Hypothesis
+*   **Series:** Adding resistors in series will increase the total resistance ($R_{total} > R_1, R_2$), resulting in a lower total current.
+*   **Parallel:** Adding resistors in parallel will decrease the total resistance ($R_{total} < R_1, R_2$), resulting in a higher total current.
 
-### 4. Safety Precautions
-*   **Short Circuits:** Avoid connecting the battery terminals directly with a low-resistance wire.
-*   **Overheating:** High currents can cause resistors to become hot. Turn off the power when not taking readings.`,
+### 4. Materials
+*   DC Power supply or battery
+*   Two or more resistors of known values (e.g., $10\Omega, 20\Omega$)
+*   Digital Ammeter
+*   Digital Voltmeter
+*   Connecting wires and a switch
+
+### 5. Procedure
+1.  **Series Setup:** Connect the battery, ammeter, $R_1$, and $R_2$ in a single loop (series).
+2.  **Series Measurement:** Close the switch. Record the total current ($I_{total}$) and the voltage across the battery ($V_{total}$), $R_1$ ($V_1$), and $R_2$ ($V_2$).
+3.  **Parallel Setup:** Connect $R_1$ and $R_2$ in parallel branches, then connect this combination in series with the battery and ammeter.
+4.  **Parallel Measurement:** Close the switch. Record the total current ($I_{total}$) and the voltage across the battery ($V_{total}$) and across the parallel branches.
+5.  **Analysis:** Use Ohm's Law ($R = V/I$) to calculate the experimental total resistance for both configurations and compare with theoretical values.
+
+### 6. Safety Precautions
+*   **Short Circuits:** Never connect the battery terminals directly with a wire; always include a resistor in the circuit.
+*   **Overheating:** Resistors can become very hot if high current flows through them for a long time. Open the switch between readings.
+*   **Polarity:** Ensure the ammeter and voltmeter are connected with the correct polarity to avoid damaging the meters.`,
     independentVariables: [
       { id: 'voltage', name: 'Battery Voltage', min: 0, max: 24, step: 0.5, defaultValue: 12, unit: 'V' },
       { id: 'r1', name: 'Resistor 1', min: 1, max: 100, step: 1, defaultValue: 10, unit: 'Ω' },

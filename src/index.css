@@ -16,7 +16,8 @@
 }
 
 .prose {
-  @apply font-serif;
+  @apply font-sans;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .prose h1, .prose h2, .prose h3 {
@@ -24,7 +25,7 @@
 }
 
 .prose p {
-  @apply text-slate-600 leading-relaxed mb-4;
+  @apply text-slate-600 leading-relaxed mb-4 text-sm;
 }
 
 .prose ul {

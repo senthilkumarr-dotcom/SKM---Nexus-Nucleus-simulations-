@@ -40,6 +40,7 @@ export interface Lab {
   controlledVariables: string[];
   safetyOptions: SafetyOption[];
   quiz?: QuizQuestion[];
+  hideTimer?: boolean;
 }
 
 export interface VariableConfig {

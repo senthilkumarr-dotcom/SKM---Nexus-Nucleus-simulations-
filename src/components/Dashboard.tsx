@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LABS } from '../constants';
-import { Search, FlaskConical, GraduationCap, ArrowRight, Beaker, Droplets, Sun, Wind, Leaf, Layers, Microscope, Dna, Zap, Activity, Palette, Globe, Syringe, Droplet, Cloud, CircleDot, Maximize, TestTube, Milk, Timer, Scale, Atom } from 'lucide-react';
+import { Search, FlaskConical, GraduationCap, ArrowRight, Beaker, Droplets, Sun, Wind, Leaf, Layers, Microscope, Dna, Zap, Activity, Palette, Globe, Syringe, Droplet, Cloud, CircleDot, Maximize, TestTube, Milk, Timer, Scale, Atom, Home } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn, getLabColorClasses } from '../utils';
 import { Subject } from '../types';
@@ -44,8 +44,9 @@ export default function Dashboard({ onSelectLab, selectedSubject, onBack }: Prop
             <button 
               onClick={onBack}
               className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500"
+              title="Back to Subjects"
             >
-              <ArrowRight className="w-5 h-5 rotate-180" />
+              <Home className="w-5 h-5" />
             </button>
             <div>
               <h1 className="text-xl font-black text-slate-900 tracking-tight">

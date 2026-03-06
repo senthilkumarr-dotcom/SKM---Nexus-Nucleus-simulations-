@@ -9,7 +9,7 @@ import {
   BarChart, Bar, Cell
 } from 'recharts';
 import { 
-  Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, ChevronRight, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X, HelpCircle
+  Play, RotateCcw, Download, Trash2, Settings2, Info, Activity, BarChart3, ChevronLeft, ChevronRight, Timer, Plus, Check, Maximize2, Minimize2, ShieldCheck, AlertTriangle, X, HelpCircle, Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, exportToCSV, getLabColorClasses } from '../utils';
@@ -18,17 +18,18 @@ import Quiz from './Quiz';
 interface Props {
   lab: Lab;
   onBack: () => void;
+  onHome?: () => void;
   renderSimulation: (variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean) => React.ReactNode;
   calculateResult: (variables: Record<string, number>) => number;
 }
 
-export default function SimulationLayout({ lab, onBack, renderSimulation, calculateResult }: Props) {
+export default function SimulationLayout({ lab, onBack, onHome, renderSimulation, calculateResult }: Props) {
   const colors = getLabColorClasses(lab.color);
   const [variables, setVariables] = useState<Record<string, number>>(
     lab.independentVariables.reduce((acc, v) => ({ ...acc, [v.id]: v.defaultValue }), {})
   );
   const [data, setData] = useState<DataPoint[]>([]);
-  const [activeIV, setActiveIV] = useState<string>(lab.independentVariables[0].id);
+  const [activeIV, setActiveIV] = useState<string>(lab.independentVariables[0]?.id || '');
   const [activeTab, setActiveTab] = useState<'theory' | 'method'>('theory');
   const [activeAnalysisTab, setActiveAnalysisTab] = useState<'results' | 'quiz'>('results');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -134,6 +135,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
   const handleClear = () => setData([]);
   const handleExport = () => {
     const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
+    if (!activeVar) return;
     const exportData = data.map(d => ({
       [activeVar.name]: d.x,
       [lab.dependentVariable.label]: d.y
@@ -146,12 +148,24 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
       {/* Header */}
       <header className="bg-white border-bottom border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={onBack}
-            className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6 text-slate-600" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={onBack}
+              className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+              title="Back to Home"
+            >
+              <ChevronLeft className="w-6 h-6 text-slate-600" />
+            </button>
+            {onHome && (
+              <button 
+                onClick={onHome}
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                title="Back to Home"
+              >
+                <Home className="w-5 h-5 text-slate-600" />
+              </button>
+            )}
+          </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900">{lab.title}</h1>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{lab.category}</p>
@@ -231,12 +245,15 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
         )}>
           {/* Panel 3: Simulation */}
           <section className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-inner relative overflow-hidden flex items-center justify-center min-h-[750px]">
-            <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
-              <Activity className={cn("w-4 h-4 text-emerald-400", isTimerRunning && "animate-pulse")} />
-              <span className="text-xs font-mono text-white/80 uppercase tracking-widest">
-                {isTimerRunning ? 'Experiment in Progress' : 'Simulation Paused'}
-              </span>
-            </div>
+            {/* Status Indicator */}
+            {!['genetic-diagram', 'pedigree-analysis', 'biomolecule-testing'].includes(lab.id) && (
+              <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
+                <Activity className={cn("w-4 h-4 text-emerald-400", isTimerRunning && "animate-pulse")} />
+                <span className="text-xs font-mono text-white/80 uppercase tracking-widest">
+                  {isTimerRunning ? 'Experiment in Progress' : 'Simulation Paused'}
+                </span>
+              </div>
+            )}
 
             {/* Fullscreen Toggle */}
             <button 
@@ -248,18 +265,20 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
             </button>
 
             {/* Safety Check Trigger */}
-            <button 
-              onClick={() => setShowSafetyPanel(true)}
-              className="absolute bottom-6 left-6 flex items-center gap-2 px-4 py-2 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-white/80 hover:text-white transition-all z-10"
-            >
-              <ShieldCheck className={cn("w-4 h-4", correctSafetyCount === totalCorrectNeeded && !hasErrors ? "text-emerald-400" : "text-amber-400")} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Safety Check</span>
-              {selectedSafety.length > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 bg-white/10 rounded text-[8px]">
-                  {correctSafetyCount}/{totalCorrectNeeded}
-                </span>
-              )}
-            </button>
+            {!['genetic-diagram', 'pedigree-analysis', 'biomolecule-testing'].includes(lab.id) && (
+              <button 
+                onClick={() => setShowSafetyPanel(true)}
+                className="absolute bottom-6 left-6 flex items-center gap-2 px-4 py-2 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-white/80 hover:text-white transition-all z-10"
+              >
+                <ShieldCheck className={cn("w-4 h-4", correctSafetyCount === totalCorrectNeeded && !hasErrors ? "text-emerald-400" : "text-amber-400")} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Safety Check</span>
+                {selectedSafety.length > 0 && (
+                  <span className="ml-1 px-1.5 py-0.5 bg-white/10 rounded text-[8px]">
+                    {correctSafetyCount}/{totalCorrectNeeded}
+                  </span>
+                )}
+              </button>
+            )}
 
             {/* Safety Panel Overlay */}
             <AnimatePresence>
@@ -332,63 +351,65 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
             </AnimatePresence>
 
             {/* Timer Overlay */}
-            <div className="absolute top-6 right-6 flex flex-col items-end gap-2 z-30">
-              <div className={cn(
-                "flex items-center gap-3 px-4 py-2 rounded-xl border backdrop-blur-md transition-all",
-                isTimerRunning ? "bg-blue-600/20 border-blue-500/50 ring-2 ring-blue-500/20" : "bg-black/40 border-white/10"
-              )}>
-                <Timer className={cn("w-4 h-4", isTimerRunning ? "text-blue-400 animate-spin-slow" : "text-white/40")} />
-                <span className="text-xl font-mono font-bold text-white">
-                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-                </span>
-                {!isTimerRunning && timeLeft > 0 ? (
-                  <button 
-                    onClick={startTimer}
-                    className="p-1.5 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white transition-colors shadow-lg shadow-emerald-900/20"
-                  >
-                    <Play className="w-3 h-3 fill-current" />
-                  </button>
-                ) : isTimerRunning ? (
-                  <button 
-                    onClick={resetTimer}
-                    className="p-1.5 bg-red-600 hover:bg-red-500 rounded-lg text-white transition-colors"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                  </button>
-                ) : (
-                  <button 
-                    onClick={startTimer}
-                    className="p-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white transition-colors"
-                  >
-                    <Play className="w-3 h-3 fill-current" />
-                  </button>
+            {!lab.hideTimer && (
+              <div className="absolute top-6 right-6 flex flex-col items-end gap-2 z-30">
+                <div className={cn(
+                  "flex items-center gap-3 px-4 py-2 rounded-xl border backdrop-blur-md transition-all",
+                  isTimerRunning ? "bg-blue-600/20 border-blue-500/50 ring-2 ring-blue-500/20" : "bg-black/40 border-white/10"
+                )}>
+                  <Timer className={cn("w-4 h-4", isTimerRunning ? "text-blue-400 animate-spin-slow" : "text-white/40")} />
+                  <span className="text-xl font-mono font-bold text-white">
+                    {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                  </span>
+                  {!isTimerRunning && timeLeft > 0 ? (
+                    <button 
+                      onClick={startTimer}
+                      className="p-1.5 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white transition-colors shadow-lg shadow-emerald-900/20"
+                    >
+                      <Play className="w-3 h-3 fill-current" />
+                    </button>
+                  ) : isTimerRunning ? (
+                    <button 
+                      onClick={resetTimer}
+                      className="p-1.5 bg-red-600 hover:bg-red-500 rounded-lg text-white transition-colors"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={startTimer}
+                      className="p-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white transition-colors"
+                    >
+                      <Play className="w-3 h-3 fill-current" />
+                    </button>
+                  )}
+                </div>
+                {!isTimerRunning && (
+                  <div className="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur-md border border-white/10">
+                    {[15, 30, 45, 60].map(d => (
+                      <button
+                        key={d}
+                        onClick={() => { setTimerDuration(d); setTimeLeft(d); }}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-[12px] font-black transition-all uppercase tracking-widest",
+                          timerDuration === d 
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40 scale-105" 
+                            : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                        )}
+                      >
+                        {d}s
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
-              {!isTimerRunning && (
-                <div className="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur-md border border-white/10">
-                  {[15, 30, 45, 60].map(d => (
-                    <button
-                      key={d}
-                      onClick={() => { setTimerDuration(d); setTimeLeft(d); }}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-[12px] font-black transition-all uppercase tracking-widest",
-                        timerDuration === d 
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40 scale-105" 
-                          : "text-white/40 hover:text-white/80 hover:bg-white/5"
-                      )}
-                    >
-                      {d}s
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
 
-            {renderSimulation(variables, !isTimerRunning, setVariables, false)}
+            {renderSimulation(variables, !lab.hideTimer && !isTimerRunning, setVariables, false)}
 
             {/* Start Overlay */}
             <AnimatePresence>
-              {!isTimerRunning && (timeLeft === timerDuration || timeLeft === 0) && (
+              {!lab.hideTimer && !isTimerRunning && (timeLeft === timerDuration || timeLeft === 0) && (
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -430,148 +451,151 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
           </section>
 
           {/* Panel 2: Variables */}
-          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <button 
-              onClick={() => setIsControlsCollapsed(!isControlsCollapsed)}
-              className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                <Settings2 className="w-6 h-6 text-blue-600" />
-                <h2 className="text-lg font-bold text-slate-800">Variable Controls</h2>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 1: Adjust</div>
-                <div className={cn("transition-transform duration-300", isControlsCollapsed ? "rotate-180" : "")}>
-                  <ChevronRight className="w-5 h-5 text-slate-400 rotate-90" />
+          {!['genetic-diagram', 'pedigree-analysis'].includes(lab.id) && (
+            <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+              <button 
+                onClick={() => setIsControlsCollapsed(!isControlsCollapsed)}
+                className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Settings2 className="w-6 h-6 text-blue-600" />
+                  <h2 className="text-lg font-bold text-slate-800">Variable Controls</h2>
                 </div>
-              </div>
-            </button>
-            
-            <AnimatePresence>
-              {!isControlsCollapsed && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                >
-                  <div className="px-8 pb-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                      {lab.independentVariables.map(v => (
-                        <div key={v.id} className={cn(
-                          "space-y-5 p-6 rounded-2xl transition-all border-2",
-                          activeIV === v.id ? "bg-blue-50/50 border-blue-200 shadow-sm" : "bg-white border-transparent"
-                        )}>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                              <button
-                                onClick={() => {
-                                  if (activeIV !== v.id) {
-                                    if (data.length > 0 && !confirm("Changing the independent variable will clear current data. Continue?")) return;
-                                    setActiveIV(v.id);
-                                    setData([]);
-                                  }
-                                }}
-                                className={cn(
-                                  "group relative flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all",
-                                  activeIV === v.id 
-                                    ? "bg-blue-600 border-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]" 
-                                    : "bg-white border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-600"
-                                )}
-                              >
-                                <div className={cn(
-                                  "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all",
-                                  activeIV === v.id ? "border-white bg-white" : "border-slate-300 group-hover:border-blue-400"
-                                )}>
-                                  {activeIV === v.id && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                <div className="flex items-center gap-4">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 1: Adjust</div>
+                  <div className={cn("transition-transform duration-300", isControlsCollapsed ? "rotate-180" : "")}>
+                    <ChevronRight className="w-5 h-5 text-slate-400 rotate-90" />
+                  </div>
+                </div>
+              </button>
+              
+              <AnimatePresence>
+                {!isControlsCollapsed && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <div className="px-8 pb-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        {lab.independentVariables.map(v => (
+                          <div key={v.id} className={cn(
+                            "space-y-5 p-6 rounded-2xl transition-all border-2",
+                            activeIV === v.id ? "bg-blue-50/50 border-blue-200 shadow-sm" : "bg-white border-transparent"
+                          )}>
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-3">
+                                <button
+                                  onClick={() => {
+                                    if (activeIV !== v.id) {
+                                      if (data.length > 0 && !confirm("Changing the independent variable will clear current data. Continue?")) return;
+                                      setActiveIV(v.id);
+                                      setData([]);
+                                    }
+                                  }}
+                                  className={cn(
+                                    "group relative flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all",
+                                    activeIV === v.id 
+                                      ? "bg-blue-600 border-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]" 
+                                      : "bg-white border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-600"
+                                  )}
+                                >
+                                  <div className={cn(
+                                    "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all",
+                                    activeIV === v.id ? "border-white bg-white" : "border-slate-300 group-hover:border-blue-400"
+                                  )}>
+                                    {activeIV === v.id && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                                  </div>
+                                  <span className="text-[10px] font-black uppercase tracking-widest">
+                                    {activeIV === v.id ? "Active IV" : "Set as IV"}
+                                  </span>
+                                </button>
+                                <div className="flex flex-col">
+                                  <label className="text-sm font-bold text-slate-700">{v.name}</label>
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">
-                                  {activeIV === v.id ? "Active IV" : "Set as IV"}
-                                </span>
-                              </button>
-                              <div className="flex flex-col">
-                                <label className="text-sm font-bold text-slate-700">{v.name}</label>
+                              </div>
+                              <span className="px-3 py-1 bg-blue-50 rounded-lg text-sm font-mono font-bold text-blue-700 border border-blue-100">
+                                {variables[v.id]} {v.unit}
+                              </span>
+                            </div>
+                            <input 
+                              type="range"
+                              min={v.min}
+                              max={v.max}
+                              step={v.step}
+                              value={variables[v.id]}
+                              onChange={(e) => handleVariableChange(v.id, parseFloat(e.target.value))}
+                              className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            />
+                            <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                              <span>{v.min}{v.unit}</span>
+                              <span>{v.max}{v.unit}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-10 pt-8 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 2: Manual Record</span>
+                            <div className="flex items-center gap-1 text-[10px] text-blue-600 font-bold">
+                              <Info className="w-3.5 h-3.5" />
+                              Count & Enter
+                            </div>
+                          </div>
+                          <form onSubmit={handleManualRecord} className="flex gap-3">
+                            <div className="relative flex-1">
+                              <input 
+                                type="number"
+                                step="any"
+                                placeholder={`Enter ${lab.dependentVariable.unit}...`}
+                                value={manualValue}
+                                onChange={(e) => setManualValue(e.target.value)}
+                                className="w-full pl-4 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-base focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
+                              />
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">
+                                {lab.dependentVariable.unit}
                               </div>
                             </div>
-                            <span className="px-3 py-1 bg-blue-50 rounded-lg text-sm font-mono font-bold text-blue-700 border border-blue-100">
-                              {variables[v.id]} {v.unit}
-                            </span>
-                          </div>
-                          <input 
-                            type="range"
-                            min={v.min}
-                            max={v.max}
-                            step={v.step}
-                            value={variables[v.id]}
-                            onChange={(e) => handleVariableChange(v.id, parseFloat(e.target.value))}
-                            className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                          />
-                          <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                            <span>{v.min}{v.unit}</span>
-                            <span>{v.max}{v.unit}</span>
-                          </div>
+                            <button 
+                              type="submit"
+                              disabled={!manualValue}
+                              className={cn(
+                                "px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg",
+                                showSuccess 
+                                  ? "bg-emerald-500 text-white shadow-emerald-200" 
+                                  : "bg-slate-800 hover:bg-slate-900 text-white disabled:opacity-50 shadow-slate-200"
+                              )}
+                            >
+                              {showSuccess ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                              {showSuccess ? 'Added' : 'Add'}
+                            </button>
+                          </form>
                         </div>
-                      ))}
-                    </div>
 
-                    <div className="mt-10 pt-8 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step 2: Manual Record</span>
-                          <div className="flex items-center gap-1 text-[10px] text-blue-600 font-bold">
-                            <Info className="w-3.5 h-3.5" />
-                            Count & Enter
-                          </div>
-                        </div>
-                        <form onSubmit={handleManualRecord} className="flex gap-3">
-                          <div className="relative flex-1">
-                            <input 
-                              type="number"
-                              step="any"
-                              placeholder={`Enter ${lab.dependentVariable.unit}...`}
-                              value={manualValue}
-                              onChange={(e) => setManualValue(e.target.value)}
-                              className="w-full pl-4 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-base focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
-                            />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">
-                              {lab.dependentVariable.unit}
-                            </div>
-                          </div>
+                        <div className="space-y-4">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alternative: Auto Record</span>
                           <button 
-                            type="submit"
-                            disabled={!manualValue}
-                            className={cn(
-                              "px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg",
-                              showSuccess 
-                                ? "bg-emerald-500 text-white shadow-emerald-200" 
-                                : "bg-slate-800 hover:bg-slate-900 text-white disabled:opacity-50 shadow-slate-200"
-                            )}
+                            onClick={handleRecord}
+                            className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 transition-all transform hover:-translate-y-1 active:translate-y-0"
                           >
-                            {showSuccess ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                            {showSuccess ? 'Added' : 'Add'}
+                            <Play className="w-5 h-5 fill-current" />
+                            Auto-Calculate Result
                           </button>
-                        </form>
-                      </div>
-
-                      <div className="space-y-4">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alternative: Auto Record</span>
-                        <button 
-                          onClick={handleRecord}
-                          className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 transition-all transform hover:-translate-y-1 active:translate-y-0"
-                        >
-                          <Play className="w-5 h-5 fill-current" />
-                          Auto-Calculate Result
-                        </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </section>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </section>
+          )}
 
           {/* Panel 4: Analysis (Moved Below) */}
-          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          {!['genetic-diagram', 'pedigree-analysis'].includes(lab.id) && (
+            <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex bg-slate-100 p-1 rounded-xl">
@@ -712,7 +736,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                               domain={['auto', 'auto']}
                               tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }}
                               label={{ 
-                                value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0].unit})`, 
+                                value: `${lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0]?.name || 'Independent Variable'} (${lab.independentVariables.find(v => v.id === activeIV)?.unit || lab.independentVariables[0]?.unit || ''})`, 
                                 position: 'bottom', 
                                 offset: 20, 
                                 fontSize: 14, 
@@ -743,7 +767,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                               labelStyle={{ fontWeight: 800, color: '#64748b', marginBottom: '4px' }}
                               labelFormatter={(value) => {
                                 const activeVar = lab.independentVariables.find(v => v.id === activeIV) || lab.independentVariables[0];
-                                return `${activeVar.name}: ${value}${activeVar.unit}`;
+                                return activeVar ? `${activeVar.name}: ${value}${activeVar.unit}` : `Value: ${value}`;
                               }}
                             />
                             <Line 
@@ -781,7 +805,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
                             <tr>
                               <th className="p-4 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">
                                 <div className="flex flex-col">
-                                  <span>{lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0].name}</span>
+                                  <span>{lab.independentVariables.find(v => v.id === activeIV)?.name || lab.independentVariables[0]?.name || 'Independent Variable'}</span>
                                   <span className="text-[8px] text-blue-500 font-black tracking-tighter">(Independent Variable)</span>
                                 </div>
                               </th>
@@ -832,6 +856,7 @@ export default function SimulationLayout({ lab, onBack, renderSimulation, calcul
               )}
             </AnimatePresence>
           </section>
+          )}
         </div>
       </main>
 

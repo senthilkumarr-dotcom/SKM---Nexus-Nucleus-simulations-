@@ -10,7 +10,7 @@ import SimulationLayout from './components/SimulationLayout';
 import VariableIdentification from './components/VariableIdentification';
 import { LABS } from './constants';
 import { Subject } from './types';
-import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation, LeafChromatographySimulation, AcidBaseTitrationSimulation, ReactionRatesGasSimulation, HookesLawSimulation, OhmsLawSimulation, RefractionSimulation, DCCircuitSimulation, NewtonSecondLawSimulation } from './components/Simulations';
+import { EnzymeSimulation, OsmosisSimulation, PhotosynthesisSimulation, LactoseBreakdownSimulation, TranspirationSimulation, FoodCalorimetrySimulation, LeafChromatographySimulation, RespirationSimulation, NaturalSelectionSimulation, AcidBaseTitrationSimulation, ReactionRatesGasSimulation, HookesLawSimulation, OhmsLawSimulation, RefractionSimulation, DCCircuitSimulation, NewtonSecondLawSimulation, RedoxReactionSimulation, FlameTestSimulation, GeneticDiagramSimulation, PedigreeAnalysisSimulation, BiomoleculeTestingSimulation } from './components/Simulations';
 
 export default function App() {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
@@ -29,7 +29,8 @@ export default function App() {
 
   const handleSelectLab = (id: string) => {
     setSelectedLabId(id);
-    setIsIdentifying(true);
+    const skipIdentification = ['genetic-diagram', 'pedigree-analysis', 'biomolecule-testing'].includes(id);
+    setIsIdentifying(!skipIdentification);
   };
 
   const handleIdentificationComplete = () => {
@@ -38,6 +39,7 @@ export default function App() {
 
   const handleBack = () => {
     setSelectedLabId(null);
+    setSelectedSubject(null);
     setIsIdentifying(false);
   };
 
@@ -50,6 +52,8 @@ export default function App() {
     'transpiration': TranspirationSimulation,
     'food-calorimetry': FoodCalorimetrySimulation,
     'leaf-chromatography': LeafChromatographySimulation,
+    'respiration': RespirationSimulation,
+    'natural-selection': NaturalSelectionSimulation,
     'acid-base-titration': AcidBaseTitrationSimulation,
     'reaction-rates-gas': ReactionRatesGasSimulation,
     'hookes-law': HookesLawSimulation,
@@ -57,6 +61,11 @@ export default function App() {
     'refraction-snells-law': RefractionSimulation,
     'dc-circuits': DCCircuitSimulation,
     'newtons-second-law': NewtonSecondLawSimulation,
+    'redox-reactions': RedoxReactionSimulation,
+    'flame-test': FlameTestSimulation,
+    'genetic-diagram': GeneticDiagramSimulation,
+    'pedigree-analysis': PedigreeAnalysisSimulation,
+    'biomolecule-testing': BiomoleculeTestingSimulation,
   };
 
   // 2. Register your mathematical models here
@@ -109,9 +118,28 @@ export default function App() {
       // Return a base value for the graph, though chromatography is more about Rf values
       return leafType * 0.5;
     },
+    'respiration': (vars) => {
+      const { temp, organism_type } = vars;
+      const baseRates: Record<number, number> = { 1: 0.2, 2: 0.5, 3: 0 };
+      const baseRate = baseRates[organism_type] || 0;
+      const tempEffect = Math.pow(2, (temp - 20) / 10);
+      return baseRate * tempEffect;
+    },
+    'natural-selection': (vars) => {
+      const { background_type } = vars;
+      // Return a survival index
+      return background_type === 1 ? 0.8 : 0.2;
+    },
     'acid-base-titration': (vars) => {
-      const { drop_size } = vars;
-      return drop_size * 100;
+      const { concentration_base } = vars;
+      // V2 = (M1 * V1) / M2. Let's assume M1 = 0.12, V1 = 25ml
+      return (0.12 * 25) / concentration_base;
+    },
+    'redox-reactions': (vars) => {
+      const { metal_type, concentration } = vars;
+      const reactivities: Record<number, number> = { 1: 0.7, 2: 0.4, 3: 1.0 };
+      const reactivity = reactivities[metal_type] || 0.7;
+      return reactivity * 30 * concentration; // Temp change
     },
     'reaction-rates-gas': (vars) => {
       const { concentration, surface_area } = vars;
@@ -144,6 +172,7 @@ export default function App() {
       const { force, mass } = vars;
       return force / mass;
     },
+    'flame-test': (vars) => vars.metal_type, // Qualitative
   };
 
   const renderSimulationContent = (id: string, variables: Record<string, number>, isPaused: boolean, setVariables?: React.Dispatch<React.SetStateAction<Record<string, number>>>, isFullscreen?: boolean) => {
@@ -196,6 +225,7 @@ export default function App() {
     <SimulationLayout 
       lab={selectedLab}
       onBack={handleBack}
+      onHome={handleBack}
       renderSimulation={(vars, isPaused, setVars) => renderSimulationContent(selectedLab.id, vars, isPaused, setVars)}
       calculateResult={(vars) => calculateResult(selectedLab.id, vars)}
     />
